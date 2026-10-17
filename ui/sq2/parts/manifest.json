@@ -1,0 +1,860 @@
+[
+ {
+  "name": "nose_section_PA6CF",
+  "stl": "cad/out/sq2/v3/parts/nose_section_PA6CF.stl",
+  "rgba": [
+   0.16,
+   0.16,
+   0.18,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "nose_tip_TPU",
+  "stl": "cad/out/sq2/v3/parts/nose_tip_TPU.stl",
+  "rgba": [
+   0.85,
+   0.85,
+   0.8,
+   1
+  ],
+  "material": "TPU"
+ },
+ {
+  "name": "gnss_window_TPU",
+  "stl": "cad/out/sq2/v3/parts/gnss_window_TPU.stl",
+  "rgba": [
+   0.9,
+   0.9,
+   0.85,
+   1
+  ],
+  "material": "TPU"
+ },
+ {
+  "name": "camera_dome_PC",
+  "stl": "cad/out/sq2/v3/parts/camera_dome_PC.stl",
+  "rgba": [
+   0.75,
+   0.85,
+   0.95,
+   0.35
+  ],
+  "material": "PC"
+ },
+ {
+  "name": "o4pro_cam_body",
+  "stl": "cad/out/sq2/v3/parts/o4pro_cam_body.stl",
+  "rgba": [
+   0.08,
+   0.08,
+   0.09,
+   1
+  ],
+  "material": "CAM"
+ },
+ {
+  "name": "o4pro_cam_glass",
+  "stl": "cad/out/sq2/v3/parts/o4pro_cam_glass.stl",
+  "rgba": [
+   0.15,
+   0.3,
+   0.55,
+   1
+  ],
+  "material": "CAM"
+ },
+ {
+  "name": "pitot_SS",
+  "stl": "cad/out/sq2/v3/parts/pitot_SS.stl",
+  "rgba": [
+   0.75,
+   0.75,
+   0.78,
+   1
+  ],
+  "material": "SS"
+ },
+ {
+  "name": "pack_liners_TPU",
+  "stl": "cad/out/sq2/v3/parts/pack_liners_TPU.stl",
+  "rgba": [
+   0.9,
+   0.9,
+   0.85,
+   1
+  ],
+  "material": "TPU"
+ },
+ {
+  "name": "pack_bulkhead_disc_PA6CF",
+  "stl": "cad/out/sq2/v3/parts/pack_bulkhead_disc_PA6CF.stl",
+  "rgba": [
+   0.3,
+   0.45,
+   0.3,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "centre_section_PA6CF",
+  "stl": "cad/out/sq2/v3/parts/centre_section_PA6CF.stl",
+  "rgba": [
+   0.2,
+   0.2,
+   0.23,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "hub_frame_7075",
+  "stl": "cad/out/sq2/v3/parts/hub_frame_7075.stl",
+  "rgba": [
+   0.72,
+   0.74,
+   0.78,
+   1
+  ],
+  "material": "AL7075"
+ },
+ {
+  "name": "j2_washer_plates_7075",
+  "stl": "cad/out/sq2/v3/parts/j2_washer_plates_7075.stl",
+  "rgba": [
+   0.72,
+   0.74,
+   0.78,
+   1
+  ],
+  "material": "AL7075"
+ },
+ {
+  "name": "aft_section_PA6CF",
+  "stl": "cad/out/sq2/v3/parts/aft_section_PA6CF.stl",
+  "rgba": [
+   0.2,
+   0.2,
+   0.23,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "feet_TPU",
+  "stl": "cad/out/sq2/v3/parts/feet_TPU.stl",
+  "rgba": [
+   0.9,
+   0.9,
+   0.85,
+   1
+  ],
+  "material": "TPU"
+ },
+ {
+  "name": "pack_L_7S",
+  "stl": "cad/out/sq2/v3/parts/pack_L_7S.stl",
+  "rgba": [
+   0.9,
+   0.72,
+   0.1,
+   1
+  ],
+  "material": "LIPO"
+ },
+ {
+  "name": "pack_L_bullets",
+  "stl": "cad/out/sq2/v3/parts/pack_L_bullets.stl",
+  "rgba": [
+   0.85,
+   0.65,
+   0.2,
+   1
+  ],
+  "material": "BRASS"
+ },
+ {
+  "name": "pack_R_7S",
+  "stl": "cad/out/sq2/v3/parts/pack_R_7S.stl",
+  "rgba": [
+   0.9,
+   0.72,
+   0.1,
+   1
+  ],
+  "material": "LIPO"
+ },
+ {
+  "name": "pack_R_bullets",
+  "stl": "cad/out/sq2/v3/parts/pack_R_bullets.stl",
+  "rgba": [
+   0.85,
+   0.65,
+   0.2,
+   1
+  ],
+  "material": "BRASS"
+ },
+ {
+  "name": "pack_foam_PU",
+  "stl": "cad/out/sq2/v3/parts/pack_foam_PU.stl",
+  "rgba": [
+   0.95,
+   0.9,
+   0.7,
+   1
+  ],
+  "material": "PUFOAM"
+ },
+ {
+  "name": "power_sled_6061",
+  "stl": "cad/out/sq2/v3/parts/power_sled_6061.stl",
+  "rgba": [
+   0.6,
+   0.62,
+   0.66,
+   1
+  ],
+  "material": "AL6061"
+ },
+ {
+  "name": "power_sled_nuts_M3",
+  "stl": "cad/out/sq2/v3/parts/power_sled_nuts_M3.stl",
+  "rgba": [
+   0.5,
+   0.5,
+   0.52,
+   1
+  ],
+  "material": "STEEL"
+ },
+ {
+  "name": "esc_RD_APD200F3",
+  "stl": "cad/out/sq2/v3/parts/esc_RD_APD200F3.stl",
+  "rgba": [
+   0.1,
+   0.45,
+   0.15,
+   1
+  ],
+  "material": "ESC"
+ },
+ {
+  "name": "esc_LD_APD200F3",
+  "stl": "cad/out/sq2/v3/parts/esc_LD_APD200F3.stl",
+  "rgba": [
+   0.1,
+   0.45,
+   0.15,
+   1
+  ],
+  "material": "ESC"
+ },
+ {
+  "name": "esc_RU_APD200F3",
+  "stl": "cad/out/sq2/v3/parts/esc_RU_APD200F3.stl",
+  "rgba": [
+   0.1,
+   0.45,
+   0.15,
+   1
+  ],
+  "material": "ESC"
+ },
+ {
+  "name": "esc_LU_APD200F3",
+  "stl": "cad/out/sq2/v3/parts/esc_LU_APD200F3.stl",
+  "rgba": [
+   0.1,
+   0.45,
+   0.15,
+   1
+  ],
+  "material": "ESC"
+ },
+ {
+  "name": "avionics_tray_PA6CF",
+  "stl": "cad/out/sq2/v3/parts/avionics_tray_PA6CF.stl",
+  "rgba": [
+   0.3,
+   0.3,
+   0.33,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "fc_H7",
+  "stl": "cad/out/sq2/v3/parts/fc_H7.stl",
+  "rgba": [
+   0.1,
+   0.3,
+   0.6,
+   1
+  ],
+  "material": "PCB"
+ },
+ {
+  "name": "adr_board",
+  "stl": "cad/out/sq2/v3/parts/adr_board.stl",
+  "rgba": [
+   0.1,
+   0.5,
+   0.25,
+   1
+  ],
+  "material": "PCB"
+ },
+ {
+  "name": "o4pro_vtx",
+  "stl": "cad/out/sq2/v3/parts/o4pro_vtx.stl",
+  "rgba": [
+   0.18,
+   0.18,
+   0.2,
+   1
+  ],
+  "material": "VTX"
+ },
+ {
+  "name": "gnss_m10",
+  "stl": "cad/out/sq2/v3/parts/gnss_m10.stl",
+  "rgba": [
+   0.2,
+   0.2,
+   0.6,
+   1
+  ],
+  "material": "PCB"
+ },
+ {
+  "name": "pod_LU_node_7075",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_node_7075.stl",
+  "rgba": [
+   0.75,
+   0.75,
+   0.78,
+   1
+  ],
+  "material": "AL7075"
+ },
+ {
+  "name": "pod_LU_motor_V3120",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_motor_V3120.stl",
+  "rgba": [
+   0.55,
+   0.55,
+   0.6,
+   1
+  ],
+  "material": "MOTOR"
+ },
+ {
+  "name": "pod_LU_motorvis_bell",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_motorvis_bell.stl",
+  "rgba": [
+   0.12,
+   0.12,
+   0.13,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_LU_motorvis_stator",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_motorvis_stator.stl",
+  "rgba": [
+   0.72,
+   0.42,
+   0.18,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_LU_motorvis_base",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_motorvis_base.stl",
+  "rgba": [
+   0.55,
+   0.56,
+   0.6,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_LU_motorvis_shaft",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_motorvis_shaft.stl",
+  "rgba": [
+   0.78,
+   0.78,
+   0.8,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_LU_nacelle_front",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_nacelle_front.stl",
+  "rgba": [
+   0.16,
+   0.16,
+   0.18,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_LU_nacelle_rear",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_nacelle_rear.stl",
+  "rgba": [
+   0.16,
+   0.16,
+   0.18,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_LU_spinner",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_spinner.stl",
+  "rgba": [
+   0.75,
+   0.1,
+   0.1,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_LU_prop",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_prop.stl",
+  "rgba": [
+   0.08,
+   0.08,
+   0.08,
+   1
+  ],
+  "material": "PROP"
+ },
+ {
+  "name": "pod_LU_spar_CFRP",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_spar_CFRP.stl",
+  "rgba": [
+   0.04,
+   0.04,
+   0.04,
+   1
+  ],
+  "material": "CFRP"
+ },
+ {
+  "name": "pod_LU_strut_fairing",
+  "stl": "cad/out/sq2/v3/parts/pod_LU_strut_fairing.stl",
+  "rgba": [
+   0.24,
+   0.24,
+   0.27,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_LD_node_7075",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_node_7075.stl",
+  "rgba": [
+   0.75,
+   0.75,
+   0.78,
+   1
+  ],
+  "material": "AL7075"
+ },
+ {
+  "name": "pod_LD_motor_V3120",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_motor_V3120.stl",
+  "rgba": [
+   0.55,
+   0.55,
+   0.6,
+   1
+  ],
+  "material": "MOTOR"
+ },
+ {
+  "name": "pod_LD_motorvis_bell",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_motorvis_bell.stl",
+  "rgba": [
+   0.12,
+   0.12,
+   0.13,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_LD_motorvis_stator",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_motorvis_stator.stl",
+  "rgba": [
+   0.72,
+   0.42,
+   0.18,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_LD_motorvis_base",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_motorvis_base.stl",
+  "rgba": [
+   0.55,
+   0.56,
+   0.6,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_LD_motorvis_shaft",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_motorvis_shaft.stl",
+  "rgba": [
+   0.78,
+   0.78,
+   0.8,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_LD_nacelle_front",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_nacelle_front.stl",
+  "rgba": [
+   0.16,
+   0.16,
+   0.18,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_LD_nacelle_rear",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_nacelle_rear.stl",
+  "rgba": [
+   0.16,
+   0.16,
+   0.18,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_LD_spinner",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_spinner.stl",
+  "rgba": [
+   0.75,
+   0.1,
+   0.1,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_LD_prop",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_prop.stl",
+  "rgba": [
+   0.08,
+   0.08,
+   0.08,
+   1
+  ],
+  "material": "PROP"
+ },
+ {
+  "name": "pod_LD_spar_CFRP",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_spar_CFRP.stl",
+  "rgba": [
+   0.04,
+   0.04,
+   0.04,
+   1
+  ],
+  "material": "CFRP"
+ },
+ {
+  "name": "pod_LD_strut_fairing",
+  "stl": "cad/out/sq2/v3/parts/pod_LD_strut_fairing.stl",
+  "rgba": [
+   0.24,
+   0.24,
+   0.27,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_RU_node_7075",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_node_7075.stl",
+  "rgba": [
+   0.75,
+   0.75,
+   0.78,
+   1
+  ],
+  "material": "AL7075"
+ },
+ {
+  "name": "pod_RU_motor_V3120",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_motor_V3120.stl",
+  "rgba": [
+   0.55,
+   0.55,
+   0.6,
+   1
+  ],
+  "material": "MOTOR"
+ },
+ {
+  "name": "pod_RU_motorvis_bell",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_motorvis_bell.stl",
+  "rgba": [
+   0.12,
+   0.12,
+   0.13,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_RU_motorvis_stator",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_motorvis_stator.stl",
+  "rgba": [
+   0.72,
+   0.42,
+   0.18,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_RU_motorvis_base",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_motorvis_base.stl",
+  "rgba": [
+   0.55,
+   0.56,
+   0.6,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_RU_motorvis_shaft",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_motorvis_shaft.stl",
+  "rgba": [
+   0.78,
+   0.78,
+   0.8,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_RU_nacelle_front",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_nacelle_front.stl",
+  "rgba": [
+   0.16,
+   0.16,
+   0.18,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_RU_nacelle_rear",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_nacelle_rear.stl",
+  "rgba": [
+   0.16,
+   0.16,
+   0.18,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_RU_spinner",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_spinner.stl",
+  "rgba": [
+   0.75,
+   0.1,
+   0.1,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_RU_prop",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_prop.stl",
+  "rgba": [
+   0.08,
+   0.08,
+   0.08,
+   1
+  ],
+  "material": "PROP"
+ },
+ {
+  "name": "pod_RU_spar_CFRP",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_spar_CFRP.stl",
+  "rgba": [
+   0.04,
+   0.04,
+   0.04,
+   1
+  ],
+  "material": "CFRP"
+ },
+ {
+  "name": "pod_RU_strut_fairing",
+  "stl": "cad/out/sq2/v3/parts/pod_RU_strut_fairing.stl",
+  "rgba": [
+   0.24,
+   0.24,
+   0.27,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_RD_node_7075",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_node_7075.stl",
+  "rgba": [
+   0.75,
+   0.75,
+   0.78,
+   1
+  ],
+  "material": "AL7075"
+ },
+ {
+  "name": "pod_RD_motor_V3120",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_motor_V3120.stl",
+  "rgba": [
+   0.55,
+   0.55,
+   0.6,
+   1
+  ],
+  "material": "MOTOR"
+ },
+ {
+  "name": "pod_RD_motorvis_bell",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_motorvis_bell.stl",
+  "rgba": [
+   0.12,
+   0.12,
+   0.13,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_RD_motorvis_stator",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_motorvis_stator.stl",
+  "rgba": [
+   0.72,
+   0.42,
+   0.18,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_RD_motorvis_base",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_motorvis_base.stl",
+  "rgba": [
+   0.55,
+   0.56,
+   0.6,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_RD_motorvis_shaft",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_motorvis_shaft.stl",
+  "rgba": [
+   0.78,
+   0.78,
+   0.8,
+   1
+  ],
+  "material": "VIS"
+ },
+ {
+  "name": "pod_RD_nacelle_front",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_nacelle_front.stl",
+  "rgba": [
+   0.16,
+   0.16,
+   0.18,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_RD_nacelle_rear",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_nacelle_rear.stl",
+  "rgba": [
+   0.16,
+   0.16,
+   0.18,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_RD_spinner",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_spinner.stl",
+  "rgba": [
+   0.75,
+   0.1,
+   0.1,
+   1
+  ],
+  "material": "PA6CF"
+ },
+ {
+  "name": "pod_RD_prop",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_prop.stl",
+  "rgba": [
+   0.08,
+   0.08,
+   0.08,
+   1
+  ],
+  "material": "PROP"
+ },
+ {
+  "name": "pod_RD_spar_CFRP",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_spar_CFRP.stl",
+  "rgba": [
+   0.04,
+   0.04,
+   0.04,
+   1
+  ],
+  "material": "CFRP"
+ },
+ {
+  "name": "pod_RD_strut_fairing",
+  "stl": "cad/out/sq2/v3/parts/pod_RD_strut_fairing.stl",
+  "rgba": [
+   0.24,
+   0.24,
+   0.27,
+   1
+  ],
+  "material": "PA6CF"
+ }
+]
