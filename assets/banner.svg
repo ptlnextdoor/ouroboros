@@ -28,7 +28,7 @@
   </g>
   <g font-family="-apple-system,'Segoe UI',Inter,Helvetica,Arial,sans-serif">
     <text x="450" y="170" font-size="96" font-weight="800" letter-spacing="10" fill="url(#title)">FORGE</text>
-    <text x="456" y="218" font-size="27" fill="#c9d1d9">Agents that design real parts, and get better on parts they've never seen.</text>
+    <text x="456" y="218" font-size="25" fill="#c9d1d9">Agents that design real parts and improve on unseen ones.</text>
     <text x="456" y="254" font-size="19" fill="#8b949e">Every claim checked by physics they can't fool. Only lessons that survive held-out tests are kept.</text>
   </g>
   <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="15">
