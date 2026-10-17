@@ -4,7 +4,7 @@ export FREECAD_BIN ?= /Applications/FreeCAD.app/Contents/Resources/bin
 TASK ?= br02
 PLAYBOOK ?= playbook/v0.md
 
-.PHONY: selftest verify-isolation demo nplus1 heldout tasks
+.PHONY: selftest verify-isolation demo nplus1 heldout tasks ui
 
 ## blocks + referee physics + llm price-math/dry-run
 selftest:
@@ -19,6 +19,10 @@ tasks:
 ## one task, end to end (TASK=br0X PLAYBOOK=playbook/vN.md)
 demo:
 	$(PY) -m forge.loop --task $(TASK) --playbook $(PLAYBOOK) --budget 1.0
+
+## stage UI: http://localhost:8008/ (live tail of newest run)  ·  /?replay=ui/fixture/br02 (zero-network fallback)
+ui:
+	python3 ui/serve.py
 
 ## Version N+1: edit the playbook, gate kept edits on DEV
 nplus1:

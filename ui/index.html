@@ -49,14 +49,14 @@ body{display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:1fr 380
 #right{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-height:0;overflow:hidden}
 h2{margin:0;font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:.14em;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
 h2 span{font-family:var(--mono);text-transform:none;letter-spacing:0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
-#cases{display:flex;flex-direction:column;gap:7px;overflow:auto;flex:1;min-height:0}
-.case{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:7px 12px;display:grid;grid-template-columns:1fr auto;gap:3px 10px;align-items:center;animation:pop .4s ease both;flex:none}
+#cases{display:flex;flex-direction:column;gap:5px;overflow:auto;flex:1;min-height:0}
+.case{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:5px 12px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;animation:pop .4s ease both;flex:none}
 @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.case .nm{font-size:17px;font-weight:700;display:flex;gap:8px;align-items:center}
+.case .nm{font-size:15px;font-weight:700;display:flex;gap:8px;align-items:center}
 .badge{font-size:11px;font-weight:800;letter-spacing:.1em;padding:2px 7px;border-radius:6px;background:var(--hid);color:#1a0a2e}
-.case .pf{font-size:18px;font-weight:900;letter-spacing:.06em}
+.case .pf{font-size:15px;font-weight:900;letter-spacing:.06em}
 .case .pf.ok{color:var(--ok)}.case .pf.bad{color:var(--bad)}
-.case .bar{grid-column:1/3;height:14px;background:#0a0e14;border-radius:7px;position:relative;overflow:hidden;border:1px solid var(--line)}
+.case .bar{grid-column:1/3;height:9px;background:#0a0e14;border-radius:7px;position:relative;overflow:hidden;border:1px solid var(--line)}
 .case .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:var(--ok);transition:width .8s cubic-bezier(.2,.8,.2,1),background .4s}
 .case .bar i.bad{background:var(--bad)}
 .case .bar b{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--fg);opacity:.8}
@@ -69,7 +69,7 @@ h2 span{font-family:var(--mono);text-transform:none;letter-spacing:0;font-size:1
 #parity .sub{color:var(--dim);font-size:14px;margin-top:6px;font-family:var(--mono)}
 #parity .sub em{color:var(--fg);font-style:normal}
 #checks{font-family:var(--mono);font-size:13px;color:var(--dim);display:flex;flex-direction:column;gap:3px;overflow:auto;min-height:0;max-height:130px;flex:none;border-top:1px solid var(--line);padding-top:8px}
-#checks div{display:flex;gap:8px}#checks .ok{color:var(--ok)}#checks .bad{color:var(--bad)}
+#checks div{display:flex;gap:8px}#checks .ok{color:var(--ok)}#checks .bad{color:var(--bad)}#checks .warn{color:var(--warn)}
 #bottom{grid-column:1/3;display:grid;grid-template-columns:1fr 1fr;gap:10px;height:270px}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden}
 #critic{font-size:18px;line-height:1.4;overflow:auto;display:flex;flex-direction:column;gap:10px;min-height:0}
@@ -160,6 +160,8 @@ const SPEED = parseFloat(Q.get('speed') || '4');
 const S = { spec:null, cands:{}, cur:null, cost:null, nverified:0, gate:null, run:REPLAY||'', task:null };
 const stlUrl = rel => !rel ? null : (/^(runs|ui)\//.test(rel) ? rel : (S.run ? S.run+'/'+rel : rel));
 const $ = id => document.getElementById(id);
+// forge/loop.py physics_ok: parity never gates 'solved'. PASS = every non-parity check ok.
+const pok = v => !!v && (v.ok || ((v.checks||[]).length>0 && (v.checks||[]).every(c=>c.ok || c.name.startsWith('parity'))));
 const fmt = (x,d=1) => (x==null||isNaN(x)) ? '—' : Number(x).toFixed(d);
 
 // ---------- three.js (vendored in ui/vendor; falls back to CDN, then to a PNG) ----------
@@ -260,16 +262,17 @@ function showCurrent(c){
   const v=c.verdict;
   $('stampname').textContent = `${c.task} · iter ${c.iter} · designer-${c.k}`;
   $('stampparams').textContent = c.params ? Object.entries(c.params).filter(([k,x])=>x).map(([k,x])=>`${k}=${x}`).join('  ') : '';
-  const vb=$('verdictbig'); vb.className='show '+(v? (v.ok?'ok':'bad') : 'wait');
-  vb.textContent = v ? (v.ok?'PASS':'FAIL') : 'REFEREE…';
-  if (c.stl && main){ loadGeo(c.stl).then(g=>{ if(S.cur===c) setMesh(main, g, v?(v.ok?COL.ok:COL.bad):COL.wait); }).catch(()=>{}); }
+  const vb=$('verdictbig'); vb.className='show '+(v? (pok(v)?'ok':'bad') : 'wait');
+  vb.textContent = v ? (v.ok?'PASS': pok(v)?'PASS · parity gap':'FAIL') : 'REFEREE…';
+  if (c.stl && main){ loadGeo(c.stl).then(g=>{ if(S.cur===c) setMesh(main, g, v?(pok(v)?COL.ok:COL.bad):COL.wait); }).catch(()=>{}); }
   else if (c.stl && !main){ $('fbimg').src='/'+c.stl.replace(/\.stl$/,'.png'); }
   referee(v); dod();
 }
 
 function referee(v){
   const cs=$('cases'); cs.innerHTML='';
-  $('refmeta').textContent = v ? `${v.material||''} · FoS ${v.fos||''} · ${v.mesh?v.mesh.tets+' tets':''} · ${v.seconds||'?'} s` : '';
+  $('refmeta').textContent = v ? [v.material, v.fos?`FoS ${v.fos}`:null, v.mesh?v.mesh.tets+' tets':null, v.seconds?`${v.seconds} s`:null,
+      `${(v.cases||[]).filter(c=>c.hidden).length} hidden loads`].filter(Boolean).join(' · ') : '';
   if (!v){ $('paritynum').textContent='—'; $('paritynum').className='big'; $('parityclaim').textContent=''; $('checks').innerHTML=''; return; }
   if (!v.cases?.length){
     const d=document.createElement('div'); d.className='case'; d.innerHTML=`<div class="nm" style="color:var(--bad)">${esc(v.reason||'no cases')}</div>`; cs.appendChild(d);
@@ -289,7 +292,7 @@ function referee(v){
     $('parityclaim').innerHTML = `claim <em>${fmt(v.claim?.sigma_MPa,0)}</em> MPa · referee <em>${fmt(v.cases?.find(c=>!c.hidden)?.sigma_MPa,0)}</em> MPa`;
   } else { pn.textContent='—'; pn.className='big'; $('parityclaim').textContent=''; }
   $('checks').innerHTML = (v.checks||[]).map(c=>`<div class="${c.ok?'ok':'bad'}"><span>${c.ok?'✓':'✕'}</span><span>${esc(c.name)}</span><span style="margin-left:auto">${esc(String(c.measured))} ${esc(c.limit||'')}</span></div>`).join('')
-    + (v.ok ? '' : `<div class="bad"><span>→</span><span>${esc(v.reason||'')}</span></div>`);
+    + (v.ok ? '' : `<div class="${pok(v)?'warn':'bad'}"><span>→</span><span>${esc(v.reason||'')}${pok(v)?' · physics passed, agent mis-estimated its own stress':''}</span></div>`);
 }
 
 function thumb(c){
@@ -304,11 +307,11 @@ function thumb(c){
     t = thumbsR[c.key] = {key:c.key, iter:c.iter, task:c.task, el, v: main?makeViewer(el,false):null};
   }
   const v=c.verdict;
-  t.el.classList.toggle('ok', !!(v&&v.ok)); t.el.classList.toggle('bad', !!(v&&!v.ok));
-  t.el.querySelector('.res').textContent = v ? (v.ok?'PASS':'FAIL') : '';
-  t.el.querySelector('.res').style.color = v ? (v.ok?'var(--ok)':'var(--bad)') : '';
+  t.el.classList.toggle('ok', pok(v)); t.el.classList.toggle('bad', !!(v&&!pok(v)));
+  t.el.querySelector('.res').textContent = v ? (v.ok?'PASS': pok(v)?'PASS*':'FAIL') : '';
+  t.el.querySelector('.res').style.color = v ? (pok(v)?'var(--ok)':'var(--bad)') : '';
   t.el.querySelector('.m').textContent = v ? `${fmt(v.mass_g,1)} g` : '';
-  if (c.stl && t.v){ t.el.querySelector('.spin').remove(); loadGeo(c.stl).then(g=>setMesh(t.v, g, v?(v.ok?COL.ok:COL.bad):COL.wait)).catch(()=>{}); }
+  if (c.stl && t.v){ t.el.querySelector('.spin').remove(); loadGeo(c.stl).then(g=>setMesh(t.v, g, v?(pok(v)?COL.ok:COL.bad):COL.wait)).catch(()=>{}); }
   else if (v && !c.stl){ const s=t.el.querySelector('.spin'); if(s) s.textContent='no geometry'; }
 }
 
@@ -380,14 +383,15 @@ function handle(e){
       const c=cand(p); c.verdict=p; c.params=p.params||c.params; c.stl=stlUrl(p.stl)||c.stl;
       if (!p.claim && c.claim) p.claim=c.claim;
       S.nverified++; thumb(c); showCurrent(c);
-      recolor(main, p.ok?COL.ok:COL.bad); if (S.cost) cost(S.cost); break; }
+      recolor(main, pok(p)?COL.ok:COL.bad); if (S.cost) cost(S.cost); break; }
     case 'critic': critic(p); break;
     case 'playbook': $('gatetag').className=''; $('gatetag').textContent='GATING…'; $('delta').textContent=''; playbookDiff(p); break;
     case 'gate':
       if ('kept' in p) gate(p);                                   // playbook gate (fixture / future producer)
       else {                                                      // per-task loop status from forge/loop.py
         const ts=$('taskstate');
-        if (p.status==='solved') ts.innerHTML = `<span style="color:var(--ok)">SOLVED</span> iter ${p.iter} · ${fmt(p.mass_g,1)} g · score ${fmt(p.score,1)}`;
+        if (p.status==='solved'){ ts.innerHTML = `<span style="color:var(--ok)">SOLVED</span> iter ${p.iter} · ${fmt(p.mass_g,1)} g · score ${fmt(p.score,1)}`;
+          const win = Object.values(S.cands).find(c=>c.task===p.task && pok(c.verdict) && Math.abs((c.verdict.mass_g||0)-p.mass_g)<0.05); if (win) showCurrent(win); }
         else if (p.status==='stuck') ts.innerHTML = `<span style="color:var(--bad)">STUCK</span> ${esc(p.reason||'')}`;
         else if (p.status==='done') ts.innerHTML = `${p.solved?'<span style="color:var(--ok)">DONE</span>':'<span style="color:var(--bad)">GAVE UP</span>'} · ${p.iters} iters · ${esc(p.stop_reason||'')}`;
       }
@@ -421,15 +425,17 @@ async function replay(run){
   st.textContent=`REPLAY done · ${run}`;
 }
 // ---------- playbook gate from playbook/history.jsonl (forge/gate.py writes it; no event in events.jsonl) ----------
+// fixture replays read <fixture>/playbook/history.jsonl instead (zero-network snapshot of the real gate rounds)
+const HIST = (REPLAY && REPLAY.startsWith('ui/fixture')) ? REPLAY+'/playbook/history.jsonl' : 'playbook/history.jsonl';
 let histSeen = 0;
 async function pollHistory(){
   try {
-    const r = await fetch('/playbook/history.jsonl', {cache:'no-store'});
+    const r = await fetch('/'+HIST, {cache:'no-store'});
     if (!r.ok) return;
     const recs = (await r.text()).split('\n').filter(Boolean).map(l=>{ try{return JSON.parse(l);}catch{return null;} }).filter(Boolean);
     if (recs.length === histSeen) return;
     histSeen = recs.length;
-    const gates = recs.filter(x=>'kept' in x), held = recs.filter(x=>x.kind==='heldout').pop();
+    const gates = recs.filter(x=>'kept' in x && x.dev_current), held = recs.filter(x=>x.kind==='heldout').pop();
     const g = gates[gates.length-1];
     if (g){
       const dc=g.dev_current||{}, dn=g.dev_candidate||{};
@@ -461,7 +467,7 @@ async function mdDiff(a, b, summary){
   return `--- ${a||'?'}\n+++ ${b||'?'}\n` + (summary? '# '+summary+'\n' : '') + trimmed.join('\n');
 }
 if (REPLAY) replay(REPLAY); else connectLive(Q.get('run'));
-if (!REPLAY || !REPLAY.startsWith('ui/fixture')) { pollHistory(); setInterval(pollHistory, 3000); }
+pollHistory(); setInterval(pollHistory, 3000);
 </script>
 </body>
 </html>

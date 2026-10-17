@@ -15,7 +15,7 @@ from urllib.parse import urlparse, parse_qs
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UI = os.path.join(ROOT, "ui")
-FIXTURE = "ui/fixture/demo"
+FIXTURE = "ui/fixture/br02"   # real br02 run (v2 playbook, 7 min, solved in 1 iter); ui/fixture/demo is the synthetic one
 FORCED_RUN = None
 
 

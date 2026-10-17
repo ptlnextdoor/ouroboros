@@ -1,0 +1,23 @@
+{
+  "visible_loads": [
+    {
+      "name": "weight",
+      "F_N": [
+        0,
+        0,
+        -19.6
+      ]
+    }
+  ],
+  "mass_limit_g": 57.1,
+  "defl_limit_mm": 1.2,
+  "material": "al6061",
+  "fos": 1.5,
+  "done_means": [
+    "The bracket holds the 2 kg motor at 80 mm reach without breaking under 3g load (19.6 N downward) with a safety factor of 1.5.",
+    "The peak stress in the arm and wall plate stays below the yield strength of aluminium divided by 1.5.",
+    "The tip deflection under load is less than 1.2 mm.",
+    "The total mass of the bracket is no more than 57.1 grams.",
+    "All features are thick enough to mesh well and avoid stress concentrations."
+  ]
+}
