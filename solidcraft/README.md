@@ -87,6 +87,36 @@ Token lives at `~/Library/Application Support/SolidCraft/control/<port>.token`.
 
 ---
 
+## 4. MJ-1 supersonic jet (demo subject)
+
+`scripts/build_mj1.py` assembles the MJ-1 in SolidCraft 0.15 from
+`mj1/cad/out/kc/`: the OML skin (`OML_master.step`) + every placed vendor STEP
+(JetCat P550 turbine, 2 KST servos, Matek H743 FC + GNSS + airspeed, fuel bag,
+LiPo, RunCam/FPV cameras, VTX, CRSF RX, pitot). Appearances: orange skin
+(matches `FINAL_vs_KingChaser.png`), grey metallic turbine, dark avionics,
+tan fuel bag. 802 bodies, ~77 kg modelled mass.
+
+```bash
+/opt/miniconda3/bin/python3 scripts/build_mj1.py --run            # + optional --skeleton (108 MB)
+```
+
+Outputs in `shots/`:
+- `mj1_iso.png`, `mj1_front.png` — orange jet, matches the reference render
+- `mj1_exploded.png` — `explode.create` scale 1.4, turbine pulled aft + avionics fanned out
+- `mj1_cutaway.png` — `inspect.section` (XZ at Y=0) viewed 3/4 from the right: the
+  section cut through the orange skin reveals the grey turbine, tan fuel bag,
+  avionics boxes and servos packed inside the fuselage
+- `mj1_orbit.gif` — 20-frame camera orbit (headless `snapshot --camera`), for the video
+- `mj1_clearance_report.json` — **JetCat turbine vs skin clearance**:
+  min gap ~0.3 mm, ~3 % of the turbine surface outside the skin in x≈1722-2087
+  (belly/intake). Verdict TIGHT — needs a local skin bulge or turbine shift.
+  (Method note: SolidCraft's exact B-rep `inspect.clearance` on the 50M-mm³ OML
+  solid did not finish headless within 150 s; the check falls back to a
+  trimesh surface-sample proximity on the world-placed meshes exported from
+  SolidCraft.)
+
+---
+
 ## Files
 
 ```

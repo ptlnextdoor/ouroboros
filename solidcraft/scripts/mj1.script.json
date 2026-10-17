@@ -1,0 +1,409 @@
+{
+ "commands": [
+  {
+   "command": "file.new",
+   "params": {
+    "name": "MJ-1"
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/OML_master.step",
+    "name": "OML_skin",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "OML_skin"
+    ],
+    "color": [
+     226,
+     97,
+     26
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.5,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/jetcat_p550_placed.step",
+    "name": "jetcat_p550",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "jetcat_p550"
+    ],
+    "color": [
+     143,
+     148,
+     154
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.35,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/jetcat_pro_interface_placed.step",
+    "name": "jetcat_pro_interface",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "jetcat_pro_interface"
+    ],
+    "color": [
+     143,
+     148,
+     154
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.35,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/jetcat_fuel_pump_placed.step",
+    "name": "jetcat_fuel_pump",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "jetcat_fuel_pump"
+    ],
+    "color": [
+     143,
+     148,
+     154
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.35,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/jetcat_hopper_placed.step",
+    "name": "jetcat_hopper",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "jetcat_hopper"
+    ],
+    "color": [
+     143,
+     148,
+     154
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.35,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/fuel_bag_3l_placed.step",
+    "name": "fuel_bag_3l",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "fuel_bag_3l"
+    ],
+    "color": [
+     217,
+     210,
+     182
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/kst_x20_placed.step",
+    "name": "kst_x20",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "kst_x20"
+    ],
+    "color": [
+     29,
+     31,
+     36
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/kst_x20_1_placed.step",
+    "name": "kst_x20_1",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "kst_x20_1"
+    ],
+    "color": [
+     29,
+     31,
+     36
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/matek_h743_wing_placed.step",
+    "name": "matek_h743_wing",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "matek_h743_wing"
+    ],
+    "color": [
+     30,
+     58,
+     46
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/M10Q-5883_placed.step",
+    "name": "M10Q-5883",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "M10Q-5883"
+    ],
+    "color": [
+     30,
+     58,
+     46
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/matek_aspd4525_placed.step",
+    "name": "matek_aspd4525",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "matek_aspd4525"
+    ],
+    "color": [
+     30,
+     58,
+     46
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/pitot_tube_placed.step",
+    "name": "pitot_tube",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pitot_tube"
+    ],
+    "color": [
+     30,
+     58,
+     46
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/runcam_racer_nano3_placed.step",
+    "name": "runcam_racer_nano3",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "runcam_racer_nano3"
+    ],
+    "color": [
+     17,
+     17,
+     17
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/runcam2_4k_placed.step",
+    "name": "runcam2_4k",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "runcam2_4k"
+    ],
+    "color": [
+     17,
+     17,
+     17
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/crsf_nano_rx_placed.step",
+    "name": "crsf_nano_rx",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "crsf_nano_rx"
+    ],
+    "color": [
+     17,
+     17,
+     17
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/vtx_58_placed.step",
+    "name": "vtx_58",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "vtx_58"
+    ],
+    "color": [
+     17,
+     17,
+     17
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/mj1/cad/out/kc/vendor/lipo_4s_3300_placed.step",
+    "name": "lipo_4s_3300",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "lipo_4s_3300"
+    ],
+    "color": [
+     43,
+     43,
+     43
+    ],
+    "opacity": 1.0
+   }
+  }
+ ]
+}

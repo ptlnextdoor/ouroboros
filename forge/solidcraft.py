@@ -302,18 +302,239 @@ def drive_live(params, port=7878, out_dir=None):
 
 
 # --------------------------------------------------------------------------
-def main(argv):
-    live = "--live" in argv
-    args = [a for a in argv if not a.startswith("--")]
-    params = json.load(open(args[0])) if args else dict(DEFAULT_PARAMS)
-    out_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                           "solidcraft", "forge_bracket")
+# live MCP session (keeps the design in the window's memory across calls)
+# --------------------------------------------------------------------------
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SHOTS = os.path.join(REPO, "solidcraft", "shots")
+SQ2_DESIGN = os.path.join(REPO, "solidcraft", "designs", "sq2_v3.solidcraft")
 
-    if live:
+# the 4 tilt-pod props: world centre of each (from the v3 STL meshes); the
+# motor/prop spin axis is world +X.
+PROPS = {
+    "pod_LU_prop:1": [332.8, 109.3, 117.8],
+    "pod_RU_prop:1": [332.8, -109.4, 117.8],
+    "pod_LD_prop:1": [332.8, 109.1, -117.8],
+    "pod_RD_prop:1": [332.8, -108.9, -117.8],
+}
+
+
+def _exec(cmd, params=None, _id=0):
+    return {"jsonrpc": "2.0", "id": _id, "method": "tools/call",
+            "params": {"name": "execute",
+                       "arguments": {"command": cmd, "params": params or {}}}}
+
+
+def _tool(name, args, _id=0):
+    return {"jsonrpc": "2.0", "id": _id, "method": "tools/call",
+            "params": {"name": name, "arguments": args}}
+
+
+def mcp_session(requests, port=7878, token=None, timeout=600):
+    """Run a prebuilt list of MCP requests against the live window over ONE
+    persistent connection, waiting for each reply before sending the next so a
+    slow command (e.g. opening the 51 MB SQ-2) never makes later ones return
+    `busy`. `requests` items may omit ids. Returns {id: result_text}, proc."""
+    if token is None:
+        token = _read_token(port)
+    cmd = [CLI, "mcp", "--connect", f"127.0.0.1:{port}", "--allow-any-path"]
+    if token:
+        cmd += ["--token", token]
+    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                            stderr=subprocess.DEVNULL, text=True, bufsize=1)
+
+    def send(obj):
+        proc.stdin.write(json.dumps(obj) + "\n")
+        proc.stdin.flush()
+
+    def recv():
+        # read until a JSON object line (skip any blanks/log lines)
+        while True:
+            line = proc.stdout.readline()
+            if line == "":
+                return None
+            line = line.strip()
+            if line.startswith("{"):
+                try:
+                    return json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+
+    out = {}
+    send({"jsonrpc": "2.0", "id": 1, "method": "initialize",
+          "params": {"protocolVersion": "2024-11-05", "capabilities": {},
+                     "clientInfo": {"name": "forge.solidcraft", "version": "1"}}})
+    recv()
+    rid = 2
+    for r in requests:
+        r = dict(r); r["id"] = rid
+        send(r)
+        rep = recv()
+        if rep is not None:
+            res = rep.get("result", {})
+            cont = res.get("content", []) if isinstance(res, dict) else []
+            out[rid] = cont[0].get("text", "") if cont else res
+        rid += 1
+    try:
+        proc.stdin.close()
+        proc.wait(timeout=10)
+    except Exception:                                # noqa: BLE001
+        proc.kill()
+    return out, proc
+
+
+def _gif_from_frames(frame_paths, gif_path, fps=18):
+    """Assemble a GIF from PNG frame paths with Pillow."""
+    from PIL import Image
+    frames = [Image.open(p).convert("RGB") for p in frame_paths if os.path.exists(p)]
+    if not frames:
+        return None
+    frames[0].save(gif_path, save_all=True, append_images=frames[1:],
+                   duration=int(1000 / fps), loop=0, optimize=True)
+    return gif_path
+
+
+# --------------------------------------------------------------------------
+# deliverable: live SQ-2 demo (open + camera + explode + prop spin + clearance)
+# --------------------------------------------------------------------------
+def demo_sq2(port=7878, design=None, frames=24, clearance=True):
+    """The money shot: drive the live window through the whole SQ-2 story and
+    export an animated GIF of the prop spin + explode for the video."""
+    os.makedirs(SHOTS, exist_ok=True)
+    design = design or SQ2_DESIGN
+    token = _read_token(port)
+    frame_dir = os.path.join(SHOTS, "sq2_demo_frames")
+    os.makedirs(frame_dir, exist_ok=True)
+    for f in os.listdir(frame_dir):
+        os.remove(os.path.join(frame_dir, f))
+
+    iso_cam = {"target": [300, 0, 0], "yaw": 0.9, "pitch": 0.5, "distance": 1600}
+    reqs = [
+        _exec("doc.open", {"path": design}),
+        _exec("view.save", {"name": "demo_iso", "camera": iso_cam}),
+        _exec("view.apply", {"view": "demo_iso"}),
+        _tool("screenshot", {"path": os.path.join(SHOTS, "sq2_demo_assembled.png"),
+                             "source": "model", "width": 1280, "height": 800}),
+    ]
+    # prop spin: rotate all 4 props about world X a little each frame, shoot a frame
+    frame_paths = []
+    step_deg = 360.0 / frames
+    for i in range(frames):
+        for occ, ctr in PROPS.items():
+            reqs.append(_exec("occurrence.move",
+                              {"occurrence": occ, "space": "world", "axis": [1, 0, 0],
+                               "angle": f"{step_deg} deg", "origin": ctr}))
+        fp = os.path.join(frame_dir, f"spin_{i:03d}.png")
+        frame_paths.append(fp)
+        reqs.append(_tool("screenshot", {"path": fp, "source": "model",
+                                         "width": 900, "height": 600}))
+    # explode sequence (3 held frames at growing scale)
+    explode_paths = []
+    for j, sc in enumerate((0.6, 1.2, 2.0)):
+        reqs.append(_exec("explode.create", {"name": f"blown{j}", "scale": sc}))
+        reqs.append(_exec("explode.show", {"view": f"blown{j}"}))
+        ep = os.path.join(frame_dir, f"explode_{j:03d}.png")
+        explode_paths.append(ep)
+        reqs.append(_tool("screenshot", {"path": ep, "source": "model",
+                                         "width": 900, "height": 600}))
+    reqs.append(_tool("screenshot", {"path": os.path.join(SHOTS, "sq2_demo_exploded.png"),
+                                     "source": "model", "width": 1280, "height": 800}))
+    reqs.append(_exec("explode.show", {}))  # reassemble
+    # final window screenshot as proof
+    reqs.append(_tool("screenshot", {"path": os.path.join(SHOTS, "sq2_demo_window.png")}))
+
+    out, proc = mcp_session(reqs, port=port, token=token, timeout=600)
+
+    # clearance (0.15 feature): scoped, runs on the resident design in a short
+    # 2nd session so the long GIF batch isn't held up.
+    clearance_report = None
+    if clearance:
+        try:
+            cout, _ = mcp_session([
+                _exec("doc.open", {"path": design}),
+                _exec("inspect.clearance", {"skip_within": "component", "nearest": 1}),
+            ], port=port, token=token, timeout=600)
+            clearance_report = cout.get(3)
+        except Exception as e:                       # noqa: BLE001
+            clearance_report = f"clearance skipped: {e}"
+
+    # assemble GIFs
+    spin_gif = _gif_from_frames(frame_paths, os.path.join(SHOTS, "sq2_prop_spin.gif"), fps=18)
+    all_gif = _gif_from_frames(frame_paths + explode_paths * 3,
+                               os.path.join(SHOTS, "sq2_spin_explode.gif"), fps=16)
+    return {
+        "design": design, "frames": len(frame_paths),
+        "spin_gif": spin_gif, "spin_explode_gif": all_gif,
+        "assembled_png": os.path.join(SHOTS, "sq2_demo_assembled.png"),
+        "exploded_png": os.path.join(SHOTS, "sq2_demo_exploded.png"),
+        "window_png": os.path.join(SHOTS, "sq2_demo_window.png"),
+        "clearance": (clearance_report[:1200] if isinstance(clearance_report, str)
+                      else clearance_report),
+        "returncode": proc.returncode,
+    }
+
+
+# --------------------------------------------------------------------------
+# deliverable: FORGE loop -> SolidCraft (growing row of PASS/FAIL brackets)
+# --------------------------------------------------------------------------
+_ROW = {"n": 0}  # how many verdicts have been pushed this session (process-local)
+
+
+def push_verdict(params, verdict, port=7878, index=None, pitch=70.0):
+    """Push one bracket design into the live window as a new component placed
+    in a growing row, coloured green for PASS and red for FAIL.
+
+    `verdict` is a dict or string; PASS iff str(verdict).upper() contains PASS.
+    `index` positions it in the row (defaults to an auto-incrementing counter).
+    """
+    token = _read_token(port)
+    if index is None:
+        index = _ROW["n"]
+        _ROW["n"] += 1
+    ok = "PASS" in str(verdict).upper()
+    color = [60, 200, 90] if ok else [210, 60, 60]
+    body = f"bracket_{index:02d}"
+    comp = f"iter_{index:02d}_{'PASS' if ok else 'FAIL'}"
+    shift = index * pitch
+
+    cmds, p = bracket_commands(params)
+    # route this build into its own component so brackets don't fuse together
+    reqs = [_exec("component.create", {"name": comp, "activate": True})]
+    for c in cmds:
+        if c["command"] == "file.new":
+            continue                                 # keep the running design
+        pr = dict(c.get("params", {}))
+        if c["command"] == "solid.extrude" and pr.get("operation") == "new":
+            pr["body_name"] = body
+        if "targets" in pr:
+            pr["targets"] = [body]
+        reqs.append(_exec(c["command"], pr))
+    # slide the whole new component along +Y so it sits next to the last one
+    reqs.append(_exec("solid.move", {"bodies": [body], "translate": [0, shift, 0]}))
+    reqs.append(_exec("appearance.assign", {"bodies": [body], "color": color, "opacity": 1,
+                                            "pbr": {"metallic": 0.0, "roughness": 0.6,
+                                                    "dielectric_ior": 1.5}}))
+    reqs.append(_tool("screenshot", {"path": os.path.join(SHOTS, "forge_row_window.png")}))
+    out, proc = mcp_session(reqs, port=port, token=token, timeout=180)
+    return {"index": index, "verdict": "PASS" if ok else "FAIL", "component": comp,
+            "shift_mm": shift, "returncode": proc.returncode}
+
+
+# --------------------------------------------------------------------------
+def main(argv):
+    args = [a for a in argv if not a.startswith("--")]
+
+    if "--demo" in argv:
+        rep = demo_sq2()
+        print(json.dumps(rep, indent=1))
+        return 0
+
+    params = json.load(open(args[0])) if args else dict(DEFAULT_PARAMS)
+    if "--live" in argv:
         rep = drive_live(params)
         print(json.dumps(rep, indent=1))
         return 0
 
+    out_dir = os.path.join(REPO, "solidcraft", "forge_bracket")
     rep = bracket_to_solidcraft(params, out_dir)
     print(json.dumps(rep, indent=1))
     print(f"\nnative={rep['native_volume_mm3']:.1f}  cadquery={rep['cadquery_volume_mm3']:.1f}"
