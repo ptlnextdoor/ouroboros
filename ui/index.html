@@ -18,7 +18,9 @@ body{display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:1fr 380
 #goal{font-size:28px;font-weight:700;letter-spacing:-.01em;line-height:1.15}
 #goal .lbl{font-size:13px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.12em;display:block;margin-bottom:4px}
 #dod{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;max-width:900px}
-.chk{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);font-size:16px;font-weight:600;color:var(--dim);transition:all .4s}
+.chk{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);font-size:15px;font-weight:600;color:var(--dim);transition:all .4s;max-width:430px}
+.chk .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chk .box{flex:none}
 .chk .box{width:20px;height:20px;border-radius:6px;border:2px solid var(--dim);display:grid;place-items:center;font-size:14px;transition:all .4s}
 .chk.ok{color:var(--ok);border-color:rgba(47,224,138,.5)}.chk.ok .box{background:var(--ok);border-color:var(--ok);color:#042}
 .chk.bad{color:var(--bad);border-color:rgba(255,77,94,.5)}.chk.bad .box{background:var(--bad);border-color:var(--bad);color:#fff}
@@ -30,6 +32,7 @@ body{display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:1fr 380
 #fallback img{max-width:90%;max-height:80%;border-radius:8px}
 #stamp{position:absolute;left:18px;top:14px;font-family:var(--mono);font-size:15px;color:var(--dim);line-height:1.5}
 #stamp b{color:var(--fg);font-size:17px}
+#taskstate{font-weight:700;font-size:16px}
 #verdictbig{position:absolute;right:18px;top:14px;font-size:44px;font-weight:900;letter-spacing:.04em;padding:6px 18px;border-radius:12px;background:rgba(0,0,0,.35);border:2px solid transparent;transition:all .4s;opacity:0;transform:translateY(-6px)}
 #verdictbig.show{opacity:1;transform:none}
 #verdictbig.ok{color:var(--ok);border-color:var(--ok)}#verdictbig.bad{color:var(--bad);border-color:var(--bad)}#verdictbig.wait{color:var(--warn);border-color:var(--warn)}
@@ -46,8 +49,8 @@ body{display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:1fr 380
 #right{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-height:0;overflow:hidden}
 h2{margin:0;font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:.14em;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
 h2 span{font-family:var(--mono);text-transform:none;letter-spacing:0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
-#cases{display:flex;flex-direction:column;gap:9px}
-.case{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;animation:pop .4s ease}
+#cases{display:flex;flex-direction:column;gap:7px;overflow:auto;flex:1;min-height:0}
+.case{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:7px 12px;display:grid;grid-template-columns:1fr auto;gap:3px 10px;align-items:center;animation:pop .4s ease both;flex:none}
 @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .case .nm{font-size:17px;font-weight:700;display:flex;gap:8px;align-items:center}
 .badge{font-size:11px;font-weight:800;letter-spacing:.1em;padding:2px 7px;border-radius:6px;background:var(--hid);color:#1a0a2e}
@@ -60,17 +63,17 @@ h2 span{font-family:var(--mono);text-transform:none;letter-spacing:0;font-size:1
 .case .nums{grid-column:1/3;font-family:var(--mono);font-size:13px;color:var(--dim);display:flex;justify-content:space-between;flex-wrap:wrap;gap:0 10px}
 .case .nums span{white-space:nowrap}
 .case .nums em{color:var(--fg);font-style:normal}
-#parity{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:center}
-#parity .big{font-size:64px;font-weight:900;letter-spacing:-.03em;line-height:1;font-family:var(--mono);transition:color .4s}
+#parity{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;text-align:center;flex:none}
+#parity .big{font-size:56px;font-weight:900;letter-spacing:-.03em;line-height:1;font-family:var(--mono);transition:color .4s}
 #parity .big.ok{color:var(--ok)}#parity .big.bad{color:var(--bad)}
 #parity .sub{color:var(--dim);font-size:14px;margin-top:6px;font-family:var(--mono)}
 #parity .sub em{color:var(--fg);font-style:normal}
-#checks{font-family:var(--mono);font-size:13px;color:var(--dim);display:flex;flex-direction:column;gap:3px;overflow:auto;min-height:0}
+#checks{font-family:var(--mono);font-size:13px;color:var(--dim);display:flex;flex-direction:column;gap:3px;overflow:auto;min-height:0;max-height:130px;flex:none;border-top:1px solid var(--line);padding-top:8px}
 #checks div{display:flex;gap:8px}#checks .ok{color:var(--ok)}#checks .bad{color:var(--bad)}
 #bottom{grid-column:1/3;display:grid;grid-template-columns:1fr 1fr;gap:10px;height:270px}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden}
 #critic{font-size:18px;line-height:1.4;overflow:auto;display:flex;flex-direction:column;gap:10px;min-height:0}
-.crit{padding:8px 12px;border-left:4px solid var(--warn);background:var(--panel2);border-radius:0 8px 8px 0;animation:pop .4s ease}
+.crit{padding:8px 12px;border-left:4px solid var(--warn);background:var(--panel2);border-radius:0 8px 8px 0;animation:pop .4s ease both}
 .crit.ok{border-left-color:var(--ok)}
 .crit .who{font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:3px}
 .crit .arrow{color:var(--acc);font-weight:700}
@@ -113,18 +116,18 @@ h2 span{font-family:var(--mono);text-transform:none;letter-spacing:0;font-size:1
 <section id="center">
   <div id="view"></div>
   <div id="fallback"><div><img id="fbimg" alt=""><div id="fbtext">3D viewer unavailable (offline). Showing last render.</div></div></div>
-  <div id="stamp"><b id="stampname">no candidate yet</b><br><span id="stampparams"></span></div>
+  <div id="stamp"><b id="stampname">no candidate yet</b><br><span id="stampparams"></span><br><span id="taskstate"></span></div>
   <div id="verdictbig"></div>
   <div id="thumbs"></div>
 </section>
 
 <aside id="right">
   <h2>Referee: CalculiX <span id="refmeta"></span></h2>
-  <div id="cases"></div>
   <div id="parity">
     <div class="big" id="paritynum">—</div>
     <div class="sub">parity gap · agent claim vs physics<br><span id="parityclaim"></span></div>
   </div>
+  <div id="cases"></div>
   <div id="checks"></div>
 </aside>
 
@@ -154,7 +157,8 @@ h2 span{font-family:var(--mono);text-transform:none;letter-spacing:0;font-size:1
 const Q = new URLSearchParams(location.search);
 const REPLAY = Q.get('replay');            // e.g. runs/<run> or ui/fixture/demo
 const SPEED = parseFloat(Q.get('speed') || '4');
-const S = { spec:null, cands:{}, cur:null, cost:null, nverified:0, gate:null };
+const S = { spec:null, cands:{}, cur:null, cost:null, nverified:0, gate:null, run:REPLAY||'', task:null };
+const stlUrl = rel => !rel ? null : (/^(runs|ui)\//.test(rel) ? rel : (S.run ? S.run+'/'+rel : rel));
 const $ = id => document.getElementById(id);
 const fmt = (x,d=1) => (x==null||isNaN(x)) ? '—' : Number(x).toFixed(d);
 
@@ -225,7 +229,7 @@ function key(p){ return `${p.task}/${p.iter}_${p.k}`; }
 function cand(p){ const k=key(p); return S.cands[k] ||= {key:k, task:p.task, iter:p.iter, k:p.k, params:p.params, verdict:null, stl:null}; }
 function dod(){
   const el=$('dod'); el.innerHTML='';
-  const checks = S.spec?.checks || [];
+  const checks = (S.spec?.checks || []).slice(0,6);
   const v = S.cur?.verdict;
   checks.forEach((name,i)=>{
     const d=document.createElement('div'); d.className='chk';
@@ -235,7 +239,7 @@ function dod(){
       if (c!=null){ st = c?'ok':'bad'; mark = c?'✓':'✕'; }
     }
     d.classList.add(st);
-    d.innerHTML=`<span class="box">${mark}</span>${name}`; el.appendChild(d);
+    d.innerHTML=`<span class="box">${mark}</span><span class="t" title="${esc(name)}">${esc(name)}</span>`; el.appendChild(d);
   });
 }
 function matchCheck(v, name, i){
@@ -245,7 +249,8 @@ function matchCheck(v, name, i){
   if (n.includes('mass')) return by('mass')?.ok ?? null;
   if (n.includes('hidden')) return by('hidden')?.ok ?? null;
   if (n.includes('parity')) return by('parity')?.ok ?? null;
-  if (n.includes('stress')||n.includes('visible')) return by('visible')?.ok ?? null;
+  if (n.includes('defl')) { const cs=(v.cases||[]).filter(c=>'defl_ok' in c); return cs.length ? cs.every(c=>c.defl_ok) : null; }
+  if (n.includes('stress')||n.includes('visible')||n.includes('yield')) return by('visible')?.ok ?? null;
   return (v.checks||[])[i]?.ok ?? null;
 }
 
@@ -280,7 +285,7 @@ function referee(v){
     requestAnimationFrame(()=>requestAnimationFrame(()=>{ d.querySelector('.bar i').style.width = (frac/1.6*100)+'%'; }));
   });
   const pn=$('paritynum');
-  if (v.parity_gap!=null){ const g=v.parity_gap*100; pn.textContent=fmt(g,0)+'%'; pn.className='big '+(v.parity_gap<=0.25?'ok':'bad');
+  if (v.parity_gap!=null){ const g=v.parity_gap*100; pn.textContent=(g>999?'>999':fmt(g,0))+'%'; pn.className='big '+(v.parity_gap<=0.25?'ok':'bad');
     $('parityclaim').innerHTML = `claim <em>${fmt(v.claim?.sigma_MPa,0)}</em> MPa · referee <em>${fmt(v.cases?.find(c=>!c.hidden)?.sigma_MPa,0)}</em> MPa`;
   } else { pn.textContent='—'; pn.className='big'; $('parityclaim').textContent=''; }
   $('checks').innerHTML = (v.checks||[]).map(c=>`<div class="${c.ok?'ok':'bad'}"><span>${c.ok?'✓':'✕'}</span><span>${esc(c.name)}</span><span style="margin-left:auto">${esc(String(c.measured))} ${esc(c.limit||'')}</span></div>`).join('')
@@ -294,9 +299,9 @@ function thumb(c){
     el.innerHTML=`<div class="spin">designing…</div><span class="tag">d${c.k} · it${c.iter}</span><span class="res"></span><span class="m"></span>`;
     // keep only the 4 latest (same iteration preferred): remove thumbs from older iterations when a new iteration starts
     const box=$('thumbs');
-    for (const k of Object.keys(thumbsR)){ if (thumbsR[k].iter < c.iter){ thumbsR[k].el.remove(); delete thumbsR[k]; } }
+    for (const k of Object.keys(thumbsR)){ if (thumbsR[k].task !== c.task || thumbsR[k].iter < c.iter){ thumbsR[k].el.remove(); delete thumbsR[k]; } }
     box.appendChild(el);
-    t = thumbsR[c.key] = {key:c.key, iter:c.iter, el, v: main?makeViewer(el,false):null};
+    t = thumbsR[c.key] = {key:c.key, iter:c.iter, task:c.task, el, v: main?makeViewer(el,false):null};
   }
   const v=c.verdict;
   t.el.classList.toggle('ok', !!(v&&v.ok)); t.el.classList.toggle('bad', !!(v&&!v.ok));
@@ -310,13 +315,13 @@ function thumb(c){
 function critic(p){
   const box=$('critic');
   const d=document.createElement('div'); d.className='crit'+(p.ok?' ok':'');
-  d.innerHTML=`<div class="who">${esc(p.task||'')} · iter ${p.iter} · designer-${p.k} · ${p.ok?'passed':'failed'}</div><div class="txt"></div>`;
+  d.innerHTML=`<div class="who">${esc(p.task||'')} · iter ${p.iter}${p.k!=null?' · designer-'+p.k:''}${p.ok!=null?(p.ok?' · passed':' · failed'):''}</div><div class="txt"></div>`;
   box.prepend(d); while (box.children.length>3) box.lastChild.remove();
-  const txt=d.querySelector('.txt'); const full=String(p.text||'');
+  const txt=d.querySelector('.txt'); const full=String(p.text||p.hypothesis||'');
   // "why -> what" highlighting: bold the sentence that starts with Change:
   let i=0; const cur=document.createElement('span'); cur.className='cursor';
   const step=()=>{ i=Math.min(full.length, i+3); txt.innerHTML=render(full.slice(0,i)); if(i<full.length){ txt.appendChild(cur); setTimeout(step, 12);} };
-  const render = s => esc(s).replace(/(Change:)/g,'<span class="arrow">→ $1</span>').replace(/(Hypothesis:)/g,'<span class="arrow">$1</span>');
+  const render = s => esc(s).replace(/(Change:|What to change:|Fix:)/gi,'<span class="arrow">→ $1</span>').replace(/(Hypothesis:|Why:|Why it failed:)/gi,'<span class="arrow">$1</span>');
   step();
 }
 
@@ -324,7 +329,7 @@ function playbookDiff(p){
   $('pbver').textContent = p.version!=null ? `v${p.version}` : '';
   const text = p.diff || p.text || '';
   $('diff').innerHTML = text.split('\n').map(l=>{
-    const c = l.startsWith('+')?'add': l.startsWith('-')?'del': (l.startsWith('@@')||l.startsWith('---')||l.startsWith('+++'))?'hd':'';
+    const c = l.startsWith('+')?'add': l.startsWith('-')?'del': (l.startsWith('@@')||l.startsWith('---')||l.startsWith('+++')||l.startsWith('#'))?'hd':'';
     return `<span class="${c}">${esc(l)}</span>`;
   }).join('\n');
   $('diff').classList.remove('flash'); void $('diff').offsetWidth; $('diff').classList.add('flash');
@@ -333,19 +338,23 @@ function gate(p){
   S.gate=p; playbookDiff(p);
   const tg=$('gatetag'); tg.className = p.kept?'kept':'rej'; tg.textContent = p.kept?'KEPT':'REJECTED';
   const dlt=(p.dev_score_new-p.dev_score_old);
-  $('delta').innerHTML = `dev ${fmt(p.dev_score_old,2)} → ${fmt(p.dev_score_new,2)} <em style="color:${dlt>=0?'var(--ok)':'var(--bad)'}">${dlt>=0?'+':''}${fmt(dlt,2)}</em>`;
+  const big = Math.abs(p.dev_score_old)>5 || Math.abs(p.dev_score_new)>5;   // forge/gate.py scores are sums (~100/task)
+  const d = big?1:2;
+  const solved = p.solved_old!=null ? ` · solved ${p.solved_old}→${p.solved_new}/${p.n}` : '';
+  $('delta').innerHTML = `dev ${fmt(p.dev_score_old,d)} → ${fmt(p.dev_score_new,d)} <em style="color:${dlt>=0?'var(--ok)':'var(--bad)'}">${dlt>=0?'+':''}${fmt(dlt,d)}</em>${solved}`;
   const h = p.heldout || (p.heldout_v0!=null ? {v0:p.heldout_v0, vN:p.heldout_vN, n:p.heldout_n} : null);
-  if (h){
-    $('barsnone').style.display='none'; const b=$('bars');
-    const vn = p.kept?p.version:(p.version-1);
-    b.innerHTML = `<div class="bar2 v0"><span>v0</span><div class="trk"><i></i></div><b>${fmt(h.v0*100,0)}%</b></div><div class="bar2 vn"><span>v${vn}</span><div class="trk"><i></i></div><b>${fmt(h.vN*100,0)}%</b></div>`;
-    $('chart').querySelector('h2 span').textContent = `v0 vs v${vn}` + (h.n ? ` · n=${h.n}` : '');
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.children[0].querySelector('i').style.width=(h.v0*100)+'%'; b.children[1].querySelector('i').style.width=(h.vN*100)+'%'; }));
-  }
+  if (h) heldoutBars({...h, name:'v'+(p.kept?p.version:(p.version-1))});
+}
+function heldoutBars(h){
+  $('barsnone').style.display='none'; const b=$('bars');
+  b.innerHTML = `<div class="bar2 v0"><span>v0</span><div class="trk"><i></i></div><b>${h.la||fmt(h.v0*100,0)+'%'}</b></div><div class="bar2 vn"><span>${esc(h.name||'vN')}</span><div class="trk"><i></i></div><b>${h.lb||fmt(h.vN*100,0)+'%'}</b></div>`;
+  $('chart').querySelector('h2 span').textContent = `v0 vs ${h.name||'vN'}` + (h.n ? ` · n=${h.n}` : '');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.children[0].querySelector('i').style.width=(Math.min(1,h.v0)*100)+'%'; b.children[1].querySelector('i').style.width=(Math.min(1,h.vN)*100)+'%'; }));
 }
 function cost(p){
-  S.cost=p; $('usd').textContent = Number(p.usd_total||0).toFixed(4);
-  $('model').textContent = (p.model||'').split('/').pop();
+  S.cost=p; const tot = p.usd_total ?? p.spent_usd ?? 0; p.usd_total = tot;
+  $('usd').textContent = Number(tot).toFixed(4);
+  $('model').textContent = p.model ? p.model.split('/').pop() : (p.calls!=null ? p.calls+' LLM calls' : '');
   $('nverified').textContent = S.nverified;
   $('perpart').textContent = S.nverified ? '$'+(p.usd_total/S.nverified).toFixed(4) : '—';
 }
@@ -355,16 +364,34 @@ function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;'
 function handle(e){
   const p=e.payload||{};
   switch(e.kind){
-    case 'spec':
-      S.spec=p; $('goaltext').textContent = p.goal || p.prompt || p.task || '';
-      if (!p.checks && p.checks_json) p.checks = p.checks_json.map(c=>c.name);
-      dod(); break;
-    case 'design': { const c=cand(p); c.params=p.params||c.params; c.stl=p.stl||c.stl; thumb(c); if(!S.cur) showCurrent(c); break; }  // keep last verdict on screen until the new one lands
-    case 'verdict': { const c=cand(p); c.verdict=p; c.params=p.params||c.params; c.stl=p.stl||c.stl; S.nverified++; thumb(c); showCurrent(c);
+    case 'spec': {
+      // producer emits two spec rows per task: {prompt,status:start} then {done_means,mass_limit_g}
+      if (S.task !== p.task){ S.task=p.task; S.spec={task:p.task}; $('taskstate').textContent=''; }
+      Object.assign(S.spec, p);
+      if (p.goal || p.prompt) $('goaltext').textContent = p.goal || p.prompt;
+      if (p.done_means) S.spec.checks = p.done_means;
+      else if (!S.spec.checks && p.checks_json) S.spec.checks = p.checks_json.map(c=>c.name);
+      dod(); break; }
+    case 'design': {
+      if (p.k==null){ $('taskstate').textContent = `iter ${p.iter}: ${p.n||4} designers working…`; break; }   // {status:start,n}
+      const c=cand(p); c.params=p.params||c.params; c.claim=p.claim||c.claim; c.stl=stlUrl(p.stl)||c.stl; thumb(c);
+      if(!S.cur || S.cur.task!==c.task) showCurrent(c); break; }  // keep last verdict on screen until the new one lands
+    case 'verdict': {
+      const c=cand(p); c.verdict=p; c.params=p.params||c.params; c.stl=stlUrl(p.stl)||c.stl;
+      if (!p.claim && c.claim) p.claim=c.claim;
+      S.nverified++; thumb(c); showCurrent(c);
       recolor(main, p.ok?COL.ok:COL.bad); if (S.cost) cost(S.cost); break; }
     case 'critic': critic(p); break;
     case 'playbook': $('gatetag').className=''; $('gatetag').textContent='GATING…'; $('delta').textContent=''; playbookDiff(p); break;
-    case 'gate': gate(p); break;
+    case 'gate':
+      if ('kept' in p) gate(p);                                   // playbook gate (fixture / future producer)
+      else {                                                      // per-task loop status from forge/loop.py
+        const ts=$('taskstate');
+        if (p.status==='solved') ts.innerHTML = `<span style="color:var(--ok)">SOLVED</span> iter ${p.iter} · ${fmt(p.mass_g,1)} g · score ${fmt(p.score,1)}`;
+        else if (p.status==='stuck') ts.innerHTML = `<span style="color:var(--bad)">STUCK</span> ${esc(p.reason||'')}`;
+        else if (p.status==='done') ts.innerHTML = `${p.solved?'<span style="color:var(--ok)">DONE</span>':'<span style="color:var(--bad)">GAVE UP</span>'} · ${p.iters} iters · ${esc(p.stop_reason||'')}`;
+      }
+      break;
     case 'cost': cost(p); break;
   }
 }
@@ -373,13 +400,13 @@ function handle(e){
 const dot=$('dot'), st=$('statustext');
 function connectLive(run){
   const es = new EventSource('/events'+(run?`?run=${encodeURIComponent(run)}`:''));
-  es.addEventListener('meta', e=>{ const m=JSON.parse(e.data); dot.className='dot live'; st.textContent='LIVE · '+m.run; });
+  es.addEventListener('meta', e=>{ const m=JSON.parse(e.data); S.run=m.run; dot.className='dot live'; st.textContent='LIVE · '+m.run; });
   es.addEventListener('ev', e=>{ try{ handle(JSON.parse(e.data)); }catch(err){ console.warn(err); } });
   es.addEventListener('switch', e=>{ es.close(); setTimeout(()=>connectLive(null), 300); });
   es.onerror = ()=>{ dot.className='dot'; st.textContent='reconnecting…'; };
 }
 async function replay(run){
-  dot.className='dot replay'; st.textContent=`REPLAY ${SPEED}x · ${run}`;
+  S.run=run; dot.className='dot replay'; st.textContent=`REPLAY ${SPEED}x · ${run}`;
   const txt = await (await fetch('/'+run+'/events.jsonl',{cache:'no-store'})).text();
   const evs = txt.split('\n').filter(Boolean).map(l=>{ try{return JSON.parse(l);}catch{return null;} }).filter(Boolean);
   const LIMIT = parseInt(Q.get('n')||'0');   // ?n=12 stops after 12 events (screenshots)
@@ -391,7 +418,48 @@ async function replay(run){
   }
   st.textContent=`REPLAY done · ${run}`;
 }
+// ---------- playbook gate from playbook/history.jsonl (forge/gate.py writes it; no event in events.jsonl) ----------
+let histSeen = 0;
+async function pollHistory(){
+  try {
+    const r = await fetch('/playbook/history.jsonl', {cache:'no-store'});
+    if (!r.ok) return;
+    const recs = (await r.text()).split('\n').filter(Boolean).map(l=>{ try{return JSON.parse(l);}catch{return null;} }).filter(Boolean);
+    if (recs.length === histSeen) return;
+    histSeen = recs.length;
+    const gates = recs.filter(x=>'kept' in x), held = recs.filter(x=>x.kind==='heldout').pop();
+    const g = gates[gates.length-1];
+    if (g){
+      const dc=g.dev_current||{}, dn=g.dev_candidate||{};
+      const ev = { version:g.round, kept:g.kept, dev_score_old:dc.score, dev_score_new:dn.score, summary:g.summary,
+                   solved_old:dc.solved, solved_new:dn.solved, n:dc.n, base:g.base, path:g.kept_path||g.rejected_path };
+      ev.diff = await mdDiff(ev.base, ev.path, ev.summary);
+      gate(ev);
+    }
+    if (held){
+      const a=held.a||{}, b=held.b||{}; const n=a.n||1;
+      heldoutBars({v0:(a.score||0)/(n*100), vN:(b.score||0)/(n*100), n, la:`${a.solved}/${n}`, lb:`${b.solved}/${n}`, name:(b.path||'vN').replace(/^playbook\//,'').replace(/\.md$/,'')});
+    }
+  } catch(e){ console.warn('history', e); }
+}
+async function mdDiff(a, b, summary){
+  const get = async p => { if(!p) return ''; try{ const r=await fetch('/'+p,{cache:'no-store'}); return r.ok? await r.text() : ''; }catch{ return ''; } };
+  const A=(await get(a)).split('\n'), B=(await get(b)).split('\n');
+  if (!B.length || (B.length===1 && !B[0])) return (summary? '# '+summary+'\n' : '') + '(playbook file not readable)';
+  // LCS line diff, files are tiny
+  const n=A.length, m=B.length, L=Array.from({length:n+1},()=>new Uint16Array(m+1));
+  for(let i=n-1;i>=0;i--) for(let j=m-1;j>=0;j--) L[i][j] = A[i]===B[j] ? L[i+1][j+1]+1 : Math.max(L[i+1][j], L[i][j+1]);
+  const out=[]; let i=0,j=0;
+  while(i<n && j<m){ if(A[i]===B[j]){ out.push(' '+A[i]); i++; j++; } else if(L[i+1][j]>=L[i][j+1]){ out.push('-'+A[i]); i++; } else { out.push('+'+B[j]); j++; } }
+  while(i<n) out.push('-'+A[i++]); while(j<m) out.push('+'+B[j++]);
+  // keep only changed lines plus 1 line of context so the panel shows the edit, not the whole playbook
+  const keep = out.map((l,k)=> l[0]!==' ' || (out[k-1]&&out[k-1][0]!==' ') || (out[k+1]&&out[k+1][0]!==' '));
+  const trimmed=[]; let gap=false;
+  out.forEach((l,k)=>{ if(keep[k]){ trimmed.push(l); gap=false; } else if(!gap){ trimmed.push('@@'); gap=true; } });
+  return `--- ${a||'?'}\n+++ ${b||'?'}\n` + (summary? '# '+summary+'\n' : '') + trimmed.join('\n');
+}
 if (REPLAY) replay(REPLAY); else connectLive(Q.get('run'));
+if (!REPLAY || !REPLAY.startsWith('ui/fixture')) { pollHistory(); setInterval(pollHistory, 3000); }
 </script>
 </body>
 </html>

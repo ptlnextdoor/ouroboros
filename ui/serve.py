@@ -20,7 +20,7 @@ FORCED_RUN = None
 
 
 def run_dirs():
-    paths = glob.glob(os.path.join(ROOT, "runs", "*", "events.jsonl"))
+    paths = glob.glob(os.path.join(ROOT, "runs", "**", "events.jsonl"), recursive=True)
     paths.sort(key=os.path.getmtime, reverse=True)
     return [os.path.relpath(os.path.dirname(p), ROOT) for p in paths]
 
