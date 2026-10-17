@@ -17,9 +17,16 @@ import json
 import os
 import socket
 import tempfile
+import threading
+import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOST, PORT = "localhost", 9876
+
+# Fusion's add-in is single-threaded: every command runs on the one UI thread.
+# Serialize ALL our calls through this lock so two turns (or a capture mid-build)
+# never collide and trip "main thread busy". One process, one lock, one caller.
+_FUSION_LOCK = threading.Lock()
 
 # referee density for al6061 (g/mm3); mirrors referee.MATERIALS["al6061"]["rho"]
 RHO = {"al6061": 2.70e-3, "petg": 1.27e-3}
@@ -30,25 +37,39 @@ class FusionError(RuntimeError):
 
 
 def call(cmd, params=None, timeout=90.0):
-    """One newline-delimited JSON round-trip to the add-in."""
+    """One newline-delimited JSON round-trip to the add-in, serialized + retried."""
     params = dict(params or {})
-    try:
-        s = socket.create_connection((HOST, PORT), timeout=timeout + 10)
-    except OSError as e:
-        raise FusionError(f"Fusion add-in not reachable on {HOST}:{PORT} ({e})")
-    try:
-        s.sendall((json.dumps({"type": cmd, "params": params}) + "\n").encode())
-        buf = b""
-        while not buf.endswith(b"\n"):
-            chunk = s.recv(1 << 20)
-            if not chunk:
-                break
-            buf += chunk
-    finally:
-        s.close()
-    if not buf:
-        raise FusionError(f"empty reply from Fusion for {cmd}")
-    return json.loads(buf.decode())
+    last = None
+    with _FUSION_LOCK:
+        for attempt in range(3):
+            try:
+                s = socket.create_connection((HOST, PORT), timeout=timeout + 15)
+            except OSError as e:
+                last = FusionError(f"Fusion add-in not reachable on {HOST}:{PORT} ({e})")
+                time.sleep(1.0 + attempt)
+                continue
+            try:
+                s.sendall((json.dumps({"type": cmd, "params": params}) + "\n").encode())
+                buf = b""
+                while not buf.endswith(b"\n"):
+                    chunk = s.recv(1 << 20)
+                    if not chunk:
+                        break
+                    buf += chunk
+            finally:
+                s.close()
+            if not buf:
+                last = FusionError(f"empty reply from Fusion for {cmd}")
+                time.sleep(1.0 + attempt)
+                continue
+            r = json.loads(buf.decode())
+            # a busy main thread is transient: back off and retry the same command
+            if isinstance(r, dict) and r.get("error_kind") in ("TIMEOUT", "BUSY"):
+                last = FusionError(f"Fusion busy on {cmd}: {r.get('message', '')[:120]}")
+                time.sleep(1.5 + attempt)
+                continue
+            return r
+    raise last or FusionError(f"Fusion call {cmd} failed")
 
 
 def ping():
@@ -237,7 +258,7 @@ def fusion_build(params, task_id="part", material="al6061", referee_mass_g=None)
 def render_png(view="iso", width=1024, height=768):
     """Active Fusion viewport -> base64 PNG string (no data: prefix)."""
     try:
-        r = call("render_view", {"view": view, "width": width, "height": height, "fit": True}, 60.0)
+        r = call("render_view", {"view": view, "width": width, "height": height, "fit": True}, 90.0)
     except Exception as e:
         raise FusionError(f"render_view failed: {e}")
     res = r.get("result") if isinstance(r, dict) else None
@@ -250,7 +271,7 @@ def render_png(view="iso", width=1024, height=768):
 
 
 def scene_info():
-    r = call("get_scene_info", {}, 30.0)
+    r = call("get_scene_info", {}, 60.0)
     return r.get("result") if isinstance(r, dict) else r
 
 

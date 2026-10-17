@@ -5,334 +5,277 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FORGE Studio</title>
 <style>
-  /* ---- tokens: a machinist's instrument panel docked beside the CAD canvas ----
-     Names evoke the shop, not a component library: ink/panel/rail = the readout
-     housing; pass/fail = what the physics referee said; spark = the accent that
-     only lights on live action. */
+  /* Tokens copied from the founder's monocode app (src/index.css): neutral greys,
+     one blue accent, system font everywhere, mono only for numbers. Green/red are
+     reserved for the physics referee's pass/fail. */
   :root{
-    --ink:#06080d;            /* deepest surface: the chat canvas */
-    --panel:#0b0f17;          /* raised: top bar, composer, cards */
-    --rail:#111726;           /* higher: step rows, pills */
-    --rail-hi:#17202f;        /* hover/active row */
-    --hair:#1b2435;           /* hairline divider */
-    --hair-soft:#141b29;
-    --fg:#e8eef7;             /* primary text */
-    --dim:#8da0b8;            /* secondary */
-    --faint:#55667a;          /* labels, metadata */
-    --pass:#2ee6a6;           /* physics passed */
-    --pass-dim:#15archived;
-    --fail:#ff5f6d;           /* referee said no / HIDDEN loads */
-    --spark:#4aa8ff;          /* live accent */
-    --amber:#f5c451;          /* working / pending */
-    --mono:ui-monospace,"SF Mono",Menlo,monospace;
-    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;
+    --bg:hsl(240 0% 9%);           /* main surface */
+    --sidebar:hsl(240 0% 7%);      /* left rail */
+    --raise:hsl(240 0% 12%);       /* cards, composer */
+    --raise-hi:hsl(240 0% 15%);    /* hover */
+    --fg:hsl(240 0% 92%);
+    --dim:hsla(0,0%,100%,.55);
+    --faint:hsla(0,0%,100%,.38);
+    --hair:hsla(0,0%,100%,.07);
+    --hair-2:hsla(0,0%,100%,.1);
+    --accent:hsl(211 92% 62%);
+    --pass:hsl(158 64% 42%);       /* referee passed */
+    --fail:hsl(0 72% 60%);         /* referee said no / HIDDEN */
+    --amber:hsl(45 90% 62%);
+    --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+    --sans:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{
-    background:var(--ink);color:var(--fg);font-family:var(--sans);
-    font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased;
-    display:flex;flex-direction:column;overflow:hidden;
-    -webkit-user-select:none;user-select:none;
+    background:var(--bg);color:var(--fg);font-family:var(--sans);
+    font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;
+    display:flex;overflow:hidden;-webkit-user-select:none;user-select:none;
   }
-  /* ---- top bar: who/what + the cost story, always visible ---- */
-  .top{
-    flex:0 0 auto;display:flex;align-items:center;gap:10px;
-    padding:12px 14px;background:var(--panel);
-    border-bottom:1px solid var(--hair);
+  /* ---------- sidebar ---------- */
+  .side{
+    width:260px;flex:0 0 260px;background:var(--sidebar);
+    border-right:1px solid var(--hair);display:flex;flex-direction:column;
+    padding:10px;padding-top:34px;-webkit-app-region:drag;
   }
-  .brand{display:flex;flex-direction:column;gap:1px;margin-right:auto}
-  .brand .name{font-size:13px;font-weight:600;letter-spacing:.2px}
-  .brand .sub{font-size:10.5px;color:var(--faint);font-family:var(--mono)}
-  .pill{
-    display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;
-    background:var(--rail);border:1px solid var(--hair);border-radius:7px;
-    font-size:10.5px;color:var(--dim);font-family:var(--mono);white-space:nowrap;
+  .newbtn{
+    -webkit-app-region:no-drag;appearance:none;width:100%;display:flex;align-items:center;gap:8px;
+    background:var(--raise);border:1px solid var(--hair-2);border-radius:9px;color:var(--fg);
+    font-family:var(--sans);font-size:13px;font-weight:500;padding:8px 11px;cursor:pointer;
   }
-  .pill .dot{width:6px;height:6px;border-radius:50%;background:var(--faint)}
-  .pill .dot.live{background:var(--pass);box-shadow:0 0 0 2px rgba(46,230,166,.18)}
-  .pill .dot.off{background:var(--fail)}
-  .pill b{color:var(--fg);font-weight:600}
-  .cost b{color:var(--pass)}
-  /* ---- tabs ---- */
-  .tabs{flex:0 0 auto;display:flex;gap:2px;padding:8px 10px 0;background:var(--panel)}
-  .tab{
-    appearance:none;border:0;background:transparent;color:var(--faint);
-    font-family:var(--sans);font-size:11.5px;font-weight:500;letter-spacing:.2px;
-    padding:6px 11px;border-radius:7px 7px 0 0;cursor:pointer;
+  .newbtn:hover{background:var(--raise-hi)}
+  .newbtn .plus{font-size:15px;color:var(--dim);font-weight:400}
+  .search{
+    -webkit-app-region:no-drag;margin-top:8px;display:flex;align-items:center;gap:7px;
+    background:var(--raise);border:1px solid var(--hair);border-radius:9px;padding:7px 10px;
   }
-  .tab:hover{color:var(--dim)}
-  .tab.on{color:var(--fg);background:var(--ink)}
-  /* ---- scroll area ---- */
-  .scroll{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;background:var(--ink)}
-  .scroll::-webkit-scrollbar{width:9px}
-  .scroll::-webkit-scrollbar-thumb{background:#1e2838;border-radius:6px;border:2px solid var(--ink)}
-  .feed{display:flex;flex-direction:column;padding:14px 12px 18px;gap:9px}
-  /* ---- the human's typed goal ---- */
-  .goal{
-    align-self:flex-end;max-width:92%;background:var(--rail);
-    border:1px solid var(--hair);border-radius:12px 12px 4px 12px;
-    padding:9px 12px;font-size:12.5px;color:var(--fg);
-  }
-  /* ---- turn header: which task the goal resolved to ---- */
-  .turnhead{
-    display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
-    padding:4px 2px 2px;border-bottom:1px solid var(--hair-soft);margin-bottom:2px;
-  }
-  .turnhead .tid{font-family:var(--mono);font-size:10.5px;color:var(--spark);font-weight:600}
-  .turnhead .tprompt{font-size:11.5px;color:var(--dim)}
-  .turnhead .tmeta{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--faint)}
-  /* ---- an agent step: the signature row ---- */
-  .step{
-    display:grid;grid-template-columns:22px 1fr auto;gap:9px;align-items:start;
-    padding:8px 10px;background:var(--rail);border:1px solid var(--hair-soft);
-    border-radius:10px;
-  }
-  .step.live{border-color:#243busy}
-  .avatar{
-    width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;
-    font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink);
-    background:var(--dim);margin-top:1px;
-  }
-  .avatar.spec{background:var(--spark)}
+  .search input{flex:1;background:transparent;border:0;outline:0;color:var(--fg);font-family:var(--sans);font-size:13px}
+  .search input::placeholder{color:var(--faint)}
+  .search .mag{color:var(--faint);font-size:12px}
+  .teamhead{display:flex;align-items:center;justify-content:space-between;padding:14px 8px 7px;
+    font-size:11px;font-weight:600;letter-spacing:.4px;color:var(--faint);text-transform:uppercase}
+  .team{display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+  .trow{-webkit-app-region:no-drag;display:grid;grid-template-columns:30px 1fr auto;gap:9px;align-items:center;
+    padding:8px;border-radius:9px;cursor:default}
+  .trow:hover{background:var(--raise)}
+  .tav{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:600;color:#fff;position:relative}
+  .tav .sd{position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--faint);border:2px solid var(--sidebar)}
+  .tav .sd.on{background:var(--pass)}
+  .tname{font-size:13px;font-weight:600;color:var(--fg)}
+  .tstat{font-size:11.5px;color:var(--dim);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+  .tmeta{font-size:11px;color:var(--faint);font-family:var(--mono);text-align:right;white-space:nowrap}
+  .tmeta.run{color:var(--accent)}
+  .cog{-webkit-app-region:no-drag;margin-top:auto;color:var(--faint);font-size:14px;padding:8px;cursor:default}
+  /* ---------- main ---------- */
+  .main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
+  .scroll{flex:1;overflow-y:auto;overflow-x:hidden}
+  .scroll::-webkit-scrollbar{width:10px}
+  .scroll::-webkit-scrollbar-thumb{background:hsla(0,0%,100%,.08);border-radius:6px;border:3px solid var(--bg)}
+  .feed{display:flex;flex-direction:column;max-width:760px;margin:0 auto;padding:26px 24px 40px;gap:14px}
+  /* empty hero */
+  .empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:70px 20px 24px;text-align:center}
+  .hero-av{width:64px;height:64px;border-radius:50%;background:linear-gradient(145deg,#3b3f52,#23252e);
+    display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600;color:#fff}
+  .empty h2{font-size:20px;font-weight:600}
+  .empty p{font-size:14px;color:var(--dim);max-width:380px}
+  .chips{display:flex;flex-direction:column;gap:8px;width:100%;max-width:520px;margin-top:8px}
+  .chip{font-size:13px;color:var(--dim);background:var(--raise);border:1px solid var(--hair);
+    border-radius:10px;padding:10px 13px;cursor:pointer;text-align:left}
+  .chip:hover{background:var(--raise-hi);color:var(--fg)}
+  /* turn header */
+  .turnhead{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;padding:6px 2px;border-bottom:1px solid var(--hair);margin-bottom:2px}
+  .turnhead .tid{font-size:13px;font-weight:600;color:var(--accent)}
+  .turnhead .tprompt{font-size:13px;color:var(--dim)}
+  .turnhead .tmeta2{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint)}
+  /* user bubble */
+  .goal{align-self:flex-end;max-width:85%;background:var(--accent);color:#07233f;
+    border-radius:16px 16px 5px 16px;padding:10px 14px;font-size:14px;font-weight:500}
+  /* agent step row */
+  .step{display:grid;grid-template-columns:26px 1fr auto;gap:11px;align-items:start;padding:3px 2px}
+  .avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:600;color:#fff;margin-top:1px}
+  .avatar.spec{background:#5b6cff}
   .avatar.designer{background:#7c8cff}
+  .avatar.sourcing{background:#c9a227}
+  .avatar.propulsion{background:#e8703a}
+  .avatar.cad{background:#2f9bd6}
+  .avatar.fusion{background:#e8703a}
   .avatar.referee{background:var(--pass)}
   .avatar.critic{background:var(--amber)}
-  .avatar.gate{background:var(--fg)}
-  .avatar.sourcing{background:#c9a227}
-  .avatar.propulsion{background:#ff7a3c}
-  .avatar.cad{background:#4aa8ff}
-  .avatar.fusion{background:#ff7a3c}
+  .avatar.gate{background:#6b7280}
   .body{min-width:0}
-  .line1{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-  .who{font-size:12px;font-weight:600;color:var(--fg)}
-  .model{font-family:var(--mono);font-size:9.5px;color:var(--faint);
-    background:var(--ink);border:1px solid var(--hair-soft);border-radius:5px;padding:1px 5px}
-  .kind{font-family:var(--mono);font-size:9px;color:var(--faint);text-transform:uppercase;letter-spacing:.5px}
-  .text{font-size:12px;color:var(--dim);margin-top:3px;white-space:pre-wrap;word-break:break-word}
-  .meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;font-family:var(--mono);font-size:9.5px;color:var(--faint)}
-  .meta .ms{color:var(--dim)}
-  .params{
-    margin-top:6px;font-family:var(--mono);font-size:10px;color:var(--dim);
-    background:var(--ink);border:1px solid var(--hair-soft);border-radius:7px;
-    padding:6px 8px;overflow-x:auto;white-space:nowrap;
-  }
-  .params b{color:var(--fg);font-weight:600}
-  /* ---- referee verdict table ---- */
-  .verdict{border-radius:10px;border:1px solid var(--hair);overflow:hidden;background:var(--panel)}
-  .verdict.pass{border-color:rgba(46,230,166,.35)}
-  .verdict.fail{border-color:rgba(255,95,109,.35)}
-  .vhead{display:flex;align-items:center;gap:8px;padding:8px 11px;background:var(--rail)}
-  .vhead .tag{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.5px;padding:2px 7px;border-radius:5px}
-  .vhead .tag.pass{color:var(--ink);background:var(--pass)}
-  .vhead .tag.fail{color:var(--ink);background:var(--fail)}
-  .vhead .vmass{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--dim)}
-  table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:10.5px}
-  th{text-align:left;color:var(--faint);font-weight:500;padding:5px 11px;border-bottom:1px solid var(--hair-soft);font-size:9.5px;text-transform:uppercase;letter-spacing:.4px}
-  td{padding:5px 11px;border-bottom:1px solid var(--hair-soft);color:var(--dim)}
+  .line1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .who{font-size:13px;font-weight:600;color:var(--fg)}
+  .model{font-family:var(--mono);font-size:10.5px;color:var(--faint)}
+  .kind{display:none}
+  .text{font-size:14px;color:var(--dim);margin-top:2px;white-space:pre-wrap;word-break:break-word}
+  .meta{font-family:var(--mono);font-size:11px;color:var(--faint);white-space:nowrap}
+  /* cards: full width, radius 12 */
+  .params,.card,.verdict,.honest{margin-top:2px}
+  .params{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--raise);
+    border:1px solid var(--hair);border-radius:10px;padding:8px 10px;overflow-x:auto;white-space:nowrap}
+  .params b{color:var(--fg)}
+  .card{border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:var(--raise)}
+  .card .chead{display:flex;align-items:center;gap:8px;padding:9px 12px;font-size:12px;font-weight:600;border-bottom:1px solid var(--hair)}
+  .card .chead .ci{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.3px}
+  table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px}
+  th{text-align:left;color:var(--faint);font-weight:500;padding:6px 12px;font-size:10px;text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--hair)}
+  td{padding:6px 12px;border-bottom:1px solid var(--hair);color:var(--dim)}
   tr:last-child td{border-bottom:0}
   td.n{text-align:right;color:var(--fg)}
-  .chk-ok{color:var(--pass)}
-  .chk-no{color:var(--fail)}
+  ul.reqs{list-style:none;padding:10px 13px;display:flex;flex-direction:column;gap:6px}
+  ul.reqs li{font-size:13px;color:var(--dim);padding-left:15px;position:relative}
+  ul.reqs li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+  ul.reqs li.risk{color:var(--amber)} ul.reqs li.risk::before{background:var(--amber)}
+  .chooser{font-size:9px;padding:1px 6px;border-radius:5px;font-family:var(--mono)}
+  .chooser.agent{color:var(--accent);background:hsla(211,92%,62%,.12)}
+  .chooser.user{color:var(--faint);background:var(--raise-hi)}
+  .bomrow td.tag-real{color:var(--pass)} .bomrow td.tag-standin,.bomrow td.tag-generated{color:var(--faint)}
+  tr.arch-close td{color:var(--fg)} tr.arch-close td.v{color:var(--pass)}
+  tr.arch-stall td{color:var(--faint)} tr.arch-stall td.v{color:var(--fail)}
+  tr.arch-best td{background:hsla(158,64%,42%,.08)}
+  .verdict{border-radius:12px;border:1px solid var(--hair);overflow:hidden;background:var(--raise)}
+  .verdict.pass{border-color:hsla(158,64%,42%,.4)} .verdict.fail{border-color:hsla(0,72%,60%,.4)}
+  .vhead{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--hair)}
+  .vhead .tag{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.4px;padding:2px 7px;border-radius:5px;color:#07140f}
+  .vhead .tag.pass{background:var(--pass)} .vhead .tag.fail{background:var(--fail)}
+  .vhead .vmass{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--dim)}
+  .chk-ok{color:var(--pass)} .chk-no{color:var(--fail)}
   tr.hidden td{color:var(--fail)}
-  tr.hidden td:first-child::after{content:" HIDDEN";font-size:8.5px;color:var(--fail);opacity:.8}
-  /* ---- Fusion image ---- */
+  tr.hidden td:first-child::after{content:" HIDDEN";font-size:8.5px;opacity:.8}
+  .honest{display:flex;gap:10px;padding:12px 13px;border-radius:12px;background:hsla(45,90%,62%,.07);border:1px solid hsla(45,90%,62%,.26)}
+  .honest .hicon{color:var(--amber);font-weight:700}
+  .honest .htext{font-size:13px;color:var(--dim);line-height:1.55}
+  .honest .htext b{color:var(--fg)}
   figure{border-radius:12px;overflow:hidden;border:1px solid var(--hair);background:#000}
   figure img{display:block;width:100%;height:auto}
-  figcaption{
-    display:flex;align-items:center;gap:7px;padding:8px 11px;background:var(--panel);
-    font-family:var(--mono);font-size:10px;color:var(--dim);border-top:1px solid var(--hair);
-  }
-  figcaption .dot{width:6px;height:6px;border-radius:50%;background:var(--spark)}
-  /* ---- summary banner ---- */
-  .summary{
-    display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;
-    background:linear-gradient(0deg,var(--rail),var(--panel));border:1px solid var(--hair);
-  }
-  .summary .verdict-dot{width:9px;height:9px;border-radius:50%}
-  .summary.pass .verdict-dot{background:var(--pass);box-shadow:0 0 0 3px rgba(46,230,166,.18)}
-  .summary.fail .verdict-dot{background:var(--fail);box-shadow:0 0 0 3px rgba(255,95,109,.18)}
-  .summary .st{font-size:12.5px;font-weight:600}
-  .summary .nums{margin-left:auto;display:flex;gap:12px;font-family:var(--mono);font-size:10.5px;color:var(--faint)}
-  .summary .nums b{color:var(--fg)}
-  /* ---- agents tab ---- */
-  .roster{display:flex;flex-direction:column;padding:14px 12px;gap:8px}
-  .rrow{display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:center;
-    padding:11px 12px;background:var(--rail);border:1px solid var(--hair-soft);border-radius:10px}
-  .rrow .sdot{width:9px;height:9px;border-radius:50%;background:var(--faint)}
-  .rrow.active .sdot{background:var(--pass);box-shadow:0 0 0 3px rgba(46,230,166,.16)}
-  .rrow .rname{font-size:12.5px;font-weight:600}
-  .rrow .rmodel{font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:1px}
-  .rrow .rrole{font-family:var(--mono);font-size:10px;color:var(--dim);text-align:right}
-  .rsum{padding:12px;margin-top:4px;border-top:1px solid var(--hair-soft);font-family:var(--mono);font-size:10.5px;color:var(--faint);display:flex;justify-content:space-between}
-  .rsum b{color:var(--pass)}
-  /* ---- empty state ---- */
-  .empty{display:flex;flex-direction:column;gap:10px;padding:34px 20px;color:var(--faint);text-align:center;align-items:center}
-  .empty h2{font-size:14px;font-weight:600;color:var(--dim)}
-  .empty p{font-size:12px;max-width:300px}
-  .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:4px}
-  .chip{font-family:var(--mono);font-size:10.5px;color:var(--dim);background:var(--rail);
-    border:1px solid var(--hair);border-radius:7px;padding:6px 9px;cursor:pointer}
-  .chip:hover{background:var(--rail-hi);color:var(--fg)}
-  /* ---- composer ---- */
-  .composer{flex:0 0 auto;padding:10px 12px 14px;background:var(--panel);border-top:1px solid var(--hair)}
-  .inputrow{display:flex;gap:8px;align-items:flex-end;background:var(--rail);
-    border:1px solid var(--hair);border-radius:12px;padding:7px 8px 7px 12px}
-  .inputrow:focus-within{border-color:#2a3b57}
-  textarea{flex:1;resize:none;background:transparent;border:0;outline:0;color:var(--fg);
-    font-family:var(--sans);font-size:13px;line-height:1.4;max-height:96px;padding:3px 0}
-  textarea::placeholder{color:var(--faint)}
-  .send{appearance:none;border:0;width:30px;height:30px;border-radius:8px;background:var(--spark);
-    color:#06131f;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
-  .send:disabled{background:var(--rail-hi);color:var(--faint);cursor:default}
-  .cbar{display:flex;align-items:center;gap:8px;margin-top:8px}
-  .layoutbtn{appearance:none;border:1px solid var(--hair);background:var(--rail);color:var(--dim);
-    font-family:var(--mono);font-size:10.5px;border-radius:7px;padding:5px 9px;cursor:pointer}
-  .layoutbtn:hover{background:var(--rail-hi);color:var(--fg)}
-  .hint{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:var(--faint)}
-  /* ---- MJ-1: requirements, BOM, architecture, honest verdict ---- */
-  .card{border:1px solid var(--hair);border-radius:10px;overflow:hidden;background:var(--panel)}
-  .card .chead{display:flex;align-items:center;gap:8px;padding:8px 11px;background:var(--rail);font-size:11px;font-weight:600}
-  .card .chead .ci{font-family:var(--mono);font-size:9px;color:var(--faint);margin-left:auto;text-transform:uppercase;letter-spacing:.4px}
-  ul.reqs{list-style:none;padding:8px 11px;display:flex;flex-direction:column;gap:5px}
-  ul.reqs li{font-size:11.5px;color:var(--dim);padding-left:14px;position:relative}
-  ul.reqs li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:var(--spark)}
-  ul.reqs li.risk{color:var(--amber)}
-  ul.reqs li.risk::before{background:var(--amber)}
-  .bomrow td.tag-real{color:var(--pass)}
-  .bomrow td.tag-standin{color:var(--faint)}
-  .bomrow td.tag-generated{color:var(--faint)}
-  .chooser{font-size:8.5px;padding:1px 5px;border-radius:4px;font-family:var(--mono)}
-  .chooser.agent{color:var(--spark);background:rgba(74,168,255,.1)}
-  .chooser.user{color:var(--faint);background:var(--ink)}
-  tr.arch-close td{color:var(--fg)}
-  tr.arch-close td.v{color:var(--pass)}
-  tr.arch-stall td{color:var(--faint)}
-  tr.arch-stall td.v{color:var(--fail)}
-  tr.arch-best td{background:rgba(46,230,166,.06)}
-  .honest{display:flex;gap:9px;padding:11px 12px;border-radius:10px;background:rgba(245,196,81,.07);border:1px solid rgba(245,196,81,.28)}
-  .honest .hicon{color:var(--amber);font-family:var(--mono);font-weight:700;flex:0 0 auto}
-  .honest .htext{font-size:11.5px;color:var(--dim);line-height:1.5}
-  .honest .htext b{color:var(--fg)}
+  figcaption{display:flex;align-items:center;gap:7px;padding:9px 12px;font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--hair);background:var(--raise)}
+  figcaption .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  /* Done + approve/revise */
+  .done{display:flex;gap:10px;padding:13px;border-radius:12px;background:var(--raise);border:1px solid var(--hair)}
+  .done .dicon{width:24px;height:24px;border-radius:50%;background:var(--pass);color:#07140f;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex:0 0 auto}
+  .done .dtext{font-size:15px;line-height:1.5;color:var(--fg)}
+  .done .dtext b{color:var(--pass);font-weight:600}
+  .actions{display:flex;gap:9px}
+  .act{appearance:none;flex:1;border:1px solid var(--hair-2);background:var(--raise);color:var(--fg);
+    font-family:var(--sans);font-size:13px;font-weight:500;border-radius:10px;padding:10px;cursor:pointer}
+  .act:hover{background:var(--raise-hi)}
+  .act.primary{background:var(--accent);color:#07233f;border-color:transparent;font-weight:600}
+  .replaying{font-family:var(--mono);font-size:10.5px;color:var(--faint);text-align:center;padding:3px}
+  /* composer: floating rounded card */
+  .composer-wrap{padding:0 24px 22px;max-width:760px;width:100%;margin:0 auto}
+  .composer{background:var(--raise);border:1px solid var(--hair-2);border-radius:16px;
+    box-shadow:0 8px 30px rgba(0,0,0,.35);padding:12px 14px}
+  .composer textarea{width:100%;resize:none;background:transparent;border:0;outline:0;color:var(--fg);
+    font-family:var(--sans);font-size:14px;line-height:1.5;max-height:120px}
+  .composer textarea::placeholder{color:var(--faint)}
+  .cfoot{display:flex;align-items:center;gap:12px;margin-top:10px}
+  .picker{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);cursor:default}
+  .picker .d{color:var(--faint);font-size:10px}
+  .picker .gdot{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+  .picker .gdot.on{background:var(--pass)}
+  .csend{margin-left:auto;appearance:none;border:0;width:34px;height:34px;border-radius:50%;
+    background:var(--accent);color:#07233f;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .csend:disabled{background:var(--raise-hi);color:var(--faint);cursor:default}
+  .layoutlink{-webkit-app-region:no-drag;font-size:12px;color:var(--faint);cursor:pointer;background:none;border:0;font-family:var(--sans)}
+  .layoutlink:hover{color:var(--dim)}
 </style>
 </head>
 <body>
-  <div class="top">
-    <div class="brand">
-      <div class="name">FORGE Studio</div>
-      <div class="sub">AI hardware engineer</div>
-    </div>
-    <div class="pill cost" title="Crusoe spend this design"><span>$ design</span> <b id="cost">0.0000</b></div>
-    <div class="pill" title="Inference backend"><span class="dot live"></span>Crusoe · Nemotron</div>
-    <div class="pill" id="fusionpill" title="Fusion 360 add-in"><span class="dot off" id="fusiondot"></span>Fusion</div>
-  </div>
+  <!-- ---------- sidebar ---------- -->
+  <aside class="side">
+    <button class="newbtn" id="newdesign"><span class="plus">+</span> New design</button>
+    <div class="search"><span class="mag">⌕</span><input id="searchbox" placeholder="Search"></div>
+    <div class="teamhead"><span>Team</span><span id="teamcount">5</span></div>
+    <div class="team" id="team"></div>
+    <div class="cog">⚙</div>
+  </aside>
 
-  <div class="tabs">
-    <button class="tab on" data-tab="chat">Chat</button>
-    <button class="tab" data-tab="agents">Agents</button>
-  </div>
-
-  <div class="scroll" id="scroll">
-    <div class="feed" id="feed" data-tab="chat">
-      <div class="empty" id="empty">
-        <h2>Describe a part</h2>
-        <p>One sentence in. Real agents design it, a physics referee signs it off, and it builds live in Fusion 360.</p>
-        <div class="chips">
-          <div class="chip">design a supersonic jet for fast medical delivery: carry 2 kg, break Mach 1 for 5 s, under 25 kg, Boom Prize rules</div>
-          <div class="chip">mount a 2 kg motor 80 mm off a wall in aluminium, 3 g rating</div>
-          <div class="chip">hold a 3 kg gearbox 70 mm off a wall, aluminium, 3 g</div>
+  <!-- ---------- main ---------- -->
+  <main class="main">
+    <div class="scroll" id="scroll">
+      <div class="feed" id="feed">
+        <div class="empty" id="empty">
+          <div class="hero-av">F</div>
+          <h2>FORGE</h2>
+          <p>Describe a part in one sentence. Real agents design it, a physics referee signs it off, and it builds live in Fusion 360.</p>
+          <div class="chips">
+            <div class="chip">design a supersonic jet for fast medical delivery: carry 2 kg, break Mach 1 for 5 s, under 25 kg, Boom Prize rules</div>
+            <div class="chip">mount a 2 kg motor 80 mm off a wall in aluminium, 3 g rating</div>
+            <div class="chip">hold a 3 kg gearbox 70 mm off a wall, aluminium, 3 g</div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="roster" id="roster" data-tab="agents" style="display:none"></div>
-  </div>
-
-  <div class="composer">
-    <div class="inputrow">
-      <textarea id="input" rows="1" placeholder="Describe a part to forge"></textarea>
-      <button class="send" id="send" title="Forge">&#8593;</button>
+    <div class="composer-wrap">
+      <div class="composer">
+        <textarea id="input" rows="1" placeholder="Describe a part to forge"></textarea>
+        <div class="cfoot">
+          <span class="picker">Nemotron · Crusoe <span class="d">▾</span></span>
+          <span class="picker">High <span class="d">▾</span></span>
+          <span class="picker"><span class="gdot" id="fusiondot"></span> Fusion <span id="fusionword">connecting</span></span>
+          <button class="layoutlink" id="layout">Window layout</button>
+          <button class="csend" id="send" title="Forge">&#8593;</button>
+        </div>
+      </div>
     </div>
-    <div class="cbar">
-      <button class="layoutbtn" id="layout">Window layout</button>
-      <span class="hint" id="hint">Fusion renders the 3D</span>
-    </div>
-  </div>
+  </main>
 
 <script>
 const BASE = location.origin;
 const feed = document.getElementById('feed');
-const roster = document.getElementById('roster');
 const scroll = document.getElementById('scroll');
 const input = document.getElementById('input');
 const send = document.getElementById('send');
-const costEl = document.getElementById('cost');
-const hint = document.getElementById('hint');
 const empty = document.getElementById('empty');
 
-// the roster the demo narrates, in the order the pipeline runs them
+// the roster shown in the sidebar TEAM list, in pipeline order
 const ROSTER = [
-  {key:'Spec',    name:'Spec',    model:'Nemotron-3-Super-120B', role:'definition of done'},
-  {key:'Designer',name:'Designers x4', model:'Nemotron-3.5-Lightning-30B', role:'propose params'},
-  {key:'Referee', name:'Referee', model:'CalculiX FEA', role:'physics pass/fail'},
-  {key:'Critic',  name:'Critic',  model:'DeepSeek-V4-Pro', role:'why it failed'},
-  {key:'Gate',    name:'Gate',    model:'FORGE', role:'keep best'},
+  {key:'Spec',    name:'Spec',    model:'Nemotron-3-Super', cls:'spec'},
+  {key:'Sourcing',name:'Sourcing',model:'vendor datasheets', cls:'sourcing'},
+  {key:'Propulsion',name:'Propulsion',model:'mj1.sizing', cls:'propulsion'},
+  {key:'CAD',     name:'CAD',     model:'Fusion 360', cls:'cad'},
+  {key:'Referee', name:'Referee', model:'CalculiX / area-rule', cls:'referee'},
 ];
-let rosterActive = {};
-function renderRoster(){
-  roster.innerHTML = ROSTER.map(a=>`
-    <div class="rrow ${rosterActive[a.key]?'active':''}">
-      <span class="sdot"></span>
-      <div><div class="rname">${a.name}</div><div class="rmodel">${a.model}</div></div>
-      <div class="rrole">${a.role}</div>
-    </div>`).join('') +
-    `<div class="rsum"><span>Crusoe · $ this design</span><b id="costAgents">$${lastCost.toFixed(4)}</b></div>`;
+let rosterActive={};
+function renderTeam(){
+  document.getElementById('team').innerHTML = ROSTER.map(a=>{
+    const run=rosterActive[a.key];
+    return `<div class="trow">
+      <div class="tav ${a.cls}">${a.name[0]}<span class="sd ${run?'on':''}"></span></div>
+      <div><div class="tname">${a.name}</div><div class="tstat">${a.model}</div></div>
+      <div class="tmeta ${run?'run':''}">${run?'running':'idle'}</div>
+    </div>`;}).join('');
+  document.getElementById('teamcount').textContent=ROSTER.length;
 }
-renderRoster();
+renderTeam();
 
-// tabs
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));
-  const on=t.dataset.tab;
-  feed.style.display = on==='chat'?'flex':'none';
-  roster.style.display = on==='agents'?'flex':'none';
-});
-
-// chips prefill
 document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{input.value=c.textContent;input.focus();autoGrow();});
-
-function autoGrow(){input.style.height='auto';input.style.height=Math.min(input.scrollHeight,96)+'px';}
+function autoGrow(){input.style.height='auto';input.style.height=Math.min(input.scrollHeight,120)+'px';}
 input.addEventListener('input',autoGrow);
 input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();go();}});
 send.onclick=go;
 
-let lastCost = 0;
-let busy = false;
-function atBottom(){return scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight < 80;}
-function stick(){scroll.scrollTop = scroll.scrollHeight;}
-
+let lastCost=0, busy=false, turnState={};
+function resetTurn(){turnState={};}
+function atBottom(){return scroll.scrollHeight - scroll.scrollTop - scroll.clientHeight < 90;}
+function stick(){scroll.scrollTop=scroll.scrollHeight;}
 function el(html){const d=document.createElement('div');d.innerHTML=html.trim();return d.firstChild;}
 function esc(s){return (s==null?'':String(s)).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 
-const AV = {Spec:'spec',Designer:'designer',Referee:'referee',Critic:'critic',Gate:'gate',
+const AV={Spec:'spec',Designer:'designer',Referee:'referee',Critic:'critic',Gate:'gate',
   Sourcing:'sourcing',Propulsion:'propulsion',CAD:'cad',Fusion:'fusion'};
-function avatarClass(agent){
-  const a=agent.split(' ')[0];
-  return AV[a]||'designer';
-}
-function initial(agent){return agent[0].toUpperCase();}
+function avatarClass(a){return AV[a.split(' ')[0]]||'designer';}
 
 function addStep(d){
   const stuck=atBottom();
-  const cls=avatarClass(d.agent);
-  rosterActive[d.agent.split(' ')[0]]=true;
-  let meta='';
-  if(d.ms!=null) meta+=`<span class="ms">${d.ms} ms</span>`;
+  rosterActive[d.agent.split(' ')[0]]=true; renderTeam();
   const node=el(`<div class="step">
-    <div class="avatar ${cls}">${initial(d.agent)}</div>
+    <div class="avatar ${avatarClass(d.agent)}">${d.agent[0].toUpperCase()}</div>
     <div class="body">
       <div class="line1"><span class="who">${esc(d.agent)}</span>
-        <span class="model">${esc((d.model||'').replace(/^.*\\//,''))}</span>
-        <span class="kind">${esc(d.kind||'')}</span></div>
+        <span class="model">${esc((d.model||'').replace(/^.*\//,''))}</span></div>
       ${d.text?`<div class="text">${esc(d.text)}</div>`:''}
       ${d.params?paramsLine(d.params,d.claim):''}
       ${d.requirements?reqsBlock(d.requirements,d.open_risks):''}
@@ -340,205 +283,169 @@ function addStep(d){
       ${d.architectures?archBlock(d.architectures):''}
       ${d.verdict?honestBlock(d.verdict):''}
     </div>
-    <div class="meta">${meta}</div>
+    <div class="meta">${d.ms!=null?d.ms+' ms':''}</div>
   </div>`);
-  feed.appendChild(node);
-  if(stuck)stick();
+  feed.appendChild(node); if(stuck)stick();
 }
 function paramsLine(p,claim){
   const keys=['t_plate','t_arm','plate_h','width','arm_len','gusset','gusset_len','gusset_h','lighten_n','lighten_d'];
   const parts=keys.filter(k=>p[k]!=null).map(k=>`${k} <b>${p[k]}</b>`).join('  ');
-  let c='';
-  if(claim&&(claim.sigma_MPa!=null||claim.mass_g!=null))
-    c=`  ·  claims σ <b>${claim.sigma_MPa??'?'}</b> MPa, <b>${claim.mass_g??'?'}</b> g`;
+  let c=''; if(claim&&(claim.sigma_MPa!=null||claim.mass_g!=null))c=`  ·  claims σ <b>${claim.sigma_MPa??'?'}</b> MPa, <b>${claim.mass_g??'?'}</b> g`;
   return `<div class="params">${parts}${c}</div>`;
 }
-
-// ---- MJ-1 render blocks ----
 function reqsBlock(reqs,risks){
-  const r=reqs.map(x=>`<li>${esc(x)}</li>`).join('');
-  const rk=(risks||[]).map(x=>`<li class="risk">${esc(x)}</li>`).join('');
-  return `<ul class="reqs">${r}${rk}</ul>`;
+  return `<ul class="reqs">${reqs.map(x=>`<li>${esc(x)}</li>`).join('')}${(risks||[]).map(x=>`<li class="risk">${esc(x)}</li>`).join('')}</ul>`;
 }
 function bomBlock(bom,totalKg,realCount){
   const rows=bom.map(p=>{
     const tag=(p.kind||'').toLowerCase().replace('-','');
     const ch=p.chooser==='agent research'?'agent':'user';
-    return `<tr class="bomrow">
-      <td>${esc(p.part)}${p.qty>1?` ×${p.qty}`:''}</td>
-      <td class="n">${p.mass_g} g</td>
-      <td class="tag-${tag}">${esc(p.kind)}</td>
-      <td><span class="chooser ${ch}">${ch==='agent'?'agent':'user'}</span></td>
-    </tr>`;}).join('');
-  return `<div class="card" style="margin-top:7px">
-    <div class="chead">Bill of materials<span class="ci">${bom.length} parts · ${totalKg} kg · ${realCount} real STEP</span></div>
-    <table><thead><tr><th>part</th><th style="text-align:right">mass</th><th>model</th><th>chosen by</th></tr></thead>
-    <tbody>${rows}</tbody></table></div>`;
+    return `<tr class="bomrow"><td>${esc(p.part)}${p.qty>1?` ×${p.qty}`:''}</td><td class="n">${p.mass_g} g</td>
+      <td class="tag-${tag}">${esc(p.kind)}</td><td><span class="chooser ${ch}">${ch}</span></td></tr>`;}).join('');
+  return `<div class="card"><div class="chead">Bill of materials<span class="ci">${bom.length} parts · ${totalKg} kg · ${realCount} real STEP</span></div>
+    <table><thead><tr><th>part</th><th style="text-align:right">mass</th><th>model</th><th>chosen by</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 function archBlock(archs){
-  const rows=archs.map(a=>{
-    if(a.closes){
-      return `<tr class="arch-close ${a.best?'arch-best':''}">
-        <td>${esc(a.name)}</td><td class="n">${a.mtow_kg} kg</td>
-        <td class="n v">closes M1.05</td><td class="n">+${a.excess_n} N</td></tr>`;
-    }
-    return `<tr class="arch-stall"><td>${esc(a.name)}</td><td class="n">${a.mtow_kg} kg</td>
-      <td class="n v">stalls M${a.stall_mach}</td><td class="n">-</td></tr>`;
-  }).join('');
-  return `<div class="card" style="margin-top:7px">
-    <div class="chead">Propulsion sweep<span class="ci">mj1.sizing · live</span></div>
-    <table><thead><tr><th>architecture</th><th style="text-align:right">MTOW</th><th style="text-align:right">M1.05</th><th style="text-align:right">excess</th></tr></thead>
-    <tbody>${rows}</tbody></table></div>`;
+  const rows=archs.map(a=>a.closes
+    ? `<tr class="arch-close ${a.best?'arch-best':''}"><td>${esc(a.name)}</td><td class="n">${a.mtow_kg} kg</td><td class="n v">closes M1.05</td><td class="n">+${a.excess_n} N</td></tr>`
+    : `<tr class="arch-stall"><td>${esc(a.name)}</td><td class="n">${a.mtow_kg} kg</td><td class="n v">stalls M${a.stall_mach}</td><td class="n">-</td></tr>`).join('');
+  return `<div class="card"><div class="chead">Propulsion sweep<span class="ci">mj1.sizing · live</span></div>
+    <table><thead><tr><th>architecture</th><th style="text-align:right">MTOW</th><th style="text-align:right">M1.05</th><th style="text-align:right">excess</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 function honestBlock(v){
-  return `<div class="honest" style="margin-top:7px">
-    <span class="hicon">!</span>
-    <div class="htext">${v.e_wd!=null?`E_WD <b>${v.e_wd}</b> (target ${v.e_wd_target}) on the real OML STEP · best arch <b>${esc(v.best_arch)}</b>.<br>`:''}${esc(v.honest)}</div>
-  </div>`;
+  return `<div class="honest"><span class="hicon">!</span><div class="htext">${v.e_wd!=null?`E_WD <b>${v.e_wd}</b> (target ${v.e_wd_target}) on the real OML STEP · best arch <b>${esc(v.best_arch)}</b>.<br>`:''}${esc(v.honest)}</div></div>`;
 }
-
 function addVerdict(d){
-  const stuck=atBottom();
-  const pass=!!d.ok;
-  const cases=(d.cases||[]);
-  const rows=cases.map(c=>{
-    const f=c.F||[];
-    const fmag=Math.round(Math.hypot(f[0]||0,f[1]||0,f[2]||0));
-    return `<tr class="${c.hidden?'hidden':''}">
-      <td>${esc(c.name)}</td>
-      <td class="n">${fmag} N</td>
-      <td class="n">${c.sigma_MPa??'-'} / ${c.allow_MPa??'-'}</td>
-      <td class="n">${c.defl_mm!=null?c.defl_mm:'-'}</td>
-      <td class="n ${c.ok?'chk-ok':'chk-no'}">${c.ok?'pass':'FAIL'}</td>
-    </tr>`;}).join('');
-  const node=el(`<div class="verdict ${pass?'pass':'fail'}">
-    <div class="vhead">
-      <span class="avatar referee" style="width:20px;height:20px;font-size:10px">R</span>
-      <span class="tag ${pass?'pass':'fail'}">${pass?'PASS':'FAIL'}</span>
-      <span style="font-size:11px;color:var(--dim)">${esc(pass?'physics verified':(d.reason||'referee rejected'))}</span>
-      ${d.mass_g!=null?`<span class="vmass">${d.mass_g} g</span>`:''}
-    </div>
-    ${cases.length?`<table><thead><tr><th>load case</th><th style="text-align:right">force</th><th style="text-align:right">σ / allow MPa</th><th style="text-align:right">defl mm</th><th style="text-align:right">result</th></tr></thead><tbody>${rows}</tbody></table>`:''}
-  </div>`);
-  feed.appendChild(node);
-  if(stuck)stick();
+  const stuck=atBottom(); const pass=!!d.ok;
+  const rows=(d.cases||[]).map(c=>{
+    const f=c.F||[]; const fmag=Math.round(Math.hypot(f[0]||0,f[1]||0,f[2]||0));
+    return `<tr class="${c.hidden?'hidden':''}"><td>${esc(c.name)}</td><td class="n">${fmag} N</td>
+      <td class="n">${c.sigma_MPa??'-'} / ${c.allow_MPa??'-'}</td><td class="n">${c.defl_mm!=null?c.defl_mm:'-'}</td>
+      <td class="n ${c.ok?'chk-ok':'chk-no'}">${c.ok?'pass':'FAIL'}</td></tr>`;}).join('');
+  const node=el(`<div class="verdict ${pass?'pass':'fail'}"><div class="vhead">
+    <span class="tag ${pass?'pass':'fail'}">${pass?'PASS':'FAIL'}</span>
+    <span style="font-size:13px;color:var(--dim)">${esc(pass?'physics verified':(d.reason||'referee rejected'))}</span>
+    ${d.mass_g!=null?`<span class="vmass">${d.mass_g} g</span>`:''}</div>
+    ${(d.cases||[]).length?`<table><thead><tr><th>load case</th><th style="text-align:right">force</th><th style="text-align:right">σ / allow MPa</th><th style="text-align:right">defl mm</th><th style="text-align:right">result</th></tr></thead><tbody>${rows}</tbody></table>`:''}</div>`);
+  feed.appendChild(node); if(stuck)stick();
 }
-
 function addImage(d){
   const stuck=atBottom();
-  const node=el(`<figure>
-    <img src="data:image/png;base64,${d.image_base64}" alt="${esc(d.caption||'Fusion 360')}">
-    <figcaption><span class="dot"></span>${esc(d.caption||'Fusion 360')}</figcaption>
-  </figure>`);
-  feed.appendChild(node);
+  feed.appendChild(el(`<figure><img src="data:image/png;base64,${d.image_base64}" alt="${esc(d.caption||'Fusion 360')}">
+    <figcaption><span class="dot"></span>${esc(d.caption||'Fusion 360')}</figcaption></figure>`));
   if(stuck)stick();
 }
-
+function addFusionNote(d){
+  if(d.status==='start') addStep({agent:'CAD',model:'Fusion 360',text:d.note||'building in Fusion 360'});
+  else if(d.status==='done'){
+    const parity=d.mass_delta_g!=null?`mass ${d.fusion_mass_g} g in Fusion vs ${d.referee_mass_g} g referee (Δ ${d.mass_delta_g} g)`:'';
+    addStep({agent:'CAD',model:'Fusion 360',text:`${d.component} built · ${d.material||'aluminium'} · ${parity}`});
+  } else if(d.status==='error') addStep({agent:'CAD',model:'Fusion 360',text:'Fusion build failed: '+(d.message||'')});
+  else if(d.status==='skip') addStep({agent:'CAD',model:'Fusion 360',text:d.message||'nothing to build'});
+}
 function addSummary(d){
   const stuck=atBottom();
-  const node=el(`<div class="summary ${d.solved?'pass':'fail'}">
-    <span class="verdict-dot"></span>
-    <span class="st">${d.solved?'Design verified':'No passing design'}</span>
-    <div class="nums">
-      ${d.iters!=null?`<span><b>${d.iters}</b> iter${d.iters===1?'':'s'}</span>`:''}
-      ${d.mass_g!=null?`<span><b>${d.mass_g}</b> g</span>`:''}
-      ${d.calls!=null?`<span><b>${d.calls}</b> calls</span>`:''}
-      ${d.spent_usd!=null?`<span>$<b>${d.spent_usd.toFixed(4)}</b></span>`:''}
-    </div>
-  </div>`);
-  feed.appendChild(node);
+  feed.appendChild(el(`<div class="honest" style="background:var(--raise);border-color:var(--hair)">
+    <span class="hicon" style="color:${d.solved?'var(--pass)':'var(--fail)'}">${d.solved?'✓':'✕'}</span>
+    <div class="htext">${d.solved?'Design verified':'No passing design'} · ${d.iters!=null?`${d.iters} iter${d.iters===1?'':'s'}`:''} ${d.mass_g!=null?`· ${d.mass_g} g`:''} ${d.spent_usd!=null?`· $${d.spent_usd.toFixed(4)}`:''}</div></div>`));
   if(stuck)stick();
-}
-
-function addFusionNote(d){
-  if(d.status==='start'){
-    addStep({agent:'Fusion', model:'Fusion 360', kind:'tool', text:d.note||'building in Fusion 360'});
-  } else if(d.status==='done'){
-    const parity = d.mass_delta_g!=null ? `mass ${d.fusion_mass_g} g in Fusion vs ${d.referee_mass_g} g referee (Δ ${d.mass_delta_g} g)` : '';
-    addStep({agent:'Fusion', model:'Fusion 360', kind:'result',
-      text:`${d.component} built · ${d.material||'aluminium'} · ${parity}`});
-  } else if(d.status==='error'){
-    addStep({agent:'Fusion', model:'Fusion 360', kind:'result', text:'Fusion build failed: '+(d.message||'')});
-  } else if(d.status==='skip'){
-    addStep({agent:'Fusion', model:'Fusion 360', kind:'result', text:d.message||'nothing to build'});
-  }
 }
 
 function go(){
-  const msg=input.value.trim();
-  if(!msg||busy) return;
-  busy=true; send.disabled=true;
-  if(empty) empty.style.display='none';
-  rosterActive={}; 
+  const msg=input.value.trim(); if(!msg||busy)return;
+  busy=true;send.disabled=true;
+  if(empty)empty.style.display='none';
+  rosterActive={};renderTeam();resetTurn();
   feed.appendChild(el(`<div class="goal">${esc(msg)}</div>`));
-  input.value=''; autoGrow(); stick();
-  hint.textContent='running on Crusoe…';
-
+  input.value='';autoGrow();stick();
   fetch(BASE+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})})
-    .then(r=>{
-      const reader=r.body.getReader(); const dec=new TextDecoder(); let buf='';
+    .then(r=>{const reader=r.body.getReader();const dec=new TextDecoder();let buf='';
       function pump(){return reader.read().then(({done,value})=>{
         if(done){finish();return;}
-        buf+=dec.decode(value,{stream:true});
-        let idx;
-        while((idx=buf.indexOf('\n\n'))>=0){
-          const chunk=buf.slice(0,idx); buf=buf.slice(idx+2);
+        buf+=dec.decode(value,{stream:true});let idx;
+        while((idx=buf.indexOf('\n\n'))>=0){const chunk=buf.slice(0,idx);buf=buf.slice(idx+2);
           const line=chunk.split('\n').find(l=>l.startsWith('data: '));
-          if(line){ try{ handle(JSON.parse(line.slice(6))); }catch(e){} }
-        }
-        return pump();
-      });}
+          if(line){try{handle(JSON.parse(line.slice(6)));}catch(e){}}}
+        return pump();});}
       return pump();
-    }).catch(e=>{ addStep({agent:'Gate',model:'FORGE',kind:'result',text:'stream error: '+e}); finish(); });
+    }).catch(e=>{addStep({agent:'Gate',model:'FORGE',text:'stream error: '+e});finish();});
 }
-function finish(){busy=false;send.disabled=false;hint.textContent='Fusion renders the 3D';renderRoster();}
+function finish(){busy=false;send.disabled=false;renderTeam();if(turnState.kind)renderDone();}
+
+function renderDone(){
+  const stuck=atBottom(); const s=turnState; let line='';
+  if(s.kind==='mj1'){
+    line=`Done. Sourced <b>${s.parts||23} parts</b> from datasheets, sized <b>${s.archN||8} architectures</b>, `+
+      `${s.bestArch?`${esc(s.bestArch)} closes at M1.05`:'twin P400 closes at M1.05'}; `+
+      `best area-ruled layout <b>E_WD ${s.e_wd??'3.06'}</b>, ~10% short of thrust for M1.05.`;
+  } else {
+    line=s.solved?`Done. <b>${s.mass_g} g</b> bracket, verified against hidden loads in <b>${s.iters} iter${s.iters===1?'':'s'}</b>, built in Fusion 360.`
+                 :`Done. No passing design yet; the referee rejected every candidate.`;
+  }
+  feed.appendChild(el(`<div class="done"><div class="dicon">✓</div><div class="dtext">${line}</div></div>`));
+  const acts=el(`<div class="actions"><button class="act primary" id="approveBtn">Approve</button><button class="act" id="reviseBtn">Revise</button></div>`);
+  feed.appendChild(acts);
+  acts.querySelector('#approveBtn').onclick=e=>{e.target.textContent='Approved ✓';e.target.disabled=true;};
+  acts.querySelector('#reviseBtn').onclick=()=>input.focus();
+  if(stuck)stick();
+}
 
 function handle(ev){
   switch(ev.event){
     case 'turn':
-      feed.appendChild(el(`<div class="turnhead">
-        <span class="tid">${esc(ev.task)}</span>
-        <span class="tprompt">${esc(ev.prompt)}</span>
-        <span class="tmeta">${esc(ev.material)} · FoS ${ev.fos} · ≤ ${ev.mass_limit_g} g</span>
-      </div>`)); stick(); break;
+      turnState={kind:'bracket'};
+      feed.appendChild(el(`<div class="turnhead"><span class="tid">${esc(ev.task)}</span><span class="tprompt">${esc(ev.prompt)}</span><span class="tmeta2">${esc(ev.material)} · FoS ${ev.fos} · ≤ ${ev.mass_limit_g} g</span></div>`));stick();break;
     case 'turn_mj1':
-      feed.appendChild(el(`<div class="turnhead">
-        <span class="tid">MJ-1</span>
-        <span class="tprompt">supersonic RC jet · KingChaser-derived</span>
-        <span class="tmeta">Boom Prize · ≤ ${ev.rules.mass_limit_kg} kg · air-breathing</span>
-      </div>`)); stick(); break;
+      turnState={kind:'mj1'};
+      feed.appendChild(el(`<div class="turnhead"><span class="tid">MJ-1</span><span class="tprompt">supersonic RC jet · KingChaser-derived</span><span class="tmeta2">Boom Prize · ≤ ${ev.rules.mass_limit_kg} kg · air-breathing</span></div>`));stick();break;
     case 'step':
-      if(ev.kind==='verdict' && ev.cases) addVerdict(ev);
-      else if(ev.agent==='Gate'&&ev.kind==='verdict') { /* fold gate into summary */ }
+      if(ev.bom)turnState.parts=ev.bom.length;
+      if(ev.architectures){turnState.archN=ev.architectures.length;const b=ev.architectures.find(a=>a.closes);if(b)turnState.bestArch=b.name;}
+      if(ev.kind==='verdict'&&ev.cases)addVerdict(ev);
+      else if(ev.agent==='Gate'&&ev.kind==='verdict'){}
       else addStep(ev);
       break;
-    case 'cost':
-      if(ev.spent_usd!=null){lastCost=ev.spent_usd;costEl.textContent=ev.spent_usd.toFixed(4);} break;
-    case 'summary': addSummary(ev); break;
-    case 'summary_mj1': break;
-    case 'fusion': addFusionNote(ev); break;
-    case 'image': addImage(ev); break;
-    case 'error': addStep({agent:'Gate',model:'FORGE',kind:'result',text:'error: '+ev.message}); break;
+    case 'cost': if(ev.spent_usd!=null){lastCost=ev.spent_usd;} break;
+    case 'summary': turnState.solved=ev.solved;turnState.iters=ev.iters;turnState.mass_g=ev.mass_g;addSummary(ev);break;
+    case 'summary_mj1': turnState.e_wd=ev.e_wd;turnState.bestArch=ev.best_arch||turnState.bestArch;break;
+    case 'fusion': addFusionNote(ev);break;
+    case 'image': addImage(ev);break;
+    case 'error': addStep({agent:'Gate',model:'FORGE',text:'error: '+ev.message});break;
   }
 }
 
-// window layout tiler
 document.getElementById('layout').onclick=function(){
   this.textContent='Tiling…';
-  fetch(BASE+'/layout',{method:'POST'}).then(r=>r.json()).then(j=>{
-    this.textContent='Window layout';
-  }).catch(()=>{this.textContent='Window layout';});
+  fetch(BASE+'/layout',{method:'POST'}).then(r=>r.json()).then(()=>{this.textContent='Window layout';}).catch(()=>{this.textContent='Window layout';});
 };
+function clearFeed(){
+  feed.querySelectorAll(':scope > *:not(#empty)').forEach(n=>n.remove());
+  resetTurn();lastCost=0;rosterActive={};renderTeam();if(empty)empty.style.display='flex';
+}
+document.getElementById('newdesign').onclick=clearFeed;
 
-// fusion health dot
 function health(){
   fetch(BASE+'/health').then(r=>r.json()).then(j=>{
-    const dot=document.getElementById('fusiondot');
-    dot.className='dot '+(j.fusion?'live':'off');
+    document.getElementById('fusiondot').className='gdot '+(j.fusion?'on':'');
+    document.getElementById('fusionword').textContent=j.fusion?'connected':'offline';
   }).catch(()=>{});
 }
-health(); setInterval(health,8000);
-autoGrow();
+health();setInterval(health,8000);autoGrow();
+
+// auto-replay the last completed MJ-1 turn so the panel is never empty
+function replay(events){
+  if(empty)empty.style.display='none';
+  const g=events.find(e=>e.event==='goal');
+  if(g)feed.appendChild(el(`<div class="goal">${esc(g.message)}</div>`));
+  const stream=events.filter(e=>e.event!=='goal');let i=0;
+  const tag=el(`<div class="replaying">replay of the last live run</div>`);feed.appendChild(tag);
+  (function tick(){
+    if(i>=stream.length){tag.remove();if(turnState.kind)renderDone();return;}
+    handle(stream[i]);i++;
+    setTimeout(tick, stream[i-1]&&stream[i-1].event==='image'?260:90);
+  })();
+}
+fetch(BASE+'/last').then(r=>r.json()).then(j=>{if(j.events&&j.events.length>3)replay(j.events);}).catch(()=>{});
 </script>
 </body>
 </html>

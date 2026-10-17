@@ -25,6 +25,8 @@ if ROOT not in sys.path:
 os.environ.setdefault("FREECAD_BIN", "/Applications/FreeCAD.app/Contents/Resources/bin")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+TRANSCRIPTS = os.path.join(HERE, "runs")
+os.makedirs(TRANSCRIPTS, exist_ok=True)
 
 from forge.llm import MODELS                       # noqa: E402
 from forge import loop as forge_loop               # noqa: E402
@@ -273,8 +275,49 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
+        elif path == "/last":
+            body = json.dumps(self._last_turn()).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
         else:
             self.send_response(404); self.end_headers()
+
+    def _last_turn(self):
+        """Newest complete MJ-1 transcript (has a fusion image), for auto-replay."""
+        try:
+            files = sorted((f for f in os.listdir(TRANSCRIPTS) if f.startswith("turn_") and f.endswith(".jsonl")),
+                           reverse=True)
+        except FileNotFoundError:
+            return {"events": []}
+        for fn in files:
+            try:
+                lines = [json.loads(x) for x in open(os.path.join(TRANSCRIPTS, fn)) if x.strip()]
+            except Exception:
+                continue
+            has_img = any(e.get("event") == "image" for e in lines)
+            is_mj1 = any(e.get("event") == "turn_mj1" for e in lines)
+            if is_mj1 and has_img:
+                return {"file": fn, "events": lines}
+        # fall back to any complete turn with an image
+        for fn in files:
+            try:
+                lines = [json.loads(x) for x in open(os.path.join(TRANSCRIPTS, fn)) if x.strip()]
+            except Exception:
+                continue
+            if any(e.get("event") == "image" for e in lines):
+                return {"file": fn, "events": lines}
+        # fresh clone: fall back to the committed fixture transcript
+        fx = os.path.join(HERE, "fixture", "last_mj1_turn.jsonl")
+        if os.path.exists(fx):
+            try:
+                lines = [json.loads(x) for x in open(fx) if x.strip()]
+                return {"file": "fixture", "events": lines}
+            except Exception:
+                pass
+        return {"events": []}
 
     def do_POST(self):
         if self.path.split("?")[0] == "/layout":
@@ -300,16 +343,27 @@ class Handler(BaseHTTPRequestHandler):
         q = queue.Queue()
         th = threading.Thread(target=run_turn, args=(goal, q), daemon=True)
         th.start()
+        # record this turn so the panel can auto-replay the last one on next launch
+        tpath = os.path.join(TRANSCRIPTS, f"turn_{int(time.time())}.jsonl")
+        tf = open(tpath, "w")
+        tf.write(json.dumps({"event": "goal", "message": goal}) + "\n")
         while True:
             item = q.get()
             if item is None:
                 break
             try:
+                tf.write(json.dumps(item) + "\n")
+            except Exception:
+                pass
+            try:
                 self.wfile.write(f"data: {json.dumps(item)}\n\n".encode())
                 self.wfile.flush()
             except (BrokenPipeError, ConnectionResetError):
                 break
-
+        try:
+            tf.close()
+        except Exception:
+            pass
     def _tile_windows(self):
         try:
             from studio import layout

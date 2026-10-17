@@ -31,7 +31,7 @@ if target is not None and app.activeDocument is not target:
     target.activate()
 json.dumps({{"active": app.activeDocument.name}})
 '''
-    return fusion._exec("import json\n" + code, 30.0)
+    return fusion._exec("import json\n" + code, 90.0)
 
 
 def _set_skin_visible(visible, patterns=("SKIN", "Skin")):
@@ -62,7 +62,7 @@ def walk(occs):
 walk(root.occurrences)
 json.dumps({{"touched": touched, "visible": want}})
 '''
-    return fusion._exec("import json\n" + code, 45.0)
+    return fusion._exec("import json\n" + code, 90.0)
 
 
 def capture(doc_prefix, view="iso", width=2400, height=1500, hide_skin=False,
@@ -98,7 +98,7 @@ root = des.rootComponent
 names = [root.occurrences.item(i).component.name for i in range(root.occurrences.count)]
 json.dumps({"active": app.activeDocument.name, "components": names})
 '''
-    raw = fusion._exec("import json\n" + code, 30.0)
+    raw = fusion._exec("import json\n" + code, 90.0)
     return json.loads(raw) if isinstance(raw, str) else raw
 
 
