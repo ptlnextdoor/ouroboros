@@ -1,0 +1,638 @@
+{
+ "bom": [
+  {
+   "name": "JetCat P550-PRO-GH turbine",
+   "vendor": "jetcat",
+   "function": "turbojet engine",
+   "qty": 1,
+   "mass_g": 4900.0,
+   "kind": "STAND-IN",
+   "source": "cad/vendor/jetcat/P550-PRO-Size.pdf + P550-PRO-mount-clamp.pdf + Datasheet V1.1 (jetcat.de)",
+   "step": "mj1/cad/vendor/jetcat/jetcat_p550.step",
+   "dims_bbox_mm": [
+    427.0,
+    178.4,
+    230.0
+   ],
+   "dims_declared_mm": [
+    427.0,
+    175.0,
+    175.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    0.0,
+    55.0,
+    3.4
+   ],
+   "note": "agent category: not-proposed-by-agent"
+  },
+  {
+   "name": "JetCat PRO-Interface V2 (ECU breakout)",
+   "vendor": "jetcat",
+   "function": "engine ECU interface",
+   "qty": 1,
+   "mass_g": 45.0,
+   "kind": "STAND-IN",
+   "source": "jetcat.de PRO Accessories 61168-0020 (photo-scaled; no drawing published)",
+   "step": "mj1/cad/vendor/jetcat/jetcat_pro_interface.step",
+   "dims_bbox_mm": [
+    96.0,
+    48.0,
+    19.0
+   ],
+   "dims_declared_mm": [
+    72.0,
+    48.0,
+    18.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    24.0,
+    0.0,
+    1.0
+   ],
+   "note": "agent category: not-proposed-by-agent"
+  },
+  {
+   "name": "JetCat brushless fuel pump",
+   "vendor": "jetcat",
+   "function": "fuel system",
+   "qty": 1,
+   "mass_g": 95.0,
+   "kind": "STAND-IN",
+   "source": "jetcat.de Fuel pumps (photo-scaled, d30 x 72 body, 4 mm barbs)",
+   "step": "mj1/cad/vendor/jetcat/jetcat_fuel_pump.step",
+   "dims_bbox_mm": [
+    100.0,
+    30.0,
+    49.0
+   ],
+   "dims_declared_mm": [
+    72.0,
+    30.0,
+    30.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    28.0,
+    19.0,
+    0.0
+   ],
+   "note": "agent category: fuel system"
+  },
+  {
+   "name": "JetCat Hopper UAT (air trap tank)",
+   "vendor": "jetcat",
+   "function": "fuel system",
+   "qty": 1,
+   "mass_g": 60.0,
+   "kind": "STAND-IN",
+   "source": "JetCat Hopper tank ~250 ml, photo-scaled d60 x 110, clunk + 2 barbs on cap",
+   "step": "mj1/cad/vendor/jetcat/jetcat_hopper.step",
+   "dims_bbox_mm": [
+    122.0,
+    62.0,
+    62.0
+   ],
+   "dims_declared_mm": [
+    110.0,
+    60.0,
+    60.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    12.0,
+    2.0,
+    2.0
+   ],
+   "note": "agent category: fuel system"
+  },
+  {
+   "name": "Fuel bag 3 L (soft kerosene bladder)",
+   "vendor": "fuel",
+   "function": "fuel system",
+   "qty": 1,
+   "mass_g": 180.0,
+   "kind": "STAND-IN",
+   "source": "volume target 3.0 L (mj1 sizing); envelope 300 x 175 x 65 mm filled, R20 edges",
+   "step": "mj1/cad/vendor/fuel/fuel_bag_3l.step",
+   "dims_bbox_mm": [
+    316.0,
+    175.0,
+    65.0
+   ],
+   "dims_declared_mm": [
+    300.0,
+    175.0,
+    65.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    16.0,
+    0.0,
+    0.0
+   ],
+   "note": "agent category: fuel system"
+  },
+  {
+   "name": "KST X20-7.4-M-830 servo",
+   "vendor": "kst",
+   "function": "control servo",
+   "qty": 2,
+   "mass_g": 80.0,
+   "kind": "STAND-IN",
+   "source": "cad/vendor/kst/X20-7.4-M-830.pdf (KST spec sheet 2021-12, dimensioned drawing)",
+   "step": "mj1/cad/vendor/kst/kst_x20.step",
+   "dims_bbox_mm": [
+    55.0,
+    20.0,
+    46.5
+   ],
+   "dims_declared_mm": [
+    40.0,
+    40.0,
+    20.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    15.0,
+    6.5,
+    0.0
+   ],
+   "note": "agent category: not-proposed-by-agent"
+  },
+  {
+   "name": "Matek H743-WING V3 flight controller",
+   "vendor": "matek",
+   "function": "flight controller",
+   "qty": 1,
+   "mass_g": 30.0,
+   "kind": "STAND-IN",
+   "source": "mateksys.com H743-WING page (web.archive 2025-11): 54 x 36 x 13 mm, 30.5 x 30.5 d4 mount (d3 with grommets), 30 g; board stack layout from product photos",
+   "step": "mj1/cad/vendor/matek/matek_h743_wing.step",
+   "dims_bbox_mm": [
+    54.0,
+    36.3,
+    12.7
+   ],
+   "dims_declared_mm": [
+    54.0,
+    36.0,
+    13.0
+   ],
+   "dims_status": "match",
+   "dims_deltas_mm": [
+    0.0,
+    0.3,
+    -0.3
+   ],
+   "note": "agent category: flight control"
+  },
+  {
+   "name": "Matek M10Q-5883 GNSS + compass",
+   "vendor": "matek",
+   "function": "GNSS + compass",
+   "qty": 1,
+   "mass_g": 8.0,
+   "kind": "REAL",
+   "source": "https://www.mateksys.com/Downloads/other/M10Q-5883_step.zip (manufacturer STEP, 2023-03)",
+   "step": "mj1/cad/vendor/matek/M10Q-5883.step",
+   "dims_bbox_mm": [
+    20.0,
+    20.0,
+    11.4
+   ],
+   "dims_declared_mm": [
+    20.0,
+    20.0,
+    12.4
+   ],
+   "dims_status": "match",
+   "dims_deltas_mm": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "note": "agent category: not-proposed-by-agent"
+  },
+  {
+   "name": "Matek ASPD-4525 airspeed sensor",
+   "vendor": "matek",
+   "function": "airspeed sensor",
+   "qty": 1,
+   "mass_g": 3.5,
+   "kind": "STAND-IN",
+   "source": "mateksys.com ASPD-4525: TE 4525DO-DS5AI001DP, JST-GH-4P, 3.5 g; board 16.5 x 15 photo-scaled",
+   "step": "mj1/cad/vendor/matek/matek_aspd4525.step",
+   "dims_bbox_mm": [
+    16.9,
+    15.0,
+    14.0
+   ],
+   "dims_declared_mm": [
+    8.7,
+    8.7,
+    6.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    8.2,
+    6.3,
+    8.0
+   ],
+   "note": "agent category: not-proposed-by-agent"
+  },
+  {
+   "name": "Pitot tube (ASPD-4525 kit)",
+   "vendor": "matek",
+   "function": "airspeed sensor",
+   "qty": 1,
+   "mass_g": 6.0,
+   "kind": "STAND-IN",
+   "source": "Matek ASPD-4525 kit aluminium pitot: d4 x 85 mm tube with d3 static/total barbs",
+   "step": "mj1/cad/vendor/matek/pitot_tube.step",
+   "dims_bbox_mm": [
+    93.0,
+    7.0,
+    14.5
+   ],
+   "dims_declared_mm": [
+    85.0,
+    4.0,
+    4.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    8.0,
+    10.5,
+    3.0
+   ],
+   "note": "agent category: not-proposed-by-agent"
+  },
+  {
+   "name": "RunCam Racer Nano 3 FPV camera",
+   "vendor": "runcam",
+   "function": "FPV camera",
+   "qty": 1,
+   "mass_g": 3.0,
+   "kind": "STAND-IN",
+   "source": "RunCam Racer Nano 3 spec: 14 x 14 mm, 1.8 mm lens, 3 g; depth ~19 mm photo-scaled",
+   "step": "mj1/cad/vendor/runcam/runcam_racer_nano3.step",
+   "dims_bbox_mm": [
+    21.5,
+    14.0,
+    14.0
+   ],
+   "dims_declared_mm": null,
+   "dims_status": null,
+   "dims_deltas_mm": null,
+   "note": "agent category: not-proposed-by-agent"
+  },
+  {
+   "name": "RunCam 2 4K action camera",
+   "vendor": "runcam",
+   "function": "onboard camera",
+   "qty": 1,
+   "mass_g": 49.0,
+   "kind": "STAND-IN",
+   "source": "RunCam 2 4K spec: 66 x 38 x 21 mm, 49 g; lens module d14 on the front",
+   "step": "mj1/cad/vendor/runcam/runcam2_4k.step",
+   "dims_bbox_mm": [
+    70.0,
+    21.0,
+    39.0
+   ],
+   "dims_declared_mm": [
+    66.0,
+    38.0,
+    21.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    4.0,
+    1.0,
+    0.0
+   ],
+   "note": "agent category: not-proposed-by-agent"
+  },
+  {
+   "name": "TBS Crossfire Nano RX",
+   "vendor": "tbs",
+   "function": "RC receiver",
+   "qty": 1,
+   "mass_g": 0.5,
+   "kind": "STAND-IN",
+   "source": "TBS Crossfire Nano RX spec: 18 x 11 mm, 0.5 g, u.FL antenna, 4-pin 2.54 pads/header",
+   "step": "mj1/cad/vendor/tbs/crsf_nano_rx.step",
+   "dims_bbox_mm": [
+    18.0,
+    11.0,
+    5.6
+   ],
+   "dims_declared_mm": [
+    18.0,
+    11.0,
+    1.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    0.0,
+    0.0,
+    4.6
+   ],
+   "note": "agent category: not-proposed-by-agent"
+  },
+  {
+   "name": "5.8 GHz VTX (TBS Unify Pro32 HV class)",
+   "vendor": "tbs",
+   "function": "video transmitter",
+   "qty": 1,
+   "mass_g": 7.5,
+   "kind": "STAND-IN",
+   "source": "TBS Unify Pro32 HV: 27 x 20 x 5 mm, 7.5 g, MMCX; 20 x 20 M2 pattern",
+   "step": "mj1/cad/vendor/tbs/vtx_58.step",
+   "dims_bbox_mm": [
+    32.1,
+    20.0,
+    5.1
+   ],
+   "dims_declared_mm": [
+    27.0,
+    20.0,
+    5.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    5.1,
+    0.0,
+    0.1
+   ],
+   "note": "agent category: video"
+  },
+  {
+   "name": "LiPo 4S 3300 mAh (Gens Ace / Tattu class)",
+   "vendor": "battery",
+   "function": "avionics battery",
+   "qty": 1,
+   "mass_g": 330.0,
+   "kind": "STAND-IN",
+   "source": "Gens Ace 4S 3300 mAh 35C: 136 x 43 x 30 mm, 328 g; XT60 + JST-XH balance",
+   "step": "mj1/cad/vendor/battery/lipo_4s_3300.step",
+   "dims_bbox_mm": [
+    192.0,
+    43.0,
+    30.0
+   ],
+   "dims_declared_mm": [
+    136.0,
+    43.0,
+    30.0
+   ],
+   "dims_status": "encloses",
+   "dims_deltas_mm": [
+    56.0,
+    0.0,
+    0.0
+   ],
+   "note": "agent category: not-proposed-by-agent"
+  },
+  {
+   "name": "ISO 4762 SHCS M3x8 (A2)",
+   "vendor": "fasteners",
+   "function": "fasteners",
+   "qty": 1,
+   "mass_g": 0.95,
+   "kind": "GENERATED",
+   "source": "ISO 4762: dk 5.5, k 3, s 2.5, P 0.5",
+   "step": "mj1/cad/vendor/fasteners/shcs_m3x8.step",
+   "dims_bbox_mm": [
+    5.5,
+    5.5,
+    11.0
+   ],
+   "dims_declared_mm": null,
+   "dims_status": null,
+   "dims_deltas_mm": null,
+   "note": "agent category: airframe fasteners"
+  },
+  {
+   "name": "ISO 4762 SHCS M3x12 (A2)",
+   "vendor": "fasteners",
+   "function": "fasteners",
+   "qty": 1,
+   "mass_g": 1.2,
+   "kind": "GENERATED",
+   "source": "ISO 4762: dk 5.5, k 3, s 2.5, P 0.5",
+   "step": "mj1/cad/vendor/fasteners/shcs_m3x12.step",
+   "dims_bbox_mm": [
+    5.5,
+    5.5,
+    15.0
+   ],
+   "dims_declared_mm": null,
+   "dims_status": null,
+   "dims_deltas_mm": null,
+   "note": "agent category: airframe fasteners"
+  },
+  {
+   "name": "ISO 4762 SHCS M4x10 (A2)",
+   "vendor": "fasteners",
+   "function": "fasteners",
+   "qty": 1,
+   "mass_g": 2.1,
+   "kind": "GENERATED",
+   "source": "ISO 4762: dk 7, k 4, s 3, P 0.7",
+   "step": "mj1/cad/vendor/fasteners/shcs_m4x10.step",
+   "dims_bbox_mm": [
+    7.0,
+    7.0,
+    14.0
+   ],
+   "dims_declared_mm": null,
+   "dims_status": null,
+   "dims_deltas_mm": null,
+   "note": "agent category: airframe fasteners"
+  },
+  {
+   "name": "ISO 7380 BHCS M3x6 (A2)",
+   "vendor": "fasteners",
+   "function": "fasteners",
+   "qty": 1,
+   "mass_g": 0.55,
+   "kind": "GENERATED",
+   "source": "ISO 7380-1: dk 5.7, k 1.65, s 2, P 0.5",
+   "step": "mj1/cad/vendor/fasteners/bhcs_m3x6.step",
+   "dims_bbox_mm": [
+    5.7,
+    5.7,
+    7.7
+   ],
+   "dims_declared_mm": null,
+   "dims_status": null,
+   "dims_deltas_mm": null,
+   "note": "agent category: airframe fasteners"
+  },
+  {
+   "name": "ISO 10642 CSK M3x8 (A2)",
+   "vendor": "fasteners",
+   "function": "fasteners",
+   "qty": 1,
+   "mass_g": 0.7,
+   "kind": "GENERATED",
+   "source": "ISO 10642: dk 6.72 theoretical, k 1.86, 90 deg, s 2, P 0.5",
+   "step": "mj1/cad/vendor/fasteners/csk_m3x8.step",
+   "dims_bbox_mm": [
+    6.3,
+    6.3,
+    9.9
+   ],
+   "dims_declared_mm": null,
+   "dims_status": null,
+   "dims_deltas_mm": null,
+   "note": "agent category: airframe fasteners"
+  },
+  {
+   "name": "Heat-set insert M3 brass (OD 4.0, L 5.7)",
+   "vendor": "fasteners",
+   "function": "fasteners",
+   "qty": 1,
+   "mass_g": 0.5,
+   "kind": "GENERATED",
+   "source": "McMaster 94180A331 class: OD 4.0, L 5.7, for d4.0 hole",
+   "step": "mj1/cad/vendor/fasteners/insert_m3.step",
+   "dims_bbox_mm": [
+    4.0,
+    4.0,
+    5.7
+   ],
+   "dims_declared_mm": null,
+   "dims_status": null,
+   "dims_deltas_mm": null,
+   "note": "agent category: airframe fasteners"
+  },
+  {
+   "name": "Heat-set insert M4 brass (OD 5.6, L 8.1)",
+   "vendor": "fasteners",
+   "function": "fasteners",
+   "qty": 1,
+   "mass_g": 1.2,
+   "kind": "GENERATED",
+   "source": "McMaster 94180A351 class: OD 5.6, L 8.1, for d5.6 hole",
+   "step": "mj1/cad/vendor/fasteners/insert_m4.step",
+   "dims_bbox_mm": [
+    5.6,
+    5.6,
+    8.1
+   ],
+   "dims_declared_mm": null,
+   "dims_status": null,
+   "dims_deltas_mm": null,
+   "note": "agent category: airframe fasteners"
+  },
+  {
+   "name": "ISO 10511 / DIN 985 M3 nyloc nut (A2)",
+   "vendor": "fasteners",
+   "function": "fasteners",
+   "qty": 1,
+   "mass_g": 0.4,
+   "kind": "GENERATED",
+   "source": "DIN 985 M3: s 5.5, m 4.0, collar d ~5.0, P 0.5",
+   "step": "mj1/cad/vendor/fasteners/nyloc_m3.step",
+   "dims_bbox_mm": [
+    6.4,
+    5.5,
+    4.0
+   ],
+   "dims_declared_mm": null,
+   "dims_status": null,
+   "dims_deltas_mm": null,
+   "note": "agent category: airframe fasteners"
+  }
+ ],
+ "rollup": {
+  "by_function_g": {
+   "turbojet engine": 4900.0,
+   "fuel system": 335.0,
+   "avionics battery": 330.0,
+   "control servo": 160.0,
+   "onboard camera": 49.0,
+   "engine ECU interface": 45.0,
+   "flight controller": 30.0,
+   "airspeed sensor": 9.5,
+   "GNSS + compass": 8.0,
+   "fasteners": 7.6,
+   "video transmitter": 7.5,
+   "FPV camera": 3.0,
+   "RC receiver": 0.5
+  },
+  "total_g": 5885.1,
+  "mtow_budget_g": 25000.0,
+  "fraction_of_mtow": 0.2354,
+  "note": "BOM covers bought-in parts (engine, avionics, servos, battery, fuel system, fasteners). Airframe structure and fuel load are sized separately in mj1/sizing.py."
+ },
+ "datasheet_checks": [
+  {
+   "part": "JetCat P550-PRO-GH turbine",
+   "checks": [
+    {
+     "field": "thrust_N",
+     "expected": 550,
+     "extracted": 550.0,
+     "ok": true,
+     "evidence": "Thrust range:                    28-550N"
+    },
+    {
+     "field": "mass_g",
+     "expected": 4900,
+     "extracted": 4900.0,
+     "ok": true,
+     "evidence": "Weight:                          4900g"
+    },
+    {
+     "field": "diameter_mm",
+     "expected": 175,
+     "extracted": 175.0,
+     "ok": true,
+     "evidence": "Diameter engine:                 175mm"
+    }
+   ],
+   "ok": true
+  },
+  {
+   "part": "KST X20-7.4-M-830 servo",
+   "checks": [
+    {
+     "field": "case_L_mm",
+     "expected": 40,
+     "extracted": 40.0,
+     "ok": true,
+     "evidence": "Case Dimensions             40mm*20mm*40mm\u00b10.2mm"
+    },
+    {
+     "field": "case_H_mm",
+     "expected": 40,
+     "extracted": 40.0,
+     "ok": true,
+     "evidence": "Case Dimensions             40mm*20mm*40mm\u00b10.2mm"
+    },
+    {
+     "field": "case_W_mm",
+     "expected": 20,
+     "extracted": 20.0,
+     "ok": true,
+     "evidence": "Case Dimensions             40mm*20mm*40mm\u00b10.2mm"
+    },
+    {
+     "field": "mass_g",
+     "expected": 80,
+     "extracted": 80.0,
+     "ok": true,
+     "evidence": "Weight                                  80g\u00b110%"
+    }
+   ],
+   "ok": true
+  }
+ ],
+ "undersized_parts": []
+}
