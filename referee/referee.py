@@ -52,7 +52,7 @@ def _solve(nodes, els, fix, load_nodes, F, mat, d):
                 if F[k]:
                     f.write(f"{i},{k + 1},{F[k] / len(load_nodes)}\n")
         f.write("*NODE FILE\nU\n*EL FILE\nS\n*END STEP\n")
-    r = subprocess.run([CCX, "job"], cwd=d, capture_output=True, text=True, timeout=300)
+    r = subprocess.run([CCX, "job"], cwd=d, capture_output=True, text=True, timeout=90)
     frd = os.path.join(d, "job.frd")
     if r.returncode or not os.path.exists(frd) or "Job finished" not in r.stdout:
         raise RuntimeError("ccx failed: " + r.stdout[-300:])
@@ -124,8 +124,9 @@ def evaluate(solid, motor_xy, arm_top_z, cases, material="al6061", fos=1.5, defl
             except RuntimeError as e:   # bad tets (nonpositive jacobian): remesh finer once, re-solve
                 if v.get("remeshed"):
                     raise
-                v["remeshed"] = f"{h0:.2f}->{0.6 * h0:.2f} mm after: {str(e)[:80]}"
-                nodes, els = _mesh(step, d, 0.6 * h0)
+                h1 = max(0.75 * h0, 0.7)  # ponytail: floor keeps the mesh < ~40k nodes; finer than this stalls ccx
+                v["remeshed"] = f"{h0:.2f}->{h1:.2f} mm after: {str(e)[:80]}"
+                nodes, els = _mesh(step, d, h1)
                 ids = np.array(list(nodes)); X = np.array([nodes[i] for i in ids])
                 fix = ids[np.abs(X[:, 0] - X[:, 0].min()) < 1e-3].tolist()
                 r = np.hypot(X[:, 0] - mx, X[:, 1] - my)
