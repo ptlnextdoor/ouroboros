@@ -1,0 +1,11 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+# large artifacts
+gens/*/adapter/
+runs/
+data/raw/
+*.safetensors
+wandb/
