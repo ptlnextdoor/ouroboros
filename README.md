@@ -153,7 +153,7 @@ See [`docs/PROVENANCE.md`](docs/PROVENANCE.md).
 
 ## Team
 - Aayushya Patel ([@ptlnextdoor](https://github.com/ptlnextdoor))
-- _teammates added on the day_
+- Krish Garg ([@krishhgg](https://github.com/krishhgg))
 
 Built at the **Recursive Agents Hackathon** (Crusoe × Cerebral Valley), Shack15, San Francisco.
 
