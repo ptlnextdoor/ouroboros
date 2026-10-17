@@ -52,6 +52,10 @@ it can't see inside, and it only keeps lessons (playbook, then LoRA weights) tha
 6. Own only your files. If you must touch a shared file, say so in the PR body.
 
 ## UI taste (the user hated vibe-coded UI)
+MANDATORY for any UI work: load and follow these skills (installed in ~/.claude/skills/ from
+github.com/42nights/ui-bundle): `impeccable` (product register: reference/product.md), `interface-design`,
+`emil-design-eng`, `taste-skill`. Run impeccable's critique on your own screenshot before you report.
+Layout must be fluid (1280-2560 wide, no clipping, no dead gaps); test at 1440x900, 1600x1000, 1920x1080.
 Dark #06080d, green #2ee6a6 = physics passed, red #ff5f6d = referee said no, blue #4aa8ff accent,
 mono labels, real numbers only. No gradients-for-decoration, no emoji, no "AI-powered", no lorem.
 Model framed and centered, nothing overlapping, legible at 1920x1080. Reference look: Fusion 360 + Apple keynote.
