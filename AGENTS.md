@@ -6,9 +6,12 @@ Updated 2026-10-17 14:10 PT. Freeze 4:00 PM. Working demo target 2:30 PM.
 FORGE: an AI hardware engineer. One sentence in, a manufacturable part out, every claim checked by physics
 it can't see inside, and it only keeps lessons (playbook, then LoRA weights) that win on parts it never saw.
 
-## THE PITCH (founder, 2:31 PM, overrides older notes)
-Zipline (blood and organ delivery to hospitals) but SUPERSONIC, designed by a high-schooler with no
-engineering budget. The hero vehicle is **MJ-1**, our Boom-Prize supersonic RC jet
+## THE PITCH (founder, 2:38 PM, overrides older notes)
+FORGE is the tool. The VISION (from a judge's feedback): hardware abundance, where one person with a $200
+subscription can build what used to take a $20M team. A supersonic Zipline (blood and organ delivery to
+hospitals) is ONE example of a startup someone could build with FORGE, not the product itself. Lead with the
+tool; use the supersonic-delivery idea as the "imagine what you could build" moment. The hero vehicle on
+screen is **MJ-1**, our Boom-Prize supersonic RC jet
 (/Users/aayu/Workspace/developer/mj1). STOP leading with the bracket: "any Opus or GPT-6 Astra can make a
 bracket." The bracket loop is only the proof that the referee + self-improvement works (held-out 5/6 -> 6/6).
 What is impressive and must be on screen: SOURCING real parts (JetCat P550-PRO turbine, KST servos, Matek FC,
