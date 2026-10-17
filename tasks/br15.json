@@ -1,0 +1,13 @@
+{
+  "id": "br15",
+  "prompt": "hold a 0.9 kg valve 55 mm off a wall, PETG printed, 2 g",
+  "load_kg": 0.9,
+  "reach_mm": 55,
+  "arm_len": 65.0,
+  "material": "petg",
+  "g_factor": 2,
+  "fos": 1.5,
+  "defl_limit_mm": 1.1,
+  "split": "heldout",
+  "mass_limit_g": 28.6
+}

@@ -1,0 +1,13 @@
+{
+  "id": "br08",
+  "prompt": "cantilever a 1 kg antenna 140 mm out, aluminium, 2.5 g",
+  "load_kg": 1.0,
+  "reach_mm": 140,
+  "arm_len": 150.0,
+  "material": "al6061",
+  "g_factor": 2.5,
+  "fos": 1.5,
+  "defl_limit_mm": 2.2,
+  "split": "dev",
+  "mass_limit_g": 111.0
+}

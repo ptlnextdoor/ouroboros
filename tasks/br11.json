@@ -1,0 +1,13 @@
+{
+  "id": "br11",
+  "prompt": "mount a 2 kg motor 110 mm off a wall, aluminium, 3 g",
+  "load_kg": 2.0,
+  "reach_mm": 110,
+  "arm_len": 120.0,
+  "material": "al6061",
+  "g_factor": 3,
+  "fos": 1.5,
+  "defl_limit_mm": 1.6,
+  "split": "heldout",
+  "mass_limit_g": 83.2
+}

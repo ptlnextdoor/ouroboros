@@ -1,0 +1,13 @@
+{
+  "id": "br16",
+  "prompt": "mount a 1.8 kg fan 150 mm off a wall, aluminium, 2.5 g",
+  "load_kg": 1.8,
+  "reach_mm": 150,
+  "arm_len": 160.0,
+  "material": "al6061",
+  "g_factor": 2.5,
+  "fos": 1.5,
+  "defl_limit_mm": 2.5,
+  "split": "heldout",
+  "mass_limit_g": 121.0
+}

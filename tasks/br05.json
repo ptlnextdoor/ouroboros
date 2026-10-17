@@ -1,0 +1,13 @@
+{
+  "id": "br05",
+  "prompt": "support a 1.5 kg light 120 mm off a wall in aluminium, 2.5 g",
+  "load_kg": 1.5,
+  "reach_mm": 120,
+  "arm_len": 130.0,
+  "material": "al6061",
+  "g_factor": 2.5,
+  "fos": 1.5,
+  "defl_limit_mm": 1.8,
+  "split": "train",
+  "mass_limit_g": 92.3
+}

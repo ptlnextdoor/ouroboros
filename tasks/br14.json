@@ -1,0 +1,13 @@
+{
+  "id": "br14",
+  "prompt": "support a 3.5 kg battery 75 mm off a wall, aluminium, 3 g",
+  "load_kg": 3.5,
+  "reach_mm": 75,
+  "arm_len": 85.0,
+  "material": "al6061",
+  "g_factor": 3,
+  "fos": 1.5,
+  "defl_limit_mm": 1.0,
+  "split": "heldout",
+  "mass_limit_g": 52.9
+}

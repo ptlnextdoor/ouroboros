@@ -1,0 +1,13 @@
+{
+  "id": "br07",
+  "prompt": "hold a 2.5 kg motor 90 mm off a wall, aluminium, 3 g",
+  "load_kg": 2.5,
+  "reach_mm": 90,
+  "arm_len": 100.0,
+  "material": "al6061",
+  "g_factor": 3,
+  "fos": 1.5,
+  "defl_limit_mm": 1.2,
+  "split": "dev",
+  "mass_limit_g": 65.8
+}

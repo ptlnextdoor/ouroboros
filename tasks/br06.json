@@ -1,0 +1,13 @@
+{
+  "id": "br06",
+  "prompt": "bracket a 0.8 kg pump 50 mm off a wall, PETG printed, 2 g",
+  "load_kg": 0.8,
+  "reach_mm": 50,
+  "arm_len": 60.0,
+  "material": "petg",
+  "g_factor": 2,
+  "fos": 1.5,
+  "defl_limit_mm": 1.2,
+  "split": "train",
+  "mass_limit_g": 27.0
+}

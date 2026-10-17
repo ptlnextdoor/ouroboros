@@ -1,0 +1,13 @@
+{
+  "id": "br09",
+  "prompt": "mount a 4 kg actuator 60 mm off a wall, aluminium, 3 g",
+  "load_kg": 4.0,
+  "reach_mm": 60,
+  "arm_len": 70.0,
+  "material": "al6061",
+  "g_factor": 3,
+  "fos": 1.5,
+  "defl_limit_mm": 0.9,
+  "split": "dev",
+  "mass_limit_g": 45.0
+}

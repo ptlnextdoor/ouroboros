@@ -1,0 +1,13 @@
+{
+  "id": "br12",
+  "prompt": "hold a 5 kg winch 65 mm off a wall, aluminium, 3 g",
+  "load_kg": 5.0,
+  "reach_mm": 65,
+  "arm_len": 75.0,
+  "material": "al6061",
+  "g_factor": 3,
+  "fos": 1.5,
+  "defl_limit_mm": 0.9,
+  "split": "heldout",
+  "mass_limit_g": 47.4
+}

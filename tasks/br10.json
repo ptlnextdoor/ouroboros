@@ -1,0 +1,13 @@
+{
+  "id": "br10",
+  "prompt": "hold a 0.6 kg controller 45 mm off a wall, PETG printed, 2 g",
+  "load_kg": 0.6,
+  "reach_mm": 45,
+  "arm_len": 55.0,
+  "material": "petg",
+  "g_factor": 2,
+  "fos": 1.5,
+  "defl_limit_mm": 1.0,
+  "split": "dev",
+  "mass_limit_g": 25.4
+}

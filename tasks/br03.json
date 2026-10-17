@@ -1,0 +1,13 @@
+{
+  "id": "br03",
+  "prompt": "cantilever a 0.5 kg camera 100 mm out, aluminium, 3 g",
+  "load_kg": 0.5,
+  "reach_mm": 100,
+  "arm_len": 110.0,
+  "material": "al6061",
+  "g_factor": 3,
+  "fos": 1.5,
+  "defl_limit_mm": 1.5,
+  "split": "train",
+  "mass_limit_g": 73.9
+}
