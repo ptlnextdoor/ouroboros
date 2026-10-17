@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A practical brief for an autonomous electronics research prototype, with real measured temperature traces and an evidence-first experiment loop.">
+<title>Thermal research factory | Project brief</title>
+<style>
+:root{--ink:var(--foreground,light-dark(#162b3b,#e5eef4));--quiet:var(--muted-foreground,light-dark(#526977,#a9bcc8));--rule:var(--border,light-dark(#cfdae2,#344956));--panel:light-dark(#edf4f8,#192c39);--blue:light-dark(#315dba,#99bcff);--blue-wash:light-dark(#dce8f7,#233c58);--petrol:light-dark(#18536a,#98d3dd);--good:light-dark(#276554,#9bd5bf);--body-font:"Avenir Next",Avenir,"Segoe UI",sans-serif;--mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+*{box-sizing:border-box}
+html{background:transparent;scroll-behavior:smooth}
+body{margin:0;background:transparent;color:var(--ink);font-family:var(--body-font);font-size:15px;line-height:1.6}
+main{width:100%;max-width:1120px;margin-inline:auto;min-width:0}
+a{color:var(--blue);text-underline-offset:4px}
+a:hover{text-decoration-thickness:2px}
+button,select{font:inherit}
+button,select,a{touch-action:manipulation}
+:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+.masthead{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:16px;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600}
+.brand-mark{display:grid;grid-template-columns:repeat(3,4px);gap:3px;width:18px;flex:none}
+.brand-mark i{width:4px;height:4px;background:var(--petrol)}
+.brand-mark i:nth-child(3n){opacity:.35}
+.meta{color:var(--quiet);text-align:right}
+.hero{padding:44px 0 30px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(190px,.6fr);gap:36px;align-items:end}
+.eyebrow{margin:0 0 14px;color:var(--petrol);font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+h1{margin:0;max-width:780px;font-size:clamp(34px,5.5vw,62px);line-height:1.07;font-weight:600;letter-spacing:-.045em;text-wrap:balance}
+.intro{font-size:17px;line-height:1.65;margin:20px 0 0;max-width:650px;color:var(--quiet)}
+.scope-note{border-left:3px solid var(--petrol);padding-left:16px;margin:0 0 4px;font-size:14px;color:var(--quiet)}
+.scope-note strong{display:block;color:var(--ink);font-weight:600;margin-bottom:6px}
+.verdict-strip{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 20px;padding:14px 0;border-block:1px solid var(--rule);font-size:13px}
+.verdict-strip p{margin:0}
+.verdict-strip .status{color:var(--good);font-weight:600}
+.section{padding-block:32px;border-bottom:1px solid var(--rule)}
+.section-head{display:flex;justify-content:space-between;gap:20px;align-items:start;margin-bottom:18px}
+h2{margin:0;font-size:24px;line-height:1.25;letter-spacing:-.025em;font-weight:600}
+.section-head p{margin:7px 0 0;color:var(--quiet);font-size:14px;max-width:650px}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--petrol);white-space:nowrap;padding-top:7px}
+.dataset-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:8px}
+.legend{display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--quiet)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.line-key{width:18px;height:3px;background:var(--blue);display:inline-block}
+.band-key{width:18px;height:10px;background:var(--blue-wash);display:inline-block}
+.select-label{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--quiet)}
+select{color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-radius:5px;padding:6px 26px 6px 9px;min-height:36px;font-size:12px}
+.plot{display:block;width:100%;height:250px;overflow:visible}
+.plot text{font-family:var(--body-font);fill:var(--quiet);font-size:11px}
+.plot .axis-title{fill:var(--ink);font-size:12px}
+.plot .grid{stroke:var(--rule);stroke-width:1;opacity:.65}
+.plot .band{fill:var(--blue-wash)}
+.plot .mean{fill:none;stroke:var(--blue);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.plot .point{fill:var(--blue)}
+.trace-detail{margin:5px 0 0;font-size:13px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.caption{margin:8px 0 0;font-size:12px;line-height:1.6;color:var(--quiet)}
+.loop-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin:20px 0 0;border-bottom:1px solid var(--rule)}
+.loop-tab{border:0;border-bottom:3px solid transparent;background:transparent;color:var(--quiet);text-align:left;padding:12px 6px 12px 0;cursor:pointer;min-height:58px;font-size:13px;white-space:nowrap}
+.loop-tab .step-index{font-family:var(--mono);font-size:10px;display:block;margin-bottom:3px;opacity:.7}
+.loop-tab[aria-selected="true"]{color:var(--petrol);border-color:var(--petrol);font-weight:600}
+.loop-tab:hover{color:var(--ink)}
+.loop-panel{padding:24px;background:var(--panel);border-radius:var(--radius,8px);margin-top:16px;min-height:176px}
+.loop-panel h3{font-size:18px;line-height:1.35;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+.loop-panel p{font-size:14px;line-height:1.65;margin:0;color:var(--quiet);max-width:780px}
+.artifact{display:flex;gap:8px;align-items:baseline;margin-top:16px;font-size:12px;flex-wrap:wrap}
+.artifact span{color:var(--quiet)}
+.artifact code{font:11px var(--mono);color:var(--petrol);overflow-wrap:anywhere}
+.control-note{margin:15px 0 0;font-size:13px;color:var(--quiet)}
+.resource-table{border-collapse:collapse;width:100%;font-size:13px}
+.resource-table th,.resource-table td{padding:12px 14px 12px 0;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+.resource-table th{font-family:var(--mono);font-size:10px;font-weight:400;letter-spacing:.04em;color:var(--quiet);text-transform:uppercase}
+.resource-table tbody tr:last-child td{border-bottom:0}
+.resource-table td:first-child{width:25%;font-weight:600}
+.resource-table td:nth-child(2){width:43%;color:var(--quiet)}
+.resource-table td:last-child{padding-right:0;color:var(--quiet)}
+.confirmed{color:var(--good);font-weight:600}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+.bottom-grid h3{font-size:16px;margin:0 0 12px;line-height:1.4;font-weight:600}
+.checks{margin:0;padding:0;list-style:none}
+.checks li{padding:9px 0;border-bottom:1px solid var(--rule);font-size:13px;display:flex;gap:10px;align-items:start}
+.checks li:last-child{border:0}
+.check-symbol{font-family:var(--mono);color:var(--quiet);flex:none}
+.done .check-symbol{color:var(--good)}
+.measure{margin:0 0 14px;font-size:14px;color:var(--quiet)}
+.measure strong{font-weight:600;color:var(--ink)}
+.track{margin:16px 0 0;font-size:12px;color:var(--petrol)}
+footer{padding:24px 0;color:var(--quiet);font-size:11px;line-height:1.7}
+footer p{margin:0 0 8px}
+.footer-line{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:16px;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+.skip{position:absolute;left:-10000px;top:8px;padding:8px;background:var(--panel);z-index:10}
+.skip:focus{left:8px}
+@media(min-width:1180px){main{padding-inline:0}}
+@media(max-width:620px){.hero{grid-template-columns:1fr;gap:22px;padding-top:30px}.scope-note{max-width:500px}.section{padding-block:26px}.section-head{gap:12px}h2{font-size:22px}.bottom-grid{grid-template-columns:1fr;gap:26px}.resource-table td:first-child{width:27%}.resource-table td:nth-child(2){width:39%}.meta{font-size:10px}.tag{font-size:9px}.loop-panel{padding:18px}.loop-tab{font-size:12px}}
+@media(max-width:380px){.masthead{font-size:10px;gap:9px}.brand{gap:7px}.loop-tab{font-size:11px}.tag{white-space:normal;text-align:right}.resource-table{font-size:12px}.resource-table th,.resource-table td{padding-right:9px}.intro{font-size:16px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{:root{color-scheme:light}body{font-size:11px}main{max-width:none}.hero{padding-top:20px}h1{font-size:38px}.loop-panel{break-inside:avoid}.section{break-inside:avoid}.skip{display:none}a{color:inherit}}
+</style>
+</head>
+<body>
+<a class="skip" href="#objective">Skip to project brief</a>
+<main>
+  <header class="masthead">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>Thermal research factory</div>
+    <div class="meta">Crusoe hackathon<br>Project brief / 17 Oct 2026</div>
+  </header>
+
+  <div class="hero" id="objective">
+    <div>
+      <p class="eyebrow">Autonomous experiments. Independent checks.</p>
+      <h1>A research team that has to prove its result.</h1>
+      <p class="intro">Give agents a thermal model that disagrees with measurements. Have them test explanations, revise the model and evaluate their changes on experiments reserved in advance.</p>
+    </div>
+    <p class="scope-note"><strong>One problem. A complete research loop.</strong>The proposed first build covers electronics temperature prediction. A general hardware factory and transfer to spacecraft remain future work.</p>
+  </div>
+
+  <div class="verdict-strip">
+    <p class="status">Feasible scope with existing resources</p>
+    <p>Data inspected &middot; Model improvement untested &middot; Agent integration pending</p>
+  </div>
+
+  <section class="section" aria-labelledby="measurements-title">
+    <div class="section-head">
+      <div><h2 id="measurements-title">Start with measured temperatures.</h2><p>Real electronics data is available. These traces establish what we can measure, not what an agent has improved.</p></div>
+      <span class="tag">Observed data</span>
+    </div>
+    <div class="dataset-head">
+      <div class="legend"><span><i class="line-key" aria-hidden="true"></i>Mean of 16 channels</span><span><i class="band-key" aria-hidden="true"></i>Channel range</span></div>
+      <label class="select-label" for="trace-select">Test <select id="trace-select"><option value="one">one</option><option value="hotspot_1">hotspot_1</option><option value="checkboard">checkboard</option></select></label>
+    </div>
+    <svg id="temperature-plot" class="plot" role="img" aria-labelledby="plot-title plot-description"><title id="plot-title">Measured electronics temperatures over time</title><desc id="plot-description">Mean temperature and channel range across a twenty-second recorded experiment. No model predictions are shown.</desc></svg>
+    <p class="trace-detail" id="trace-detail" aria-live="polite"></p>
+    <p class="caption">Source: the MPSoC thermal-modeling dataset by Terraneo, Leva and Fornaciari. The supplied plotting script specifies 1 kHz sampling. Each displayed point averages 200 samples per channel; the band spans the minimum and maximum of those channel averages. These are development examples. Final test experiments have not been reserved.</p>
+  </section>
+
+  <section class="section" aria-labelledby="loop-title" id="loop">
+    <div class="section-head"><div><h2 id="loop-title">The proposed research loop</h2><p>The agent proposes the work. A separate controller owns the budget, evidence records and acceptance checks.</p></div><span class="tag">Planned behavior</span></div>
+    <div class="loop-tabs" role="tablist" aria-label="Research stages">
+      <button type="button" class="loop-tab" role="tab" id="step-read" aria-selected="true" aria-controls="loop-panel" data-step="0"><span class="step-index">01</span>Read</button>
+      <button type="button" class="loop-tab" role="tab" id="step-explain" aria-selected="false" aria-controls="loop-panel" data-step="1"><span class="step-index">02</span>Explain</button>
+      <button type="button" class="loop-tab" role="tab" id="step-test" aria-selected="false" aria-controls="loop-panel" data-step="2"><span class="step-index">03</span>Test</button>
+      <button type="button" class="loop-tab" role="tab" id="step-verify" aria-selected="false" aria-controls="loop-panel" data-step="3"><span class="step-index">04</span>Verify</button>
+      <button type="button" class="loop-tab" role="tab" id="step-revise" aria-selected="false" aria-controls="loop-panel" data-step="4"><span class="step-index">05</span>Revise</button>
+    </div>
+    <div class="loop-panel" id="loop-panel" role="tabpanel" aria-labelledby="step-read">
+      <h3 id="stage-title">Reproduce a baseline.</h3>
+      <p id="stage-description">Read the dataset documentation and relevant research. Establish the measured inputs, units and assumptions. Reserve entire test experiments before fitting a simple CPU model.</p>
+      <div class="artifact"><span>Required output</span><code id="stage-artifact">Research contract + frozen baseline</code></div>
+    </div>
+    <p class="control-note">A worker saying "done" is not an acceptance condition. The final result needs a versioned model, saved observations, independent checks and a replay command.</p>
+  </section>
+
+  <section class="section" aria-labelledby="resources-title">
+    <div class="section-head"><div><h2 id="resources-title">Enough compute. A bounded build.</h2><p>The first version uses a small Python model and hosted agent inference. No new GPU rental or commercial solver license is assumed.</p></div><span class="tag">Resource assessment</span></div>
+    <table class="resource-table">
+      <thead><tr><th scope="col">Resource</th><th scope="col">Purpose</th><th scope="col">Current state</th></tr></thead>
+      <tbody>
+        <tr><td>Measured data</td><td>Evaluate thermal predictions against observations.</td><td><span class="confirmed">Downloaded and checked.</span> Open CC BY 4.0 dataset.</td></tr>
+        <tr><td>Local Python</td><td>Run the baseline, candidate models and evaluator on CPU.</td><td>Environment works. Thermal baseline not yet fitted.</td></tr>
+        <tr><td>Claude Code + Codex</td><td>Implement and inspect the research system.</td><td>Access reported in your existing setup.</td></tr>
+        <tr><td>Crusoe inference</td><td>Run the bounded agent loop for the event.</td><td>$50 credit offered by the event. Account and integration pending.</td></tr>
+        <tr><td>A100 access</td><td>Optional for later model workloads.</td><td>Latest SSH check timed out. Not required for this prototype.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section" aria-labelledby="success-title">
+    <div class="section-head"><div><h2 id="success-title">Make the achievement inspectable.</h2><p>The demo should show a research decision, the experiment it triggers and the evidence behind the final conclusion.</p></div></div>
+    <div class="bottom-grid">
+      <div>
+        <h3>What success would mean</h3>
+        <p class="measure"><strong>Predict reserved experiments better than a frozen baseline.</strong> Report temperature error in &deg;C using the same data split and total budget for every method.</p>
+        <p class="measure">Compare against conventional model fitting. Preserve failed attempts. Report uncertainty or competing explanations when the measurements cannot distinguish them.</p>
+        <p class="track">Main track: Done Means Done.<br>Version N+1 requires separate evidence that the research procedure improves on fresh tasks.</p>
+      </div>
+      <div>
+        <h3>Checks still to complete</h3>
+        <ul class="checks">
+          <li class="done"><span class="check-symbol" aria-hidden="true">[x]</span><span>Download and inspect real measurements.</span></li>
+          <li><span class="check-symbol" aria-hidden="true">[ ]</span><span>Reserve test experiments and fit the baseline.</span></li>
+          <li><span class="check-symbol" aria-hidden="true">[ ]</span><span>Connect Crusoe and enforce an experiment budget.</span></li>
+          <li><span class="check-symbol" aria-hidden="true">[ ]</span><span>Run the agent loop and independent evaluation.</span></li>
+          <li><span class="check-symbol" aria-hidden="true">[ ]</span><span>Demonstrate a supported result or an honest inconclusive outcome.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Data attribution: Federico Terraneo, Alberto Leva and William Fornaciari, <a href="https://zenodo.org/records/3345878" target="_blank" rel="noopener noreferrer">Dataset: An Open-hardware Platform for MPSoC Thermal Modeling</a>, version 2.0, 2019. <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>. The plot summarizes selected experimental traces; no external code runs when opening this file.</p>
+    <p>This is an interactive project brief with measured-data examples. It does not run agents, fit a model or establish improved predictions. The dataset concerns electronics, not rocket or spacecraft hardware. Current originality and first-place prospects remain unproved.</p>
+    <div class="footer-line"><span>One dataset / one model family / one complete loop</span><span>Assessment snapshot &middot; 17 Oct 2026</span></div>
+  </footer>
+</main>
+<script type="application/json" id="trace-data">{"one":{"raw_samples":20000,"channels":16,"duration_seconds":19.999,"points":[[0.0995,42.677,42.571,42.738],[0.2995,42.693,42.58,42.752],[0.4995,42.682,42.561,42.749],[0.6995,42.696,42.582,42.769],[0.8995,42.688,42.578,42.744],[1.0995,42.696,42.575,42.763],[1.2995,42.693,42.571,42.761],[1.4995,42.694,42.574,42.766],[1.6995,42.704,42.589,42.771],[1.8995,42.697,42.59,42.763],[2.0995,42.71,42.594,42.782],[2.2995,42.702,42.59,42.775],[2.4995,42.716,42.607,42.786],[2.6995,42.703,42.585,42.769],[2.8995,42.716,42.603,42.788],[3.0995,42.712,42.6,42.774],[3.2995,42.714,42.596,42.79],[3.4995,42.723,42.611,42.793],[3.6995,42.714,42.596,42.784],[3.8995,42.728,42.609,42.796],[4.0995,42.721,42.599,42.787],[4.2995,42.734,42.615,42.806],[4.4995,42.724,42.602,42.799],[4.6995,42.733,42.618,42.797],[4.8995,42.731,42.619,42.798],[5.0995,43.647,42.637,53.739],[5.2995,43.917,42.709,55.459],[5.4995,43.997,42.767,55.708],[5.6995,44.063,42.815,55.874],[5.8995,44.093,42.834,55.953],[6.0995,43.216,42.85,44.942],[6.2995,42.972,42.803,43.241],[6.4995,42.928,42.797,43.076],[6.6995,42.89,42.765,43.016],[6.8995,42.874,42.752,42.981],[7.0995,43.773,42.737,54.014],[7.2995,44.023,42.808,55.662],[7.4995,44.105,42.851,55.895],[7.6995,44.143,42.881,56.004],[7.8995,44.188,42.908,56.097],[8.0995,43.282,42.916,45.053],[8.2995,43.057,42.883,43.361],[8.4995,42.994,42.841,43.158],[8.6995,42.962,42.832,43.092],[8.8995,42.943,42.812,43.051],[9.0995,43.838,42.807,54.114],[9.2995,44.102,42.879,55.774],[9.4995,44.16,42.914,55.963],[9.6995,44.218,42.955,56.101],[9.8995,44.243,42.96,56.157],[10.0995,43.348,42.98,45.132],[10.2995,43.104,42.929,43.42],[10.4995,43.054,42.903,43.232],[10.6995,43.02,42.885,43.157],[10.8995,42.993,42.87,43.111],[11.0995,43.903,42.866,54.195],[11.2995,44.144,42.92,55.82],[11.4995,44.224,42.972,56.051],[11.6995,44.261,42.993,56.146],[11.8995,44.307,43.028,56.241],[12.0995,43.782,43.01,50.156],[12.2995,43.746,43.009,49.955],[12.4995,43.727,42.999,49.883],[12.6995,43.719,42.997,49.853],[12.8995,43.065,42.484,47.164],[13.0995,41.876,41.694,42.166],[13.2995,41.694,41.559,41.84],[13.4995,41.573,41.455,41.68],[13.6995,41.512,41.4,41.607],[13.8995,41.443,41.34,41.516],[14.0995,41.407,41.314,41.475],[14.2995,41.367,41.28,41.429],[14.4995,41.335,41.242,41.392],[14.6995,41.316,41.232,41.37],[14.8995,41.287,41.198,41.341],[15.0995,41.282,41.199,41.334],[15.2995,41.251,41.171,41.31],[15.4995,41.249,41.171,41.309],[15.6995,41.221,41.15,41.281],[15.8995,41.218,41.141,41.281],[16.0995,41.201,41.122,41.268],[16.2995,41.191,41.118,41.251],[16.4995,41.186,41.111,41.252],[16.6995,41.17,41.088,41.228],[16.8995,41.168,41.097,41.228],[17.0995,41.149,41.074,41.209],[17.2995,41.152,41.071,41.222],[17.4995,41.13,41.054,41.184],[17.6995,41.131,41.048,41.196],[17.8995,41.119,41.038,41.191],[18.0995,41.114,41.038,41.182],[18.2995,41.108,41.028,41.172],[18.4995,41.096,41.017,41.16],[18.6995,41.097,41.006,41.173],[18.8995,41.081,41.001,41.137],[19.0995,41.087,41.003,41.144],[19.2995,41.068,40.984,41.121],[19.4995,41.074,40.992,41.139],[19.6995,41.058,40.975,41.12],[19.8995,41.054,40.964,41.113]]},"hotspot_1":{"raw_samples":20000,"channels":16,"duration_seconds":19.999,"points":[[0.0995,42.28,42.15,42.37],[0.2995,42.285,42.163,42.365],[0.4995,42.277,42.153,42.373],[0.6995,42.295,42.17,42.388],[0.8995,42.282,42.164,42.373],[1.0995,42.301,42.177,42.385],[1.2995,42.284,42.161,42.373],[1.4995,42.295,42.173,42.377],[1.6995,42.293,42.168,42.382],[1.8995,42.292,42.167,42.383],[2.0995,42.3,42.177,42.395],[2.2995,42.292,42.158,42.386],[2.4995,42.306,42.177,42.4],[2.6995,42.297,42.167,42.385],[2.8995,42.31,42.183,42.395],[3.0995,42.299,42.177,42.374],[3.2995,42.312,42.188,42.403],[3.4995,42.305,42.182,42.396],[3.6995,42.31,42.189,42.397],[3.8995,42.313,42.193,42.411],[4.0995,42.307,42.178,42.4],[4.2995,42.325,42.207,42.418],[4.4995,42.309,42.177,42.396],[4.6995,42.324,42.201,42.41],[4.8995,42.313,42.197,42.395],[5.0995,44.651,42.339,66.712],[5.2995,45.343,42.447,70.066],[5.4995,45.577,42.553,70.702],[5.6995,45.728,42.629,71.051],[5.8995,45.837,42.693,71.295],[6.0995,43.629,42.758,47.016],[6.2995,43.012,42.711,43.808],[6.4995,42.866,42.668,43.399],[6.6995,42.766,42.619,43.161],[6.8995,42.713,42.578,43.025],[7.0995,44.959,42.557,67.352],[7.2995,45.612,42.631,70.65],[7.4995,45.808,42.719,71.142],[7.6995,45.937,42.774,71.436],[7.8995,46.045,42.844,71.649],[8.0995,43.791,42.878,47.261],[8.2995,43.177,42.847,44.03],[8.4995,43.006,42.782,43.587],[8.6995,42.919,42.744,43.363],[8.8995,42.842,42.708,43.193],[9.0995,45.1,42.682,67.562],[9.2995,45.742,42.75,70.851],[9.4995,45.931,42.825,71.326],[9.6995,46.07,42.897,71.615],[9.8995,46.158,42.937,71.802],[10.0995,43.916,42.992,47.417],[10.2995,43.278,42.934,44.162],[10.4995,43.125,42.892,43.739],[10.6995,43.016,42.839,43.475],[10.8995,42.956,42.821,43.328],[11.0995,45.207,42.78,67.707],[11.2995,45.847,42.839,70.977],[11.4995,46.048,42.923,71.46],[11.6995,46.171,42.988,71.738],[11.8995,46.275,43.043,71.937],[12.0995,44.968,43.065,58.57],[12.2995,44.86,43.064,58.165],[12.4995,44.803,43.044,57.997],[12.6995,44.786,43.042,57.931],[12.8995,43.888,42.529,52.055],[13.0995,42.14,41.791,42.921],[13.2995,41.824,41.601,42.35],[13.4995,41.637,41.48,42.028],[13.6995,41.529,41.4,41.846],[13.8995,41.431,41.328,41.687],[14.0995,41.374,41.284,41.605],[14.2995,41.309,41.231,41.508],[14.4995,41.275,41.211,41.454],[14.6995,41.229,41.161,41.4],[14.8995,41.2,41.141,41.342],[15.0995,41.174,41.115,41.319],[15.2995,41.145,41.092,41.283],[15.4995,41.134,41.077,41.268],[15.6995,41.105,41.049,41.22],[15.8995,41.1,41.034,41.213],[16.0995,41.074,41.009,41.182],[16.2995,41.069,41.0,41.177],[16.4995,41.046,40.981,41.149],[16.6995,41.039,40.977,41.134],[16.8995,41.024,40.95,41.117],[17.0995,41.013,40.933,41.111],[17.2995,41.01,40.936,41.106],[17.4995,40.99,40.91,41.084],[17.6995,40.992,40.921,41.081],[17.8995,40.97,40.891,41.059],[18.0995,40.973,40.897,41.057],[18.2995,40.951,40.876,41.034],[18.4995,40.95,40.888,41.025],[18.6995,40.941,40.864,41.023],[18.8995,40.928,40.851,41.008],[19.0995,40.926,40.849,41.01],[19.2995,40.91,40.838,40.988],[19.4995,40.912,40.826,40.994],[19.6995,40.896,40.818,40.973],[19.8995,40.898,40.817,40.976]]},"checkboard":{"raw_samples":20000,"channels":16,"duration_seconds":19.999,"points":[[0.0995,43.014,42.888,43.088],[0.2995,43.007,42.89,43.094],[0.4995,43.011,42.894,43.1],[0.6995,43.012,42.9,43.099],[0.8995,43.012,42.893,43.101],[1.0995,43.017,42.9,43.098],[1.2995,43.013,42.892,43.104],[1.4995,43.022,42.903,43.106],[1.6995,43.014,42.906,43.093],[1.8995,43.023,42.901,43.117],[2.0995,43.015,42.907,43.1],[2.2995,43.024,42.915,43.1],[2.4995,43.021,42.903,43.106],[2.6995,43.018,42.899,43.102],[2.8995,43.025,42.906,43.11],[3.0995,43.017,42.903,43.104],[3.2995,43.029,42.903,43.114],[3.4995,43.019,42.903,43.1],[3.6995,43.032,42.932,43.115],[3.8995,43.02,42.9,43.099],[4.0995,43.034,42.919,43.114],[4.2995,43.025,42.901,43.108],[4.4995,43.028,42.902,43.115],[4.6995,43.033,42.918,43.115],[4.8995,43.024,42.91,43.109],[5.0995,50.41,45.98,54.684],[5.2995,52.64,47.729,57.142],[5.4995,53.346,48.357,57.788],[5.6995,53.803,48.732,58.194],[5.8995,54.187,49.066,58.538],[6.0995,47.103,46.27,47.69],[6.2995,45.032,44.7,45.344],[6.4995,44.498,44.247,44.726],[6.6995,44.193,43.984,44.378],[6.8995,44.002,43.826,44.156],[7.0995,51.346,46.863,55.568],[7.2995,53.433,48.479,57.895],[7.4995,54.045,48.987,58.456],[7.6995,54.497,49.372,58.911],[7.8995,54.832,49.651,59.271],[8.0995,47.643,46.788,48.258],[8.2995,45.581,45.242,45.894],[8.4995,44.962,44.704,45.21],[8.6995,44.632,44.414,44.825],[8.8995,44.391,44.2,44.552],[9.0995,51.768,47.283,55.989],[9.2995,53.811,48.841,58.276],[9.4995,54.472,49.403,58.917],[9.6995,54.903,49.76,59.363],[9.8995,55.218,50.02,59.65],[10.0995,47.996,47.13,48.604],[10.2995,45.949,45.612,46.256],[10.4995,45.35,45.08,45.596],[10.6995,44.959,44.737,45.158],[10.8995,44.73,44.542,44.896],[11.0995,52.082,47.591,56.3],[11.2995,54.166,49.19,58.639],[11.4995,54.827,49.737,59.336],[11.6995,55.253,50.088,59.713],[11.8995,55.563,50.334,59.976],[12.0995,51.424,48.555,53.527],[12.2995,51.033,48.24,53.124],[12.4995,50.866,48.103,52.958],[12.6995,50.802,48.068,52.902],[12.8995,49.135,47.333,50.394],[13.0995,44.952,44.634,45.215],[13.2995,44.287,44.052,44.459],[13.4995,43.935,43.746,44.07],[13.6995,43.686,43.512,43.782],[13.8995,43.504,43.366,43.579],[14.0995,43.369,43.235,43.43],[14.2995,43.254,43.135,43.309],[14.4995,43.176,43.062,43.233],[14.6995,43.095,42.975,43.16],[14.8995,43.046,42.929,43.117],[15.0995,42.986,42.875,43.055],[15.2995,42.95,42.835,43.015],[15.4995,42.906,42.8,42.992],[15.6995,42.87,42.762,42.95],[15.8995,42.846,42.747,42.918],[16.0995,42.811,42.705,42.896],[16.2995,42.797,42.7,42.877],[16.4995,42.764,42.657,42.844],[16.6995,42.752,42.652,42.83],[16.8995,42.721,42.612,42.796],[17.0995,42.715,42.614,42.808],[17.2995,42.687,42.592,42.758],[17.4995,42.673,42.571,42.753],[17.6995,42.661,42.56,42.727],[17.8995,42.638,42.534,42.715],[18.0995,42.636,42.526,42.709],[18.2995,42.61,42.509,42.692],[18.4995,42.609,42.503,42.686],[18.6995,42.583,42.485,42.657],[18.8995,42.58,42.477,42.653],[19.0995,42.562,42.452,42.64],[19.2995,42.553,42.444,42.629],[19.4995,42.541,42.426,42.615],[19.6995,42.524,42.419,42.602],[19.8995,42.523,42.416,42.595]]}}</script>
+<script>
+(() => {
+  'use strict';
+  const data=JSON.parse(document.getElementById('trace-data').textContent);
+  const stages=[
+    {title:'Reproduce a baseline.',description:'Read the dataset documentation and relevant research. Establish the measured inputs, units and assumptions. Reserve entire test experiments before fitting a simple CPU model.',artifact:'Research contract + frozen baseline'},
+    {title:'Propose explanations that can be tested.',description:'Investigate where the baseline disagrees with measured temperatures. Record candidate explanations and what observation would distinguish them. A plausible story alone does not identify a cause.',artifact:'Competing hypotheses + discriminating checks'},
+    {title:'Choose and execute a useful experiment.',description:'The agent proposes the next test. The controller admits it against the declared scope and remaining budget, then records the actual model version, inputs, outputs and failures.',artifact:'Experiment specification + runner receipt'},
+    {title:'Evaluate independently.',description:'Compare the frozen candidate and baseline on reserved experiments. Count the complete cost of research. A development-score gain must not become an improvement claim without this check.',artifact:'Independent comparison + scoped conclusion'},
+    {title:'Revise the model or the research procedure.',description:'Retain a model change only when its evidence supports the claim. If the procedure itself changes, compare method versions on fresh tasks. Earlier confirmation data becomes development data once it informs a revision.',artifact:'Versioned decision + replayable evidence package'}
+  ];
+  const buttons=[...document.querySelectorAll('.loop-tab')];
+  function activate(index,moveFocus=false){
+    const stage=stages[index];
+    buttons.forEach((b,i)=>{b.setAttribute('aria-selected',String(i===index));b.tabIndex=i===index?0:-1;});
+    document.getElementById('loop-panel').setAttribute('aria-labelledby',buttons[index].id);
+    document.getElementById('stage-title').textContent=stage.title;
+    document.getElementById('stage-description').textContent=stage.description;
+    document.getElementById('stage-artifact').textContent=stage.artifact;
+    if(moveFocus)buttons[index].focus();
+  }
+  buttons.forEach((button,i)=>{
+    button.addEventListener('click',()=>activate(i));
+    button.addEventListener('keydown',event=>{
+      let next=i;
+      if(event.key==='ArrowRight')next=(i+1)%buttons.length;
+      else if(event.key==='ArrowLeft')next=(i+buttons.length-1)%buttons.length;
+      else if(event.key==='Home')next=0;
+      else if(event.key==='End')next=buttons.length-1;
+      else return;
+      event.preventDefault();activate(next,true);
+    });
+  });
+  activate(0);
+  const select=document.getElementById('trace-select');
+  const svg=document.getElementById('temperature-plot');
+  const ns='http://www.w3.org/2000/svg';
+  const add=(tag,attributes,text,parent=svg)=>{
+    const node=document.createElementNS(ns,tag);
+    for(const [key,value]of Object.entries(attributes))node.setAttribute(key,String(value));
+    if(text!==undefined)node.textContent=text;
+    parent.appendChild(node);return node;
+  };
+  function draw(){
+    const record=data[select.value],points=record.points;
+    const width=Math.max(280,svg.getBoundingClientRect().width),height=250;
+    const left=48,right=16,top=20,bottom=42;
+    const plotWidth=width-left-right,plotHeight=height-top-bottom;
+    const minimum=Math.min(...points.map(p=>p[2]));
+    const maximum=Math.max(...points.map(p=>p[3]));
+    const pad=Math.max(.5,(maximum-minimum)*.12);
+    const lo=Math.floor((minimum-pad)*2)/2,hi=Math.ceil((maximum+pad)*2)/2;
+    const maxTime=record.duration_seconds;
+    const x=time=>left+(time/maxTime)*plotWidth;
+    const y=value=>top+(hi-value)/(hi-lo)*plotHeight;
+    svg.replaceChildren();svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
+    add('title',{id:'plot-title'},`Measured temperatures, test ${select.value}`);
+    add('desc',{id:'plot-description'},`Measured mean and channel range across ${record.channels} channels. ${record.raw_samples.toLocaleString()} samples per channel, averaged into ${points.length} display bins. No predictions are shown.`);
+    for(let i=0;i<4;i++){
+      const value=lo+(hi-lo)*i/3,py=y(value);
+      add('line',{x1:left,x2:width-right,y1:py,y2:py,class:'grid'});
+      add('text',{x:left-9,y:py+4,'text-anchor':'end'},value.toFixed(1));
+    }
+    const ticks=width<430?3:5;
+    for(let i=0;i<ticks;i++){
+      const value=maxTime*i/(ticks-1);
+      add('text',{x:x(value),y:height-bottom+20,'text-anchor':i===0?'start':i===ticks-1?'end':'middle'},value.toFixed(0));
+    }
+    const topPath=points.map((p,i)=>`${i?'L':'M'}${x(p[0]).toFixed(2)},${y(p[3]).toFixed(2)}`).join(' ');
+    const bottomPath=[...points].reverse().map(p=>`L${x(p[0]).toFixed(2)},${y(p[2]).toFixed(2)}`).join(' ');
+    add('path',{d:topPath+' '+bottomPath+' Z',class:'band'});
+    add('path',{d:points.map((p,i)=>`${i?'L':'M'}${x(p[0]).toFixed(2)},${y(p[1]).toFixed(2)}`).join(' '),class:'mean'});
+    const last=points[points.length-1];
+    add('circle',{cx:x(last[0]),cy:y(last[1]),r:3,class:'point'});
+    add('text',{x:left,y:12,class:'axis-title'},'Temperature (°C)');
+    add('text',{x:left+plotWidth/2,y:height-1,'text-anchor':'middle',class:'axis-title'},'Time (seconds)');
+    document.getElementById('trace-detail').textContent=`Test ${select.value} · ${record.raw_samples.toLocaleString()} samples per channel · Final displayed mean ${last[1].toFixed(1)} °C`;
+  }
+  select.addEventListener('change',draw);
+  new ResizeObserver(draw).observe(svg);
+  draw();
+})();
+</script>
+</body>
+</html>

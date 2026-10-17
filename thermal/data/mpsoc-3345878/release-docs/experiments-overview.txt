@@ -1,0 +1,109 @@
+
+Nominal power for each of the 4x4 heating elements for each experiment.
+For example, in the "one" experiment the heater at the top left corner is powered
+at 3W, while all the other heaters are set to 0.2W (to simulate leakage power).
+Also, for each experiment, the total power applied to the thermal test chip is
+reported.
+
+one 6W
+======
+3.0 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+
+four 14.4W
+==========
+3.0 3.0 0.2 0.2
+3.0 3.0 0.2 0.2
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+
+nine 28.4W
+==========
+3.0 3.0 3.0 0.2
+3.0 3.0 3.0 0.2
+3.0 3.0 3.0 0.2
+0.2 0.2 0.2 0.2
+
+sixteen 48W
+===========
+3.0 3.0 3.0 3.0
+3.0 3.0 3.0 3.0
+3.0 3.0 3.0 3.0
+3.0 3.0 3.0 3.0
+
+line_1 14.4W
+============
+3.0 3.0 3.0 3.0
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+
+line_2 14.4W
+============
+0.2 0.2 0.2 0.2
+3.0 3.0 3.0 3.0
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+
+thickline_1 25.6W
+=================
+3.0 3.0 3.0 3.0
+3.0 3.0 3.0 3.0
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+
+thickline_2 25.6W
+=================
+0.2 0.2 0.2 0.2
+3.0 3.0 3.0 3.0
+3.0 3.0 3.0 3.0
+0.2 0.2 0.2 0.2
+
+checkboard 25.6W
+================
+0.2 3.0 0.2 3.0
+3.0 0.2 3.0 0.2
+0.2 3.0 0.2 3.0
+3.0 0.2 3.0 0.2
+
+hotspot_1 10W
+=============
+0.2 7.0 0.2 0.2
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+
+hotspot_2 10W
+=============
+7.0 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+
+hotspot_3 10W
+=============
+0.2 0.2 0.2 0.2
+7.0 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+
+hotspot_4 10W
+=============
+0.2 0.2 0.2 0.2
+0.2 7.0 0.2 0.2
+0.2 0.2 0.2 0.2
+0.2 0.2 0.2 0.2
+
+NOTE for version 2 of this dataset.
+Some issues were found in the first version of the dataset, namely:
+- a software issue in one device driver caused the temperature of two
+  experiments to be "rotated", T(1) was actually T(16), T(2) was T(1), ...
+  This issue has been fixed.
+- a hardware modification altered the calibration parameters, causing
+  temperatures to be off by up to 1.5°C. The device has been recalibrated and
+  the appropriate calibration was applied post-facto to the dataset.
+- some experiments exhibited bad thermal contact between the some heating
+  elements of the chip and heatsink, those experiments have been redone.
+These issues only affect the heatsink_with_fan dataset.

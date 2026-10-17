@@ -1,0 +1,233 @@
+{
+  "source": "https://zenodo.org/api/records/3345878/files/release.tar.gz/content",
+  "license": "CC-BY-4.0 per Zenodo metadata",
+  "md5": "d399debadf28ed5ed494ea3bae887581",
+  "archive_bytes": 37381859,
+  "files": [
+    "release/heatsink_with_fan/plot_separate.sce",
+    "release/heatsink_with_fan/one.csv",
+    "release/heatsink_with_fan/hotspot_3.csv",
+    "release/heatsink_with_fan/nine.csv",
+    "release/heatsink_with_fan/hotspot_1.csv",
+    "release/heatsink_with_fan/hotspot_4.csv",
+    "release/heatsink_with_fan/line_1.csv",
+    "release/heatsink_with_fan/line_2.csv",
+    "release/heatsink_with_fan/tests.txt",
+    "release/heatsink_with_fan/plot.sce",
+    "release/heatsink_with_fan/thickline_1.csv",
+    "release/heatsink_with_fan/checkboard.csv",
+    "release/heatsink_with_fan/thickline_2.csv",
+    "release/heatsink_with_fan/hotspot_2.csv",
+    "release/heatsink_with_fan/four.csv",
+    "release/heatsink_with_fan/sixteen.csv",
+    "release/chip/plot_separate.sce",
+    "release/chip/one.csv",
+    "release/chip/hotspot_3.csv",
+    "release/chip/nine.csv",
+    "release/chip/hotspot_1.csv",
+    "release/chip/hotspot_4.csv",
+    "release/chip/line_1.csv",
+    "release/chip/line_2.csv",
+    "release/chip/tests.txt",
+    "release/chip/plot.sce",
+    "release/chip/thickline_1.csv",
+    "release/chip/checkboard.csv",
+    "release/chip/thickline_2.csv",
+    "release/chip/hotspot_2.csv",
+    "release/chip/four.csv",
+    "release/chip/sixteen.csv",
+    "release/heatsink/plot_separate.sce",
+    "release/heatsink/one.csv",
+    "release/heatsink/hotspot_3.csv",
+    "release/heatsink/nine.csv",
+    "release/heatsink/hotspot_1.csv",
+    "release/heatsink/hotspot_4.csv",
+    "release/heatsink/line_1.csv",
+    "release/heatsink/line_2.csv",
+    "release/heatsink/tests.txt",
+    "release/heatsink/plot.sce",
+    "release/heatsink/thickline_1.csv",
+    "release/heatsink/checkboard.csv",
+    "release/heatsink/thickline_2.csv",
+    "release/heatsink/hotspot_2.csv",
+    "release/heatsink/four.csv",
+    "release/heatsink/sixteen.csv",
+    "release/experiments overview.txt",
+    "release/README.md"
+  ],
+  "data_files": [
+    {
+      "path": "release/heatsink_with_fan/one.csv",
+      "bytes": 10229517
+    },
+    {
+      "path": "release/heatsink_with_fan/hotspot_3.csv",
+      "bytes": 10242495
+    },
+    {
+      "path": "release/heatsink_with_fan/nine.csv",
+      "bytes": 10362914
+    },
+    {
+      "path": "release/heatsink_with_fan/hotspot_1.csv",
+      "bytes": 10695677
+    },
+    {
+      "path": "release/heatsink_with_fan/hotspot_4.csv",
+      "bytes": 10366655
+    },
+    {
+      "path": "release/heatsink_with_fan/line_1.csv",
+      "bytes": 10269366
+    },
+    {
+      "path": "release/heatsink_with_fan/line_2.csv",
+      "bytes": 10268062
+    },
+    {
+      "path": "release/heatsink_with_fan/tests.txt",
+      "bytes": 415
+    },
+    {
+      "path": "release/heatsink_with_fan/thickline_1.csv",
+      "bytes": 10335087
+    },
+    {
+      "path": "release/heatsink_with_fan/checkboard.csv",
+      "bytes": 10315332
+    },
+    {
+      "path": "release/heatsink_with_fan/thickline_2.csv",
+      "bytes": 10328265
+    },
+    {
+      "path": "release/heatsink_with_fan/hotspot_2.csv",
+      "bytes": 10387131
+    },
+    {
+      "path": "release/heatsink_with_fan/four.csv",
+      "bytes": 10335000
+    },
+    {
+      "path": "release/heatsink_with_fan/sixteen.csv",
+      "bytes": 8677020
+    },
+    {
+      "path": "release/chip/one.csv",
+      "bytes": 5203484
+    },
+    {
+      "path": "release/chip/hotspot_3.csv",
+      "bytes": 5055130
+    },
+    {
+      "path": "release/chip/nine.csv",
+      "bytes": 5234024
+    },
+    {
+      "path": "release/chip/hotspot_1.csv",
+      "bytes": 5198108
+    },
+    {
+      "path": "release/chip/hotspot_4.csv",
+      "bytes": 5195406
+    },
+    {
+      "path": "release/chip/line_1.csv",
+      "bytes": 5165113
+    },
+    {
+      "path": "release/chip/line_2.csv",
+      "bytes": 5245713
+    },
+    {
+      "path": "release/chip/tests.txt",
+      "bytes": 416
+    },
+    {
+      "path": "release/chip/thickline_1.csv",
+      "bytes": 5234590
+    },
+    {
+      "path": "release/chip/checkboard.csv",
+      "bytes": 5158064
+    },
+    {
+      "path": "release/chip/thickline_2.csv",
+      "bytes": 5221244
+    },
+    {
+      "path": "release/chip/hotspot_2.csv",
+      "bytes": 5176214
+    },
+    {
+      "path": "release/chip/four.csv",
+      "bytes": 5220973
+    },
+    {
+      "path": "release/chip/sixteen.csv",
+      "bytes": 5147429
+    },
+    {
+      "path": "release/heatsink/one.csv",
+      "bytes": 10905578
+    },
+    {
+      "path": "release/heatsink/hotspot_3.csv",
+      "bytes": 8868922
+    },
+    {
+      "path": "release/heatsink/nine.csv",
+      "bytes": 8570189
+    },
+    {
+      "path": "release/heatsink/hotspot_1.csv",
+      "bytes": 6947495
+    },
+    {
+      "path": "release/heatsink/hotspot_4.csv",
+      "bytes": 7792773
+    },
+    {
+      "path": "release/heatsink/line_1.csv",
+      "bytes": 7180646
+    },
+    {
+      "path": "release/heatsink/line_2.csv",
+      "bytes": 8834873
+    },
+    {
+      "path": "release/heatsink/tests.txt",
+      "bytes": 402
+    },
+    {
+      "path": "release/heatsink/thickline_1.csv",
+      "bytes": 6409172
+    },
+    {
+      "path": "release/heatsink/checkboard.csv",
+      "bytes": 8698857
+    },
+    {
+      "path": "release/heatsink/thickline_2.csv",
+      "bytes": 6063750
+    },
+    {
+      "path": "release/heatsink/hotspot_2.csv",
+      "bytes": 9384540
+    },
+    {
+      "path": "release/heatsink/four.csv",
+      "bytes": 7014450
+    },
+    {
+      "path": "release/heatsink/sixteen.csv",
+      "bytes": 5698885
+    },
+    {
+      "path": "release/experiments overview.txt",
+      "bytes": 2221
+    }
+  ],
+  "status": "Downloaded and inspected archive directory and selected documentation. No external code executed; no dataset/model validation performed."
+}

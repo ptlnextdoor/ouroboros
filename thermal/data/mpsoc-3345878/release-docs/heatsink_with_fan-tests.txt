@@ -1,0 +1,16 @@
+
+one          Tamb=24.0°C
+four         Tamb=23.7°C
+nine         Tamb=23.7°C
+sixteen      Tamb=23.6°C
+line_1       Tamb=23.6°C
+line_2       Tamb=23.8°C
+thickline_1  Tamb=24.4°C
+thickline_2  Tamb=24.2°C
+checkboard   Tamb=23.5°C
+hotspot_1    Tamb=23.7°C
+hotspot_2    Tamb=24.8°C
+hotspot_3    Tamb=24.9°C
+hotspot_4    Tamb=25.1°C
+
+NOTE: ambient temperature measured with a rotronic CP11 temperature sensor
