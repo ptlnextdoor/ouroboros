@@ -77,6 +77,15 @@ def _solve(nodes, els, fix, load_nodes, F, mat, d):
                 uz_tip=float(np.mean([U[i][2] for i in load_nodes])))
 
 
+def _auto_clmax(solid):
+    """Element size ~ thinnest wall / 1.5 (thin 2.5-4 mm walls gave nonpositive-jacobian tets at bbox/2.5)."""
+    try:
+        t = min(e.Length() for e in solid.Edges() if e.Length() > 0.3)
+    except ValueError:
+        t = 3.0
+    return float(min(max(t / 1.5, 0.8), 4.0))
+
+
 def evaluate(solid, motor_xy, arm_top_z, cases, material="al6061", fos=1.5, defl_limit=None, mass_limit=None,
              clmax=None, workdir=None, claim=None):
     """cases: [{name, F:[Fx,Fy,Fz] N, hidden:bool}]. Returns verdict dict."""
@@ -96,20 +105,34 @@ def evaluate(solid, motor_xy, arm_top_z, cases, material="al6061", fos=1.5, defl
         v["mass_g"] = round(mass, 2)
         if mass_limit:
             v["checks"].append(dict(name="mass", limit=f"<= {mass_limit} g", measured=round(mass, 1), ok=mass <= mass_limit))
-        nodes, els = _mesh(step, d, clmax or max(1.0, min(bb.xlen, bb.ylen, bb.zlen) / 2.5))
+        h0 = clmax or _auto_clmax(solid)
+        nodes, els = _mesh(step, d, h0)
         ids = np.array(list(nodes)); X = np.array([nodes[i] for i in ids])
-        fix = ids[np.abs(X[:, 0] - bb.xmin) < 1e-6].tolist()
+        xw = X[:, 0].min()                       # wall face from the mesh itself (robust to export offsets)
+        fix = ids[np.abs(X[:, 0] - xw) < 1e-3].tolist()
         mx, my = motor_xy
         r = np.hypot(X[:, 0] - mx, X[:, 1] - my)
-        land = ids[(np.abs(X[:, 2] - arm_top_z) < 1e-4) & (r > 3.2) & (r < 6.5)].tolist()
+        land = ids[(np.abs(X[:, 2] - arm_top_z) < 1e-3) & (r > 3.2) & (r < 6.5)].tolist()
         if len(fix) < 3 or len(land) < 3:
             raise RuntimeError(f"cannot apply BCs (fixed nodes {len(fix)}, load nodes {len(land)}): motor land or wall face missing")
         v["mesh"] = dict(nodes=len(nodes), tets=len(els))
         allow = mat["sy"] / fos
         for c in cases:
             cd = os.path.join(d, c["name"]); os.makedirs(cd, exist_ok=True)
-            res = _solve(nodes, els, fix, land, c["F"], mat, cd)
-            # sanity: response must oppose nothing silly; symmetric part + load in xz-plane -> tiny uy
+            try:
+                res = _solve(nodes, els, fix, land, c["F"], mat, cd)
+            except RuntimeError as e:   # bad tets (nonpositive jacobian): remesh finer once, re-solve
+                if v.get("remeshed"):
+                    raise
+                v["remeshed"] = f"{h0:.2f}->{0.6 * h0:.2f} mm after: {str(e)[:80]}"
+                nodes, els = _mesh(step, d, 0.6 * h0)
+                ids = np.array(list(nodes)); X = np.array([nodes[i] for i in ids])
+                fix = ids[np.abs(X[:, 0] - X[:, 0].min()) < 1e-3].tolist()
+                r = np.hypot(X[:, 0] - mx, X[:, 1] - my)
+                land = ids[(np.abs(X[:, 2] - arm_top_z) < 1e-3) & (r > 3.2) & (r < 6.5)].tolist()
+                v["mesh"] = dict(nodes=len(nodes), tets=len(els))
+                res = _solve(nodes, els, fix, land, c["F"], mat, cd)
+            # sanity: symmetric part + load in xz-plane -> tiny uy
             sym_ok = True
             if abs(c["F"][1]) < 1e-9 and abs(my) < 1e-9:
                 sym_ok = abs(res["uy_tip"]) <= 0.05 * max(res["defl"], 1e-9) + 1e-6
