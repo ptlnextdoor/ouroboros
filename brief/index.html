@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What wins at Cerebral Valley · and what we build</title>
+<style>
+:root{
+  --bg:#06080d;--panel:rgba(255,255,255,.035);--panel2:rgba(255,255,255,.06);--line:rgba(255,255,255,.09);
+  --txt:#e8eef5;--dim:#8a94a3;--mute:#5b6472;
+  --green:#2ee6a6;--lime:#9be15d;--blue:#4aa8ff;--red:#ff5f6d;--amber:#ffb547;--violet:#a78bfa;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Helvetica,Arial,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:
+   radial-gradient(900px 500px at 85% -5%,rgba(46,230,166,.13),transparent 60%),
+   radial-gradient(700px 500px at -10% 30%,rgba(74,168,255,.10),transparent 60%),
+   radial-gradient(800px 600px at 60% 110%,rgba(167,139,250,.08),transparent 60%),
+   linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px) 0 0/40px 40px,
+   linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px) 0 0/40px 40px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+section.wrap{padding-top:96px;padding-bottom:12px}
+.eyebrow{font:600 12px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:10px}
+.eyebrow:before{content:"";width:22px;height:1px;background:currentColor}
+h1{font-size:clamp(40px,6.4vw,78px);line-height:1.02;letter-spacing:-.035em;font-weight:800;margin:18px 0 18px}
+h2{font-size:clamp(28px,3.6vw,42px);line-height:1.1;letter-spacing:-.025em;font-weight:780;margin:14px 0 10px}
+h3{font-size:18px;letter-spacing:-.01em;font-weight:700}
+p.lead{font-size:19px;color:#c3ccd8;max-width:760px}
+.grad{background:linear-gradient(92deg,#fff 0%,#bff5e2 45%,var(--green) 75%,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.dim{color:var(--dim)} .mono{font-family:var(--mono)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;backdrop-filter:blur(6px);position:relative;overflow:hidden}
+.card.glow:after{content:"";position:absolute;inset:-1px;border-radius:18px;padding:1px;pointer-events:none;
+  background:linear-gradient(135deg,rgba(46,230,166,.7),transparent 40%,transparent 60%,rgba(74,168,255,.6));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--mono);padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:#cfd7e2}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:860px){.g2,.g3,.g4{grid-template-columns:1fr}}
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(6,8,13,.7);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+nav a{color:var(--dim);text-decoration:none;font-size:13px;margin-left:20px} nav a:hover{color:var(--txt)}
+.logo{font:800 14px/1 var(--mono);letter-spacing:.1em;display:flex;gap:9px;align-items:center}
+.logo i{width:10px;height:10px;border-radius:3px;background:linear-gradient(135deg,var(--green),var(--blue));box-shadow:0 0 14px var(--green)}
+
+/* hero stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:38px}
+.stats div{background:rgba(8,11,17,.92);padding:22px}
+.stats b{display:block;font-size:40px;letter-spacing:-.03em;font-weight:800}
+.stats span{font:12px var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+@media(max-width:860px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* lift chart */
+.lift{margin-top:26px}
+.lrow{display:grid;grid-template-columns:230px 1fr 64px;align-items:center;gap:14px;padding:7px 0;border-bottom:1px dashed rgba(255,255,255,.05)}
+.lrow .lab{font-size:14.5px;color:#d5dde8;display:flex;gap:8px;align-items:center}
+.lrow .val{font:700 15px var(--mono);text-align:right}
+.track{position:relative;height:26px}
+.track:before{content:"";position:absolute;left:50%;top:-8px;bottom:-8px;width:1px;background:rgba(255,255,255,.28)}
+.bar{position:absolute;top:4px;height:18px;border-radius:5px;width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.bar.up{left:50%;background:linear-gradient(90deg,rgba(46,230,166,.35),var(--green));box-shadow:0 0 18px rgba(46,230,166,.35)}
+.bar.down{right:50%;background:linear-gradient(270deg,rgba(255,95,109,.3),var(--red));box-shadow:0 0 18px rgba(255,95,109,.3)}
+.bar.flat{left:50%;background:linear-gradient(90deg,rgba(138,148,163,.3),#8a94a3)}
+.tag{font:600 10.5px/1 var(--mono);padding:4px 7px;border-radius:6px;white-space:nowrap}
+.t-pick{background:rgba(46,230,166,.14);color:var(--green);border:1px solid rgba(46,230,166,.4)}
+.t-out{background:rgba(255,95,109,.12);color:var(--red);border:1px solid rgba(255,95,109,.35)}
+.axis{display:grid;grid-template-columns:230px 1fr 64px;gap:14px;font:11px var(--mono);color:var(--mute);margin-top:8px}
+.axis div{display:flex;justify-content:space-between}
+@media(max-width:860px){.lrow,.axis{grid-template-columns:120px 1fr 50px}.lrow .lab{font-size:12.5px}.tag{display:none}}
+
+/* winners */
+.win{display:flex;flex-direction:column;gap:12px}
+.medal{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font:800 14px var(--mono);color:#111}
+.m1{background:radial-gradient(circle at 35% 30%,#fff6c9,#ffcc33 45%,#b8860b);box-shadow:0 0 22px rgba(255,204,51,.45)}
+.m3{background:radial-gradient(circle at 35% 30%,#ffe3c7,#d68a4c 45%,#7a4419);box-shadow:0 0 18px rgba(214,138,76,.35)}
+.win .meta{font:12px var(--mono);color:var(--dim)}
+.mini{display:flex;gap:5px;margin-top:4px}
+.mini span{flex:1;height:30px;border-radius:6px;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+.mini span.on{background:linear-gradient(180deg,var(--green),rgba(46,230,166,.35));border-color:rgba(46,230,166,.6)}
+.vs{display:flex;align-items:center;gap:10px;font:700 13px var(--mono)}
+
+/* formula */
+.formula{display:flex;flex-wrap:wrap;align-items:stretch;gap:12px;margin-top:26px}
+.fx{flex:1 1 160px;border-radius:16px;padding:18px;border:1px solid var(--line);background:var(--panel);position:relative}
+.fx .k{font:700 11px var(--mono);letter-spacing:.12em;color:var(--dim)}
+.fx b{display:block;font-size:19px;margin-top:6px;letter-spacing:-.01em}
+.fx small{color:var(--dim);font-size:13px}
+.op{display:grid;place-items:center;font:800 26px var(--mono);color:var(--mute)}
+.fx.hl{border-color:rgba(46,230,166,.5);background:linear-gradient(160deg,rgba(46,230,166,.12),rgba(46,230,166,.02))}
+.eq{flex:0 0 120px;min-height:110px;border-radius:16px;display:grid;place-items:center;text-align:center;font:800 22px/1.1 var(--mono);
+  background:linear-gradient(135deg,var(--green),var(--blue));color:#04110c;box-shadow:0 0 40px rgba(46,230,166,.35)}
+@media(max-width:860px){.op{display:none}.eq{flex-basis:100%;padding:18px}}
+
+/* pick */
+.prompt{font:500 clamp(15px,2vw,20px)/1.4 var(--mono);padding:20px 22px;border-radius:14px;background:#0b0f17;border:1px solid rgba(46,230,166,.35);box-shadow:0 0 0 6px rgba(46,230,166,.05);display:flex;gap:12px;align-items:center}
+.prompt .caret{color:var(--green)}
+#typed:after{content:"▍";color:var(--green);animation:blink 1s steps(1) infinite;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px;counter-reset:s}
+.step{padding:18px;border-radius:16px;border:1px solid var(--line);background:var(--panel);position:relative}
+.step:before{counter-increment:s;content:"0" counter(s);font:800 12px var(--mono);color:var(--green);letter-spacing:.1em}
+.step h3{margin:8px 0 6px;font-size:16px}
+.step p{font-size:13.5px;color:#aeb8c6}
+.step .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.step .chips span{font:600 11px var(--mono);padding:4px 7px;border-radius:6px;background:rgba(255,255,255,.06);color:#cdd6e1}
+@media(max-width:860px){.steps{grid-template-columns:1fr 1fr}}
+
+.stage{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:860px){.stage{grid-template-columns:1fr}}
+.viz{min-height:330px;display:flex;flex-direction:column}
+.viz svg{width:100%;height:auto;flex:1}
+.legend{display:flex;align-items:center;gap:10px;font:11px var(--mono);color:var(--dim)}
+.legend i{flex:0 0 120px;height:8px;border-radius:4px;background:linear-gradient(90deg,#2ee6a6,#ffe066,#ff5f6d)}
+
+.term{font:13px/1.75 var(--mono);background:#05070b;border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-height:330px}
+.term .bar3{display:flex;gap:6px;margin-bottom:12px}.term .bar3 i{width:10px;height:10px;border-radius:50%;background:#2a2f38}
+.term p{opacity:0;transform:translateY(4px);transition:all .4s}
+.term.play p{opacity:1;transform:none}
+.term .r{color:var(--red)} .term .g{color:var(--green)} .term .a{color:var(--amber)} .term .d{color:var(--mute)}
+@keyframes in{to{opacity:1;transform:none}}
+
+.chart{padding:22px}
+.chart svg text{font-family:var(--mono)}
+.note{display:inline-flex;gap:8px;align-items:center;font:600 11px var(--mono);color:var(--amber);border:1px dashed rgba(255,181,71,.5);padding:5px 9px;border-radius:7px;background:rgba(255,181,71,.06)}
+
+/* parity strip */
+.parity{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
+.gauge{width:170px;height:170px}
+@media(max-width:860px){.parity{grid-template-columns:1fr}}
+
+/* why */
+.why .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:20px;margin-bottom:12px;background:rgba(46,230,166,.1);border:1px solid rgba(46,230,166,.35)}
+.why p{font-size:14.5px;color:#b4bfcc;margin-top:6px}
+
+/* scorecard */
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
+th{font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--dim);text-align:left;padding:12px 14px;border-bottom:1px solid var(--line)}
+td{padding:14px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:middle}
+tr.pick td{background:linear-gradient(90deg,rgba(46,230,166,.12),rgba(46,230,166,.02))}
+tr.pick td:first-child{border-left:3px solid var(--green)}
+.dots{display:inline-flex;gap:4px}.dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.12)}
+.dots i.on{background:var(--green);box-shadow:0 0 8px rgba(46,230,166,.6)}
+.dots.bad i.on{background:var(--red);box-shadow:0 0 8px rgba(255,95,109,.5)}
+.verdict{font:700 12px var(--mono);padding:5px 9px;border-radius:7px}
+.v-go{background:var(--green);color:#03140d}.v-no{background:rgba(255,95,109,.14);color:var(--red);border:1px solid rgba(255,95,109,.35)}
+.why-no{color:var(--dim);font-size:13px}
+.scroll{overflow-x:auto}
+
+/* watch */
+.warn{border-color:rgba(255,181,71,.35);background:linear-gradient(160deg,rgba(255,181,71,.08),rgba(255,181,71,.01))}
+.warn h3{color:var(--amber)}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;font-size:13px}
+.cmp div{padding:10px;border-radius:10px;background:rgba(0,0,0,.25);border:1px solid var(--line)}
+.cmp b{font:700 11px var(--mono);color:var(--dim);display:block;margin-bottom:4px;letter-spacing:.08em}
+
+.odds{display:flex;gap:16px;flex-wrap:wrap;margin-top:18px}
+.odd{flex:1 1 220px}
+.odd .n{font-size:44px;font-weight:800;letter-spacing:-.03em}
+.meter{height:8px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:8px}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--blue))}
+footer{padding:60px 0 70px;color:var(--mute);font:12px/1.7 var(--mono)}
+.reveal{opacity:0;transform:translateY(18px);transition:all .8s cubic-bezier(.2,.8,.2,1)}
+.reveal.on{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <div class="logo"><i></i>RECURSIVE AGENTS · BRIEF</div>
+  <div><a href="#data">Data</a><a href="#winners">Winners</a><a href="#formula">Formula</a><a href="#pick">The pick</a><a href="#compare">Compare</a><a href="#risks">Risks</a></div>
+</div></nav>
+
+<!-- HERO -->
+<header class="wrap" style="padding-top:80px">
+  <div class="eyebrow">Crusoe × Cerebral Valley · Sat Oct 17 2026</div>
+  <h1>We read <span class="grad">4,280 hackathon projects</span>.<br>Here's what wins, and what we build.</h1>
+  <p class="lead">Every project from 61 Cerebral Valley hackathons (the organizer running today's event), scored for which themes show up more often among winners than among everyone else.</p>
+  <div class="stats">
+    <div><b data-count="4280">0</b><span>projects scanned</span></div>
+    <div><b data-count="61">0</b><span>CV hackathons</span></div>
+    <div><b data-count="331">0</b><span>award winners</span></div>
+    <div><b data-count="155">0</b><span>winners in SF</span></div>
+  </div>
+</header>
+
+<!-- DATA -->
+<section id="data" class="wrap reveal">
+  <div class="eyebrow">01 · What the data says</div>
+  <h2>Winners build <span class="grad">things you can see</span>. Referees alone lose.</h2>
+  <p class="dim" style="max-width:760px">Lift = how often a theme appears among winners ÷ how often it appears among non-winners. Right of the line means it wins more than its share.</p>
+  <div class="card lift"><div id="lift"></div>
+  <div class="axis"><span></span><div><span>0.3×</span><span>← loses&nbsp;&nbsp;·&nbsp;&nbsp;1.0× even&nbsp;&nbsp;·&nbsp;&nbsp;wins →</span><span>1.7×</span></div><span></span></div></div>
+</section>
+
+<!-- WINNERS -->
+<section id="winners" class="wrap reveal">
+  <div class="eyebrow">02 · Closest recent 1st-place winners</div>
+  <h2>Same organizer. Same "recursive" framing. <span class="grad">Physical artifacts on top.</span></h2>
+  <div class="grid g4" style="margin-top:24px">
+    <div class="card win glow">
+      <div style="display:flex;justify-content:space-between;align-items:center"><div class="medal m1">1st</div><span class="pill">NYC · 3 wks ago</span></div>
+      <h3>Ripple</h3>
+      <p class="dim" style="font-size:14px">Plain English → circuit board. Graded on <b style="color:var(--txt)">hidden checks</b>. Evolves its own harness from failures.</p>
+      <div class="vs"><span class="dim">before</span><div class="mini" style="flex:1"><span></span><span></span><span></span><span></span></div><span>0/4</span></div>
+      <div class="vs"><span class="dim">after&nbsp;</span><div class="mini" style="flex:1"><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div><span style="color:var(--green)">3/4</span></div>
+    </div>
+    <div class="card win">
+      <div style="display:flex;justify-content:space-between;align-items:center"><div class="medal m1">1st</div><span class="pill">SF · 6 days ago</span></div>
+      <h3>MongoMation</h3>
+      <p class="dim" style="font-size:14px">Autonomous PLC engineer. Describe a machine; agents write, compile and deploy industrial control code.</p>
+      <div style="margin-top:auto" class="pill">⚙️ real hardware</div>
+    </div>
+    <div class="card win">
+      <div style="display:flex;justify-content:space-between;align-items:center"><div class="medal m1">1st</div><span class="pill">SF · GPT-6 Astra</span></div>
+      <h3>CAD Sandboxes</h3>
+      <p class="dim" style="font-size:14px">Agents driving Fusion CAD in sandboxed VMs with a live stream of the workspace.</p>
+      <div style="margin-top:auto" class="pill">📐 agents + CAD</div>
+    </div>
+    <div class="card win" style="opacity:.82">
+      <div style="display:flex;justify-content:space-between;align-items:center"><div class="medal m3">3rd</div><span class="pill">SF · same event</span></div>
+      <h3>Recursive Harness Scientist</h3>
+      <p class="dim" style="font-size:14px">AI scientist that must replicate gains on unseen data. <b style="color:var(--amber)">Basically the thermal idea.</b> Placed behind two hardware projects.</p>
+      <div style="margin-top:auto;color:var(--amber)" class="pill">🔬 referee-first → 3rd</div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMULA -->
+<section id="formula" class="wrap reveal">
+  <div class="eyebrow">03 · The formula</div>
+  <h2>The checks are how it works. <span class="grad">The artifact is what you lead with.</span></h2>
+  <div class="formula">
+    <div class="fx hl"><div class="k">ARTIFACT</div><b>A physical engineering part</b><small>something judges can see</small></div>
+    <div class="op">+</div>
+    <div class="fx"><div class="k">MECHANISM</div><b>Hidden physics checks</b><small>graded by a solver it can't touch</small></div>
+    <div class="op">+</div>
+    <div class="fx"><div class="k">RECURSION</div><b>Rewrites its own setup</b><small>from every failure</small></div>
+    <div class="op">+</div>
+    <div class="fx"><div class="k">PROOF</div><b>Before / after on unseen tasks</b><small>same budget, new parts</small></div>
+    <div class="op">=</div>
+    <div class="eq">WIN<br><span style="font-size:12px;opacity:.75">pattern</span></div>
+  </div>
+</section>
+
+<!-- PICK -->
+<section id="pick" class="wrap reveal">
+  <div class="eyebrow">04 · The pick</div>
+  <h2>An agent team that designs real parts, and <span class="grad">gets better on parts it's never seen.</span></h2>
+  <div class="prompt" style="margin-top:22px"><span class="caret">❯</span><span id="typed"></span></div>
+
+  <div class="steps">
+    <div class="step"><h3>Turn words into checks</h3><p>One line becomes numbers a computer can test. That's the definition of done.</p><div class="chips"><span>load 19.6 N</span><span>deflection</span><span>mass &lt; 40 g</span><span>printable</span></div></div>
+    <div class="step"><h3>Design + simulate</h3><p>Agents write CadQuery code → mesh → a structural (FEA) solver computes stress.</p><div class="chips"><span>CadQuery 2.8</span><span>headless</span><span>CPU</span></div></div>
+    <div class="step"><h3>Referee, hidden loads</h3><p>A separate referee runs load cases the agents never saw. Overfit designs get rejected.</p><div class="chips"><span>can't be gamed</span><span>sim parity</span></div></div>
+    <div class="step"><h3>Rewrite the playbook</h3><p>After each run the team edits its own playbook and keeps a change only if the score goes up.</p><div class="chips"><span>v1 → v2</span><span>10 unseen parts</span></div></div>
+  </div>
+
+  <div class="stage">
+    <div class="card viz">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><b style="font-size:14px">Stress plot · iteration <span id="iter">1</span></b><div class="legend">low<i></i>high</div></div>
+      <svg viewBox="0 0 520 300" aria-label="bracket stress animation">
+        <defs>
+          <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#3a4250" stroke-width="3"/></pattern>
+          <linearGradient id="stress" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ff5f6d"><animate attributeName="stop-color" values="#ff5f6d;#ff5f6d;#ffe066;#2ee6a6;#2ee6a6;#ff5f6d" keyTimes="0;.15;.4;.65;.95;1" dur="8s" repeatCount="indefinite"/></stop>
+            <stop offset=".5" stop-color="#ffe066"><animate attributeName="stop-color" values="#ffe066;#ff8a5c;#9be15d;#2ee6a6;#2ee6a6;#ffe066" keyTimes="0;.15;.4;.65;.95;1" dur="8s" repeatCount="indefinite"/></stop>
+            <stop offset="1" stop-color="#9be15d"><animate attributeName="stop-color" values="#9be15d;#ffe066;#2ee6a6;#2ee6a6;#2ee6a6;#9be15d" keyTimes="0;.15;.4;.65;.95;1" dur="8s" repeatCount="indefinite"/></stop>
+          </linearGradient>
+          <filter id="gl"><feGaussianBlur stdDeviation="6"/></filter>
+        </defs>
+        <rect x="20" y="20" width="40" height="260" fill="url(#hatch)"/>
+        <rect x="58" y="20" width="4" height="260" fill="#566070"/>
+        <!-- bracket: wall plate + arm + gusset -->
+        <g>
+          <path d="M62 70 h18 v170 h-18z" fill="url(#stress)"/>
+          <path d="M80 70 h230 v22 h-230z" fill="url(#stress)"/>
+          <path d="M80 92 L230 92 L80 220 Z" fill="url(#stress)" opacity=".9">
+            <animate attributeName="d" values="M80 92 L120 92 L80 120 Z;M80 92 L120 92 L80 120 Z;M80 92 L190 92 L80 185 Z;M80 92 L230 92 L80 220 Z;M80 92 L230 92 L80 220 Z;M80 92 L120 92 L80 120 Z" keyTimes="0;.15;.4;.65;.95;1" dur="8s" repeatCount="indefinite"/>
+          </path>
+          <circle cx="71" cy="100" r="4" fill="#06080d"/><circle cx="71" cy="210" r="4" fill="#06080d"/>
+        </g>
+        <!-- motor -->
+        <rect x="250" y="20" width="56" height="50" rx="6" fill="#1b2230" stroke="#4aa8ff" stroke-width="1.5"/>
+        <text x="278" y="50" text-anchor="middle" fill="#8cc8ff" font-size="12" font-family="ui-monospace,monospace">2 kg</text>
+        <path d="M278 108 v40" stroke="#ff5f6d" stroke-width="3"/><path d="M270 140 l8 12 l8 -12z" fill="#ff5f6d"/>
+        <text x="292" y="135" fill="#ff8a95" font-size="12" font-family="ui-monospace,monospace">19.6 N</text>
+        <!-- dimension -->
+        <path d="M62 262 H278" stroke="#5b6472" stroke-dasharray="4 4"/><path d="M62 255v14M278 255v14" stroke="#5b6472"/>
+        <text x="170" y="256" text-anchor="middle" fill="#8a94a3" font-size="12" font-family="ui-monospace,monospace">80 mm</text>
+        <!-- readout -->
+        <g font-family="ui-monospace,monospace" font-size="12">
+          <rect x="350" y="150" width="155" height="104" rx="10" fill="#0b0f17" stroke="rgba(255,255,255,.12)"/>
+          <text x="364" y="174" fill="#8a94a3">max stress</text>
+          <text x="364" y="196" fill="#e8eef5" font-size="16" font-weight="700"><tspan id="ms">118 MPa</tspan></text>
+          <text x="364" y="218" fill="#8a94a3">mass · <tspan id="mass" fill="#e8eef5">22 g</tspan></text>
+          <text x="364" y="240" id="ok" fill="#ff5f6d" font-weight="700">✗ FAILS</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="term" id="term">
+      <div class="bar3"><i></i><i></i><i></i></div>
+      <p class="d" style="animation-delay:.2s"># the hook: our own loop fooled itself</p>
+      <p style="animation-delay:.6s">oct 16 17:00 · cfd optimizer picks best design <b>e01</b></p>
+      <p class="r" style="animation-delay:1s">  CdA = −1.61 cm²   (negative drag, impossible)</p>
+      <p class="r" style="animation-delay:1.3s">  nothing in the loop caught it</p>
+      <p class="d" style="animation-delay:2s"># today: referee with hidden load cases</p>
+      <p style="animation-delay:2.4s">referee › H3 side impact 15 N <span class="d">(agents never saw)</span></p>
+      <p style="animation-delay:2.8s">  agent claimed  <span class="a">42 MPa</span></p>
+      <p style="animation-delay:3.1s">  solver measured <span class="r">118 MPa</span>   parity gap 2.8×</p>
+      <p class="r" style="animation-delay:3.5s">  ✗ REJECTED · tuned to the visible load only</p>
+      <p style="animation-delay:4.2s">playbook › + "always gusset cantilevers &gt; 50 mm"</p>
+      <p class="g" style="animation-delay:4.7s">  ✓ kept · held-out score improved</p>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card chart">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <b>v1 vs v2 · 10 parts neither version saw</b>
+        <span class="note">⚠ illustrative target, not data yet</span>
+      </div>
+      <svg id="vchart" viewBox="0 0 520 230" style="width:100%;margin-top:10px"></svg>
+      <div class="legend" style="gap:16px"><span><i style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#5b6472;flex:none"></i> v1 playbook</span><span><i style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#2ee6a6;flex:none"></i> v2 playbook</span><span>same budget per part</span></div>
+    </div>
+    <div class="card glow parity">
+      <svg class="gauge" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
+        <circle id="arc" cx="60" cy="60" r="48" fill="none" stroke="url(#pg)" stroke-width="10" stroke-linecap="round" stroke-dasharray="301.6" stroke-dashoffset="301.6" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 2s cubic-bezier(.2,.8,.2,1)"/>
+        <defs><linearGradient id="pg"><stop offset="0" stop-color="#2ee6a6"/><stop offset="1" stop-color="#4aa8ff"/></linearGradient></defs>
+        <text x="60" y="58" text-anchor="middle" fill="#e8eef5" font-size="20" font-weight="800" font-family="ui-monospace,monospace">parity</text>
+        <text x="60" y="76" text-anchor="middle" fill="#8a94a3" font-size="9" font-family="ui-monospace,monospace">claim ≈ physics</text>
+      </svg>
+      <div>
+        <div class="eyebrow" style="color:var(--blue)">Krish's framing</div>
+        <h3 style="margin:8px 0 6px;font-size:20px">This is simulation parity, for every part.</h3>
+        <p class="dim" style="font-size:14.5px">Every number an agent claims (stress, stiffness, mass) is checked against a physics solver it can't touch. The gap between <i>what the agent thinks</i> and <i>what physics says</i> is the score. Close the gap first, then make the part better.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="wrap reveal">
+  <div class="eyebrow">05 · Why this one</div>
+  <h2>Every winning signal, <span class="grad">none of the infra risk.</span></h2>
+  <div class="grid g4 why" style="margin-top:22px">
+    <div class="card"><div class="ic">🎯</div><h3>Hits all 4 signals</h3><p>Physical artifact, hidden checks, self-rewrite, unseen-task proof. It's also your actual expertise, so hard Q&amp;A is an advantage.</p></div>
+    <div class="card"><div class="ic">💻</div><h3>Laptop CPU only</h3><p>No cluster, no RunPod. The biggest failure mode of every other idea disappears.</p></div>
+    <div class="card"><div class="ic">🚦</div><h3>Visual demo</h3><p>A part forms, stress goes red → green, the referee catches a cheat, the v1/v2 chart lands.</p></div>
+    <div class="card"><div class="ic">☁️</div><h3>Crusoe-native</h3><p>Every agent runs on Crusoe inference. Nemotron-3-Super as designer is a shot at the RTX 5090.</p></div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section id="compare" class="wrap reveal">
+  <div class="eyebrow">06 · Why not the others</div>
+  <h2>Five ideas, <span class="grad">one clear pick.</span></h2>
+  <div class="card scroll" style="margin-top:22px;padding:6px">
+    <table>
+      <thead><tr><th>Idea</th><th>Theme in data</th><th>Runs without GPUs</th><th>Iteration speed</th><th>Demo</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr class="pick"><td><b>Parts agent</b><div class="why-no">CAD + FEA + hidden loads</div></td><td class="mono" style="color:var(--green)">1.59×</td><td><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i></span> <span class="why-no">seconds</span></td><td><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="verdict v-go">BUILD</span></td></tr>
+        <tr><td><b>Ouroboros</b><div class="why-no">self-trains its weights</div></td><td class="mono dim">1.03–1.08×</td><td><span class="dots bad"><i class="on"></i><i></i><i></i></span> <span class="why-no">needs GPUs</span></td><td><span class="dots"><i class="on"></i><i></i><i></i></span> <span class="why-no">~1 h/gen</span></td><td><span class="dots"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="verdict v-no">PASS</span></td></tr>
+        <tr><td><b>Thermal factory</b><div class="why-no">fix a chip-temp sim</div></td><td class="mono" style="color:var(--red)">0.66×</td><td><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="dots"><i class="on"></i><i></i><i></i></span> <span class="why-no">line plots</span></td><td><span class="verdict v-no">3rd last wk</span></td></tr>
+        <tr><td><b>CFD aero lab</b><div class="why-no">OpenFOAM drag loop</div></td><td class="mono" style="color:var(--green)">1.56×</td><td><span class="dots"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="dots bad"><i class="on"></i><i></i><i></i></span> <span class="why-no">4–30 min/run</span></td><td><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="verdict v-no">TOO SLOW</span></td></tr>
+        <tr><td><b>PolyTrack driver</b><div class="why-no">vision model plays a game</div></td><td class="mono" style="color:var(--green)">1.44×</td><td><span class="dots bad"><i class="on"></i><i></i><i></i></span> <span class="why-no">WebGL + GPU</span></td><td><span class="dots"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="verdict v-no">RISKY</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- RISKS -->
+<section id="risks" class="wrap reveal">
+  <div class="eyebrow" style="color:var(--amber)">07 · Watch out</div>
+  <h2>Two things judges will check.</h2>
+  <div class="grid g2" style="margin-top:22px">
+    <div class="card warn">
+      <h3>⚠ Ripple is close prior art</h3>
+      <p class="dim" style="font-size:14.5px;margin-top:6px">Say how we differ in the first 20 seconds.</p>
+      <div class="cmp">
+        <div><b>RIPPLE</b>circuit boards<br>rule checks<br>0/4 → 3/4 on its tasks</div>
+        <div style="border-color:rgba(46,230,166,.4)"><b style="color:var(--green)">US</b>mechanical parts<br>real FEA physics solver<br>scored on unseen parts</div>
+      </div>
+    </div>
+    <div class="card warn">
+      <h3>⚠ "New work only" rule</h3>
+      <p class="dim" style="font-size:14.5px;margin-top:6px">The existing topology-optimization solver and CAD code are pre-existing.</p>
+      <div class="cmp">
+        <div><b>OPTION A</b>Use them, disclose in PROVENANCE.md</div>
+        <div style="border-color:rgba(46,230,166,.4)"><b style="color:var(--green)">RECOMMENDED</b>Rewrite a small voxel FEA today: ~150 lines, ~30 min. Everything in the demo is built today.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="odds">
+    <div class="card odd"><span class="dim mono" style="font-size:12px">TOP 6 (estimate)</span><div class="n">55–60%</div><div class="meter"><i style="width:57%"></i></div></div>
+    <div class="card odd"><span class="dim mono" style="font-size:12px">1ST PLACE (estimate)</span><div class="n">25–30%</div><div class="meter"><i style="width:27%"></i></div></div>
+    <div class="card odd"><span class="dim mono" style="font-size:12px">MOST LIKELY FAILURE</span><div style="font-size:15px;margin-top:8px">Generated CAD code breaks often, so v1 scores near zero. <b style="color:var(--green)">Fix:</b> give agents 6–8 shape building blocks to combine.</div></div>
+  </div>
+</section>
+
+<footer class="wrap">
+  Source: public JSON-LD on 61 Cerebral Valley hackathon galleries, scraped 2026-10-17 · 4,280 projects · 331 award winners (1st/2nd/3rd/finalist).<br>
+  Theme lift uses keyword matching on project names and descriptions, so treat it as directional, not exact. Odds are judgment estimates. The v1/v2 chart is a target, not a result.
+</footer>
+
+<script>
+// count-up
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+document.querySelectorAll('[data-count]').forEach(el=>{const t=+el.dataset.count,s=performance.now();
+  (function f(n){const p=Math.min((n-s)/1400,1),v=Math.round(t*(1-Math.pow(1-p,3)));el.textContent=v.toLocaleString();if(p<1)requestAnimationFrame(f)})(s)});
+
+// lift chart
+const L=[
+ ['Physical / hardware',1.59,'pick'],['Simulation / RL env',1.56,'pick'],['Voice',1.49,''],['Visual / 3D / game',1.44,'pick'],
+ ['Train weights',1.08,'Ouroboros'],['Self-improving (alone)',1.03,'Ouroboros'],['Memory',0.89,''],['Science research',0.87,''],
+ ['Multi-agent',0.76,''],['Evaluator / referee (alone)',0.66,'Thermal'],['Finance',0.38,'']];
+const box=document.getElementById('lift');
+L.forEach(([n,v,t])=>{const r=document.createElement('div');r.className='lrow';
+  const tag=t==='pick'?'<span class="tag t-pick">OUR PICK</span>':t?`<span class="tag t-out">${t}</span>`:'';
+  const cls=Math.abs(v-1)<.1?'flat':v>1?'up':'down';
+  r.innerHTML=`<div class="lab">${n} ${tag}</div><div class="track"><div class="bar ${cls}" data-w="${Math.min(Math.abs(v-1)/.7*50,50)}"></div></div><div class="val" style="color:${v>1.1?'var(--green)':v<.9?'var(--red)':'var(--dim)'}">${v.toFixed(2)}×</div>`;
+  box.appendChild(r)});
+new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){box.querySelectorAll('.bar').forEach((b,i)=>setTimeout(()=>b.style.width=b.dataset.w+'%',i*70));o.disconnect()}},{threshold:.3}).observe(box);
+
+// typing prompt
+const P='bracket that holds a 2 kg motor 80 mm off a wall, under 40 g';let k=0;
+const ty=document.getElementById('typed');(function t(){if(k<=P.length){ty.textContent=P.slice(0,k++);setTimeout(t,38)}})();
+
+// stress readout synced to the 8s SVG animation
+const seq=[[0,'118 MPa','22 g',0],[1.2,'96 MPa','27 g',0],[3.2,'61 MPa','33 g',0],[5.2,'38 MPa','36 g',1]];
+const ms=document.getElementById('ms'),ma=document.getElementById('mass'),ok=document.getElementById('ok'),it=document.getElementById('iter');
+const t0=performance.now();(function loop(){const s=((performance.now()-t0)/1000)%8;let c=seq[0],i=1;
+  seq.forEach((q,j)=>{if(s>=q[0]){c=q;i=j+1}});
+  ms.textContent=c[1];ma.textContent=c[2];it.textContent=i;ok.textContent=c[3]?'✓ PASSES':'✗ FAILS';ok.setAttribute('fill',c[3]?'#2ee6a6':'#ff5f6d');
+  requestAnimationFrame(loop)})();
+
+// v1 vs v2 chart (illustrative)
+const v1=[1,2,0,1,2,1,0,2,1,1],v2=[3,4,2,3,4,3,2,4,3,3];
+const S=document.getElementById('vchart'),W=520,H=230,pl=34,pb=26,bw=(W-pl-10)/10;
+let g=`<g font-size="10" fill="#5b6472">`;
+for(let y=0;y<=4;y++){const yy=H-pb-y*(H-pb-14)/4;g+=`<line x1="${pl}" x2="${W-6}" y1="${yy}" y2="${yy}" stroke="rgba(255,255,255,.06)"/><text x="${pl-8}" y="${yy+3}" text-anchor="end">${y}/4</text>`}
+v1.forEach((a,i)=>{const x=pl+i*bw+bw*.14,w=bw*.33,h1=a*(H-pb-14)/4,h2=v2[i]*(H-pb-14)/4;
+  g+=`<rect x="${x}" y="${H-pb-h1}" width="${w}" height="${h1}" rx="3" fill="#5b6472"><animate attributeName="height" from="0" to="${h1}" dur=".9s" begin="${.2+i*.05}s" fill="freeze"/><animate attributeName="y" from="${H-pb}" to="${H-pb-h1}" dur=".9s" begin="${.2+i*.05}s" fill="freeze"/></rect>`;
+  g+=`<rect x="${x+w+3}" y="${H-pb-h2}" width="${w}" height="${h2}" rx="3" fill="#2ee6a6" style="filter:drop-shadow(0 0 6px rgba(46,230,166,.5))"><animate attributeName="height" from="0" to="${h2}" dur="1.1s" begin="${.5+i*.05}s" fill="freeze"/><animate attributeName="y" from="${H-pb}" to="${H-pb-h2}" dur="1.1s" begin="${.5+i*.05}s" fill="freeze"/></rect>`;
+  g+=`<text x="${x+w+1}" y="${H-8}" text-anchor="middle">P${i+1}</text>`});
+g+=`<text x="${W-8}" y="16" text-anchor="end" fill="#8a94a3" font-size="11">checks passed per unseen part</text></g>`;S.innerHTML=g;
+
+// parity gauge + terminal play when visible
+const term=document.getElementById('term');
+term.querySelectorAll('p').forEach(p=>{p.style.transitionDelay=p.style.animationDelay});
+new IntersectionObserver((es,o)=>{if(es[0].isIntersecting){term.classList.add('play');document.getElementById('arc').style.strokeDashoffset=301.6*.12;o.disconnect()}},{threshold:.25}).observe(term);
+if(location.search.includes('static')){document.querySelectorAll('.reveal').forEach(e=>e.classList.add('on'));term.classList.add('play');
+  document.querySelectorAll('*').forEach(e=>{e.style.transition='none'});box.querySelectorAll('.bar').forEach(b=>b.style.width=b.dataset.w+'%');document.getElementById('arc').style.strokeDashoffset=301.6*.12}
+</script>
+</body>
+</html>
