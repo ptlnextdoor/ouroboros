@@ -33,8 +33,17 @@ flowchart LR
 | problem statement | how FORGE answers it |
 |---|---|
 | **Done Means Done** | The spec agent turns one line into numeric checks (load × g-factor, factor of safety, mass, deflection). "Done" means the referee passed every check, including loads the agents never saw. A loop detector re-plans when designs repeat or stop improving. |
-| **Version N+1** | After each run a playbook editor proposes engineering rules from the failures. A rule is kept only if the dev-set score improves. v0 vs vN is reported on **held-out parts never used for editing**. Rejected edits stay in the log. |
+| **Version N+1** | After each run a playbook editor proposes engineering rules from the failures. A rule is kept only if the dev-set score improves. v0 vs vN is reported on **held-out parts never used for editing**. Rejected edits stay in the log. Then the designer's *weights* get the same treatment: referee-verified designs become a LoRA fine-tune on Crusoe. |
 | **Shared Brain** | The playbook is the team's shared memory. Every designer reads it before working, and its value is measured by held-out score, not by how it reads. |
+
+### Memory: three tiers, one promotion rule
+| tier | what | gate |
+|---|---|---|
+| notebook | every attempt: params → verdict → critic hypothesis (`trace.json`) | none, raw experience |
+| playbook | plain-English rules the team wrote from its own failures (`playbook/vN.md`) | kept only if dev score rises |
+| weights | referee-verified (goal → params) pairs distilled into a Nemotron LoRA via Crusoe Serverless Fine-Tuning (`forge/distill.py`) | promoted only if held-out score rises |
+
+Design rationale and the compute decision (Crusoe over our 8×A100s: the bottleneck is physics, not FLOPs) are in [`docs/BACKEND.md`](docs/BACKEND.md).
 
 ### Why the referee can't be fooled
 - **It isn't an LLM.** It's a 2nd-order tetrahedral FEA run (gmsh + CalculiX), checked against beam theory at **0.18 % error** (`make selftest`).
@@ -60,6 +69,8 @@ make selftest                     # blocks + referee physics vs beam theory
 make verify-isolation             # proves agents can't see hidden load cases
 make demo TASK=motor_2kg_80mm     # one goal end-to-end
 make nplus1                       # playbook rounds: train → gate on dev → score held-out
+python -m forge.distill --dry-run # harvest referee-verified designs → gens/gen1/*.jsonl
+python -m forge.distill --launch  # Crusoe Serverless Fine-Tuning job on Nemotron (LoRA)
 python3 ui/serve.py               # live view; ?replay=runs/<run> replays a finished run
 ```
 
