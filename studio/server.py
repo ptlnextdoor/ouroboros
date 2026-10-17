@@ -29,6 +29,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 from forge.llm import MODELS                       # noqa: E402
 from forge import loop as forge_loop               # noqa: E402
 from studio import fusion                          # noqa: E402
+from studio import mj1bridge                        # noqa: E402
+from studio import mj1flow                          # noqa: E402
+
+# words that route a goal to the MJ-1 supersonic-jet pipeline instead of brackets
+JET_WORDS = ("supersonic", "mach", "jet", "drone", "aircraft", "plane", "boom",
+             "delivery", "flight", "fly", "turbine", "wing")
 
 # human labels for the agent rows
 AGENT_MODEL = {
@@ -91,6 +97,17 @@ def closest_task(goal):
 def run_turn(goal, q, playbook_rel="playbook/v2.md"):
     def send(ev, **data):
         q.put(dict(event=ev, **data))
+
+    # route: a supersonic-jet goal runs the MJ-1 pipeline; anything else is a bracket
+    gl = goal.lower()
+    if any(w in gl for w in JET_WORDS):
+        try:
+            mj1flow.run_mj1_turn(goal, send, mj1bridge)
+        except Exception as e:
+            send("error", message=f"{type(e).__name__}: {e}")
+        finally:
+            q.put(None)
+        return
 
     try:
         task = closest_task(goal)
