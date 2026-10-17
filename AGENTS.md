@@ -6,6 +6,21 @@ Updated 2026-10-17 14:10 PT. Freeze 4:00 PM. Working demo target 2:30 PM.
 FORGE: an AI hardware engineer. One sentence in, a manufacturable part out, every claim checked by physics
 it can't see inside, and it only keeps lessons (playbook, then LoRA weights) that win on parts it never saw.
 
+## THE PITCH (founder, 2:31 PM, overrides older notes)
+Zipline (blood and organ delivery to hospitals) but SUPERSONIC, designed by a high-schooler with no
+engineering budget. The hero vehicle is **MJ-1**, our Boom-Prize supersonic RC jet
+(/Users/aayu/Workspace/developer/mj1). STOP leading with the bracket: "any Opus or GPT-6 Astra can make a
+bracket." The bracket loop is only the proof that the referee + self-improvement works (held-out 5/6 -> 6/6).
+What is impressive and must be on screen: SOURCING real parts (JetCat P550-PRO turbine, KST servos, Matek FC,
+GNSS, airspeed, fuel system: mj1/cad/kc_vendor.py, 23 parts, each with datasheet source and REAL vs STAND-IN
+tag), reading datasheets/drawings, vendor STEP files, and designing the airframe AROUND them (Fusion stage
+scripts mj1/cad/fusion_mj1_kc/, MJ1_KC.f3d), then physics: mj1.sizing (8 architectures vs Mach 1.05),
+calibrated turbojet deck, area rule from the real STEP (E_WD 7.1 -> 3.06).
+MJ-1 honesty: a design, not flown. Best area-ruled layout is ~10 % short of thrust for M1.05 at the nominal
+engine model. No 2 kg payload bay exists yet ("payload bay sizing: next"). Twin-P400 closes nominally,
+P(M1.05) 0.68 in Monte Carlo, fails the pessimistic band. SQ-2 (590 km/h quad, NOT supersonic) is the
+second vehicle, also designed by this agent stack.
+
 ## Why this wins (from docs/WIN_PLAYBOOK.md + docs/WINNER_AUDIT.md research, condensed)
 - Repeat winners: one-line input typed live, something visual inside 60 s, a referee that says FAIL with a
   number, one before/after table on a hidden set with a $ column, one honest limitation sentence,
