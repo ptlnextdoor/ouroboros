@@ -7,7 +7,14 @@ on Crusoe Managed Inference.
 
 Status: **trained; promotion pending a deployed held-out gate.** The adapter
 exists and its weights are on disk, but it is not yet served, so it has not been
-scored on held-out parts. By our own promotion rule (weights are kept only if
+scored on held-out parts.
+
+Deploy attempt (2026-10-17): a Crusoe Self-Serve Deployment of checkpoint-3 (Fused LoRA on
+Nemotron 3.5 Lightning, Throughput 4xH100, 1 replica, alias `forge-gen1`, deployment
+`nvidia-nemotron-3-5-lightning-fc72a4f4`) was created at 2:56 PM PT, sat at 30 % "Loading
+model, starting server" and moved to **Failed** at ~3:36 PM with no error in the activity log;
+0/1 replicas came up and no credits were charged. Flagged to Crusoe staff in the hackathon
+Discord at 3:38 PM. Inference calls to `forge-gen1` returned `model_not_found` throughout. By our own promotion rule (weights are kept only if
 the held-out score rises) it is a trained candidate, not a promoted generation.
 
 ## Job
