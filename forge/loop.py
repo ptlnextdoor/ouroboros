@@ -81,9 +81,21 @@ def evaluate_design(task, params, claim, vis, hid, stl_path=None):
     return v, pc
 
 
+def physics_ok(verdict):
+    """Design is sound if every SAFETY check passes. Parity (agent claim vs
+    referee) is reported as the sim-to-real metric but does not gate solved:
+    a design is correct even if the agent mis-estimated its own stress."""
+    if not verdict:
+        return False
+    checks = verdict.get("checks", [])
+    if not checks:
+        return False
+    return all(c["ok"] for c in checks if not c["name"].startswith("parity"))
+
+
 def score(verdict, iters, mass_limit):
     """Higher is better. Passing dominates, then fewer iters, then lighter."""
-    if not verdict or not verdict.get("ok"):
+    if not physics_ok(verdict):
         return 0.0
     mass = verdict.get("mass_g") or mass_limit
     mass_frac = max(0.0, min(1.0, mass / mass_limit)) if mass_limit else 1.0
@@ -112,7 +124,7 @@ def solve(task, playbook, *, llm=None, run_dir=None, max_iters=6, n_designers=4,
 
     history = []        # [{params, verdict, critic}]
     best = None         # dict(params, verdict, iter, k, score)
-    seen_hashes = {}
+    iter_best_hashes = []  # best clamped-hash per iteration (across-iter loop detect)
     no_improve = 0
     stop_reason = "max_iters"
 
@@ -153,7 +165,6 @@ def solve(task, playbook, *, llm=None, run_dir=None, max_iters=6, n_designers=4,
             rec = dict(params=d["params"], clamped=pc, claim=d["claim"], verdict=v,
                        iter=it, k=k, phash=h, critic=None)
             history.append(rec)
-            seen_hashes[h] = seen_hashes.get(h, 0) + 1
             sc = score(v, it, task["mass_limit_g"])
             if iter_best is None or sc > iter_best["score"]:
                 iter_best = dict(rec, score=sc)
@@ -166,16 +177,20 @@ def solve(task, playbook, *, llm=None, run_dir=None, max_iters=6, n_designers=4,
             no_improve = 0 if improved else no_improve + 1
         else:
             no_improve += 1
+        if iter_best:
+            iter_best_hashes.append(iter_best["phash"])
 
-        if best and best["verdict"]["ok"]:
+        if best and physics_ok(best["verdict"]):
             stop_reason = "solved"
             ev.emit("gate", task=tid, iter=it, status="solved",
                     mass_g=best["verdict"].get("mass_g"), score=round(best["score"], 2))
             break
 
-        # loop detector: same clamped params twice, or 3 iters no improvement
-        repeated = any(c >= 2 for c in seen_hashes.values())
-        if repeated:
+        # loop detector: iter-best lands on the same clamped params two iters
+        # running (agents stuck), or 3 iterations with no score improvement.
+        stuck_repeat = (len(iter_best_hashes) >= 2 and
+                        iter_best_hashes[-1] == iter_best_hashes[-2])
+        if stuck_repeat:
             stop_reason = "loop_repeat_params"
             ev.emit("gate", task=tid, iter=it, status="stuck", reason=stop_reason)
             break
@@ -186,7 +201,7 @@ def solve(task, playbook, *, llm=None, run_dir=None, max_iters=6, n_designers=4,
 
         # critic: why did it fail + what to change -> fed into next designers
         if it < max_iters - 1:
-            failed = [a for a in history if not a["verdict"]["ok"]]
+            failed = [a for a in history if not physics_ok(a["verdict"])]
             if failed:
                 try:
                     hyp = agents.critic(llm, task, spec, playbook, failed)
@@ -199,7 +214,7 @@ def solve(task, playbook, *, llm=None, run_dir=None, max_iters=6, n_designers=4,
                 ev.emit("cost", spent_usd=round(llm.spent, 5), calls=llm.calls)
 
     trace = dict(task=tid, playbook_len=len(playbook), iters=(best["iter"] + 1 if best else max_iters),
-                 solved=bool(best and best["verdict"]["ok"]), stop_reason=stop_reason,
+                 solved=bool(best and physics_ok(best["verdict"])), stop_reason=stop_reason,
                  best=best, history=history, spent_usd=round(llm.spent, 5), calls=llm.calls)
     json.dump(trace, open(os.path.join(task_dir, "trace.json"), "w"), indent=2, default=str)
     ev.emit("gate", task=tid, status="done", solved=trace["solved"],

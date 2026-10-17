@@ -20,6 +20,10 @@ SYSTEM = (
     "You reply with STRICT JSON only, no prose, no code fences.\n\n"
     "PART FRAME: wall at x=0, arm extends +x, +z up, y across, units mm. The load "
     "hole sits 10 mm in from the arm tip, so arm_len = reach_mm + 10.\n\n"
+    "STRESS ESTIMATE (for your claim): the arm is a cantilever. Bending moment "
+    "M = F * reach (N*mm). Section modulus of the arm Z = width * t_arm^2 / 6 "
+    "(mm^3). Peak bending stress sigma_MPa ~= M / Z. A gusset near the wall cuts "
+    "the effective moment arm, lowering wall stress. Use the largest visible F.\n\n"
     "PARAMETERS (name: min..max):\n" + blocks.describe()
 )
 
