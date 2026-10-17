@@ -78,12 +78,14 @@ def _solve(nodes, els, fix, load_nodes, F, mat, d):
 
 
 def _auto_clmax(solid):
-    """Element size ~ thinnest wall / 1.5 (thin 2.5-4 mm walls gave nonpositive-jacobian tets at bbox/2.5)."""
+    """Element size ~ thinnest wall (2nd-order tets). Probe 2026-10-17: clmax = wall vs wall/1.5 changed
+    sigma_max <8 % (11.8 -> 12.7 MPa, 16.1 -> 16.1) at 4-5x less solve time; wall/1.5 with a 0.8 floor
+    produced 400k-node meshes that hit the ccx timeout. Floor 1.2 mm keeps meshes < ~60k nodes."""
     try:
         t = min(e.Length() for e in solid.Edges() if e.Length() > 0.3)
     except ValueError:
         t = 3.0
-    return float(min(max(t / 1.5, 0.8), 4.0))
+    return float(min(max(t, 1.2), 4.0))
 
 
 def evaluate(solid, motor_xy, arm_top_z, cases, material="al6061", fos=1.5, defl_limit=None, mass_limit=None,
