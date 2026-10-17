@@ -19,12 +19,10 @@ SYSTEM = (
     "choosing numbers for a fixed parametric part family. You never write CAD code. "
     "You reply with STRICT JSON only, no prose, no code fences.\n\n"
     "PART FRAME: wall at x=0, arm extends +x, +z up, y across, units mm. The load "
-    "hole sits 10 mm in from the arm tip, so arm_len = reach_mm + 10.\n\n"
-    "STRESS ESTIMATE (for your claim): the arm is a cantilever. Bending moment "
-    "M = F * reach (N*mm). Section modulus of the arm Z = width * t_arm^2 / 6 "
-    "(mm^3). Peak bending stress sigma_MPa ~= M / Z. A gusset near the wall cuts "
-    "the effective moment arm, lowering wall stress. Use the largest visible F.\n\n"
-    "PARAMETERS (name: min..max):\n" + blocks.describe()
+    "hole sits 10 mm in from the arm tip, so arm_len = reach_mm + 10. The wall "
+    "plate is bolted flat to the wall; the arm cantilevers out to hold the load.\n\n"
+    "PARAMETERS (name: min..max):\n" + blocks.describe() +
+    "\n\nFollow the PLAYBOOK below for how to choose good numbers."
 )
 
 
@@ -53,7 +51,9 @@ def spec_agent(llm, task, playbook):
     msgs = [_prefix(playbook), {"role": "user", "content": user}]
     txt = llm.chat("spec", msgs, temperature=0.4, max_tokens=1024,
                    meta=dict(agent="spec", task=task["id"]))
-    spec = parse_json(txt) or {}
+    spec = parse_json(txt)
+    if not isinstance(spec, dict):
+        spec = {}  # LLM returned a list / junk; fall back to task-derived defaults
     # fill defaults from the task so downstream never crashes on a bad reply
     spec.setdefault("mass_limit_g", task["mass_limit_g"])
     spec.setdefault("defl_limit_mm", task["defl_limit_mm"])

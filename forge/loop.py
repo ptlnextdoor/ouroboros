@@ -94,12 +94,13 @@ def physics_ok(verdict):
 
 
 def score(verdict, iters, mass_limit):
-    """Higher is better. Passing dominates, then fewer iters, then lighter."""
+    """Higher is better. Passing dominates; then FEWER iterations (the playbook's
+    real value: get it right sooner); then lighter. iters is 0-based here."""
     if not physics_ok(verdict):
         return 0.0
     mass = verdict.get("mass_g") or mass_limit
     mass_frac = max(0.0, min(1.0, mass / mass_limit)) if mass_limit else 1.0
-    return 100.0 - 5.0 * iters - 10.0 * mass_frac
+    return 100.0 - 15.0 * iters - 5.0 * mass_frac
 
 
 # ---------------------------------------------------------------------------
