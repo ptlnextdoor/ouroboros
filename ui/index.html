@@ -399,10 +399,12 @@ function handle(e){
 // ---------- transport ----------
 const dot=$('dot'), st=$('statustext');
 function connectLive(run){
-  const es = new EventSource('/events'+(run?`?run=${encodeURIComponent(run)}`:''));
+  // ?once=1 : server closes after catching up (instant snapshot of a finished run, no tail)
+  const es = new EventSource('/events?'+(run?`run=${encodeURIComponent(run)}&`:'')+(Q.has('once')?'replay=1':''));
   es.addEventListener('meta', e=>{ const m=JSON.parse(e.data); S.run=m.run; dot.className='dot live'; st.textContent='LIVE · '+m.run; });
   es.addEventListener('ev', e=>{ try{ handle(JSON.parse(e.data)); }catch(err){ console.warn(err); } });
   es.addEventListener('switch', e=>{ es.close(); setTimeout(()=>connectLive(null), 300); });
+  es.addEventListener('done', e=>{ es.close(); st.textContent='SNAPSHOT · '+(run||''); });
   es.onerror = ()=>{ dot.className='dot'; st.textContent='reconnecting…'; };
 }
 async function replay(run){
