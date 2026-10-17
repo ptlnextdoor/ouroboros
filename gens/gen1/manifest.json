@@ -1,0 +1,9 @@
+{
+  "playbook_path": "playbook/v2.md",
+  "playbook_sha1": "f248a5bb849024041eb918138a384e3ad3a6cb16",
+  "base_model": "ftmodel-6c22bf52-fb65-4bd5-94c4-736f0a7d33f0",
+  "n_examples": 24,
+  "n_train": 22,
+  "n_val": 2,
+  "token_estimate": 30467
+}
