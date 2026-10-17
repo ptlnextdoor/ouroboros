@@ -179,7 +179,7 @@ next iteration                 <b>playbook editor</b> proposes ONE rule
       team's notebook; the adapter is its trained hands. Neither gets promoted unless it wins on parts
       it has never seen."</p></div>
     <div class="card"><h3>Compute call: Crusoe, A100s parked</h3>
-      <p>Verified today: our key reaches Crusoe's fine-tuning API; Nemotron-3.5-Nano-30B trains at
+      <p>Verified today: our key reaches Crusoe's fine-tuning API; Nemotron 3.5 Lightning 30B (the same model our designers run) trains at
       <b>$0.40/1M tokens</b> — a Gen-1 LoRA job costs ~$2 of our $200. Krish's 8×A100s stay on standby
       (the bottleneck is physics, not FLOPs — CalculiX is CPU-bound at ~6 s/verdict).</p></div>
   </div>
@@ -228,7 +228,7 @@ next iteration                 <b>playbook editor</b> proposes ONE rule
   <div class="eyebrow">division of labor · now → 4:00 freeze</div>
   <h2>Who's on what</h2>
   <div class="card" style="margin-top:10px">
-    <div class="task"><span class="who k">KRISH</span><div><b>forge/distill.py</b> — harvest referee-passing train-split designs from <span class="mono">runs/**/trace.json</span> → chat-format JSONL (system = serving prefix verbatim, assistant = designer JSON) → upload + launch Crusoe FT job on Nemotron-Nano (<span class="mono">api.intelligence.crusoecloud.com</span>, OpenAI SDK, key in .env works — verified). Dedupe by params hash, cap 4/task, train split ONLY.</div></div>
+    <div class="task"><span class="who k">KRISH</span><div><b>forge/distill.py: DONE</b>, 24 referee-verified train designs, Crusoe LoRA job <span class="mono">ftjob-0330cd18758a46da997c2a530677360a</span> on Nemotron 3.5 Lightning is queued. Poll: <span class="mono">python -m forge.distill --status ftjob-0330cd18758a46da997c2a530677360a</span>. Your part now: the video.</div></div>
     <div class="task"><span class="who k">KRISH</span><div><b>Gen-1 gate hook</b> — when the adapter lands, A/B base vs adapter on held-out via the existing <span class="mono">forge/gate.py --heldout</span> path. If the job doesn't finish by 3:30, the running console IS the demo artifact.</div></div>
     <div class="task"><span class="who a">AAYU</span><div>Held-out v0 vs v2 run (in flight), results table into README, demo part selection + caching, vision video clip, rehearsal ×3 at 4:15.</div></div>
     <div class="task"><span class="who b">BOTH</span><div>Feature freeze 4:00 · submit 4:45. Nothing new after freeze, only demo-path fixes.</div></div>

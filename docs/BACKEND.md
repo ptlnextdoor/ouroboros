@@ -80,8 +80,8 @@ Budget plan for the $200:
 |---|---|
 | all inference for remaining rounds + heldout + demo reruns | < $5 |
 | Gen-1 LoRA job (≈100–300 verified trajectories × ~800 tok × 3 epochs ≈ 0.5–1 M tok) | ≈ $0.40–2 |
-| Self-Serve Deployment of the adapter for the demo window (2 h H100) | ≈ $13 |
-| headroom | > $175 |
+| Self-Serve Deployment of the adapter for the demo window (Fused LoRA, 4×H100 throughput profile, $22/hr, billed per second; ~1 h) | ≈ $22 |
+| headroom | > $170 |
 
 **A100 cluster verdict: keep it parked.** Using it means rebuilding the OUROBOROS stack (vLLM
 multi-LoRA + TRL + accelerate) that we explicitly abandoned at kickoff; the risky item on the
@@ -126,8 +126,10 @@ want a "real CAD tool" moment; the three.js viewer in `ui/` is the rehearsed def
 - Fine-tune job wall-clock (~30 min on sample data per Crusoe's guide) may not finish before
   freeze. Mitigation: the *job itself* (real data, real console) is the demo artifact; deploy only
   if it lands by 3:30.
-- Adapter inference needs a Self-Serve Deployment (base `ftmodel-…Nano` is not on serverless
-  inference). Fallback: download the adapter and show the gate running against the base model,
-  labeled "Gen 1 pending."
+- Adapter inference needs a Self-Serve Deployment (console-verified 13:40: Fused LoRA on Nemotron 3.5
+  Lightning, 4×H100 $22/hr or 8×H100 $44/hr). The FT base `crusoeai/NVIDIA-Nemotron-3.5-Nano-30B-A3B-BF16`
+  is what the console labels "Nemotron 3.5 Lightning 30B A3B", i.e. the same model our designers already
+  call, so the adapter is a drop-in designer upgrade. Deploy only after the job succeeds; tear down right
+  after the demo. Fallback: show the gate against the base model, labeled "Gen 1 pending."
 - Design/visual work (banner, slide card) routes to the Gemini account, not Claude, to save
   Anthropic quota for builders.
