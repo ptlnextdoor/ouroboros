@@ -13,6 +13,7 @@ import concurrent.futures as cf
 import hashlib
 import json
 import os
+import threading
 import time
 
 os.environ.setdefault("FREECAD_BIN", "/Applications/FreeCAD.app/Contents/Resources/bin")
@@ -29,14 +30,20 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # events
 # ---------------------------------------------------------------------------
 class Events:
+    # class-level lock: eval_playbook runs tasks in parallel threads, each with
+    # its own Events instance pointing at the same tag/events.jsonl. Serialize
+    # all appends globally so concurrent writes don't interleave.
+    _lock = threading.Lock()
+
     def __init__(self, run_dir):
         self.path = os.path.join(run_dir, "events.jsonl")
         os.makedirs(run_dir, exist_ok=True)
 
     def emit(self, kind, **payload):
         rec = dict(ts=time.time(), kind=kind, payload=payload)
-        with open(self.path, "a") as f:
-            f.write(json.dumps(rec) + "\n")
+        with Events._lock:
+            with open(self.path, "a") as f:
+                f.write(json.dumps(rec) + "\n")
         return rec
 
 

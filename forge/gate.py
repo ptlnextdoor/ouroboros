@@ -47,13 +47,31 @@ def _log_history(rec):
 
 
 def eval_playbook(playbook, tasks, *, llm, run_dir, max_iters=4, n_designers=4, tag=""):
-    """Run every task; return aggregate dict. Score = sum of per-task best score."""
+    """Run every task; return aggregate dict. Score = sum of per-task best score.
+
+    Tasks run concurrently: each solve spends most wall time in the referee
+    (gmsh+ccx subprocesses, CPU-bound), so threads parallelize well. Each task
+    writes to its own run_dir/<task_id> subdir; the only shared file is the
+    tag's events.jsonl, whose append is serialized by Events._lock (loop.py).
+    """
+    sub = os.path.join(run_dir, tag or "eval")
+    results = {}  # t_id -> (best, trace)
+
+    def _run(t):
+        return loop.solve(t, playbook, llm=llm, run_dir=sub,
+                          max_iters=max_iters, n_designers=n_designers)
+
+    import concurrent.futures as cf
+    with cf.ThreadPoolExecutor(max_workers=min(4, len(tasks))) as ex:
+        futs = {ex.submit(_run, t): t for t in tasks}
+        for fut in cf.as_completed(futs):
+            t = futs[fut]
+            results[t["id"]] = fut.result()
+
     total, solved, masses, iters_used = 0.0, 0, [], []
     per = {}
-    for t in tasks:
-        sub = os.path.join(run_dir, tag or "eval")
-        best, trace = loop.solve(t, playbook, llm=llm, run_dir=sub,
-                                 max_iters=max_iters, n_designers=n_designers)
+    for t in tasks:  # deterministic order for aggregates/output
+        best, trace = results[t["id"]]
         sc = best["score"] if best else 0.0
         total += sc
         if trace["solved"]:
