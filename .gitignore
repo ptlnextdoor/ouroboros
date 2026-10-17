@@ -9,3 +9,6 @@ runs/
 data/raw/
 *.safetensors
 wandb/
+
+# large SolidCraft assembly design (regenerate: python3 solidcraft/scripts/build_sq2.py --run)
+solidcraft/designs/*.solidcraft

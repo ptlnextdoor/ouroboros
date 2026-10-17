@@ -1,0 +1,1946 @@
+{
+ "commands": [
+  {
+   "command": "file.new",
+   "params": {
+    "name": "SQ-2 v3"
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/nose_section_PA6CF.step",
+    "name": "nose_section_PA6CF",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "nose_section_PA6CF"
+    ],
+    "color": [
+     41,
+     41,
+     46
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/nose_tip_TPU.step",
+    "name": "nose_tip_TPU",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "nose_tip_TPU"
+    ],
+    "color": [
+     217,
+     217,
+     204
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.75,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/gnss_window_TPU.step",
+    "name": "gnss_window_TPU",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "gnss_window_TPU"
+    ],
+    "color": [
+     230,
+     230,
+     217
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.75,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/camera_dome_PC.step",
+    "name": "camera_dome_PC",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "camera_dome_PC"
+    ],
+    "color": [
+     191,
+     217,
+     242
+    ],
+    "opacity": 0.35
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/o4pro_cam_body.step",
+    "name": "o4pro_cam_body",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "o4pro_cam_body"
+    ],
+    "color": [
+     20,
+     20,
+     23
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/o4pro_cam_glass.step",
+    "name": "o4pro_cam_glass",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "o4pro_cam_glass"
+    ],
+    "color": [
+     38,
+     76,
+     140
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pitot_SS.step",
+    "name": "pitot_SS",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pitot_SS"
+    ],
+    "color": [
+     191,
+     191,
+     199
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.22,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pack_liners_TPU.step",
+    "name": "pack_liners_TPU",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pack_liners_TPU"
+    ],
+    "color": [
+     230,
+     230,
+     217
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.75,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pack_bulkhead_disc_PA6CF.step",
+    "name": "pack_bulkhead_disc_PA6CF",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pack_bulkhead_disc_PA6CF"
+    ],
+    "color": [
+     76,
+     115,
+     76
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/centre_section_PA6CF.step",
+    "name": "centre_section_PA6CF",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "centre_section_PA6CF"
+    ],
+    "color": [
+     51,
+     51,
+     59
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/hub_frame_7075.step",
+    "name": "hub_frame_7075",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "hub_frame_7075"
+    ],
+    "color": [
+     184,
+     189,
+     199
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.3,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/j2_washer_plates_7075.step",
+    "name": "j2_washer_plates_7075",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "j2_washer_plates_7075"
+    ],
+    "color": [
+     184,
+     189,
+     199
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.3,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/aft_section_PA6CF.step",
+    "name": "aft_section_PA6CF",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "aft_section_PA6CF"
+    ],
+    "color": [
+     51,
+     51,
+     59
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/feet_TPU.step",
+    "name": "feet_TPU",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "feet_TPU"
+    ],
+    "color": [
+     230,
+     230,
+     217
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.75,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pack_L_7S.step",
+    "name": "pack_L_7S",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pack_L_7S"
+    ],
+    "color": [
+     230,
+     184,
+     26
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pack_L_bullets.step",
+    "name": "pack_L_bullets",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pack_L_bullets"
+    ],
+    "color": [
+     217,
+     166,
+     51
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.28,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pack_R_7S.step",
+    "name": "pack_R_7S",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pack_R_7S"
+    ],
+    "color": [
+     230,
+     184,
+     26
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pack_R_bullets.step",
+    "name": "pack_R_bullets",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pack_R_bullets"
+    ],
+    "color": [
+     217,
+     166,
+     51
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.28,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pack_foam_PU.step",
+    "name": "pack_foam_PU",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pack_foam_PU"
+    ],
+    "color": [
+     242,
+     230,
+     178
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/power_sled_6061.step",
+    "name": "power_sled_6061",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "power_sled_6061"
+    ],
+    "color": [
+     153,
+     158,
+     168
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.3,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/power_sled_nuts_M3.step",
+    "name": "power_sled_nuts_M3",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "power_sled_nuts_M3"
+    ],
+    "color": [
+     128,
+     128,
+     133
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.22,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/esc_RD_APD200F3.step",
+    "name": "esc_RD_APD200F3",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "esc_RD_APD200F3"
+    ],
+    "color": [
+     26,
+     115,
+     38
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/esc_LD_APD200F3.step",
+    "name": "esc_LD_APD200F3",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "esc_LD_APD200F3"
+    ],
+    "color": [
+     26,
+     115,
+     38
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/esc_RU_APD200F3.step",
+    "name": "esc_RU_APD200F3",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "esc_RU_APD200F3"
+    ],
+    "color": [
+     26,
+     115,
+     38
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/esc_LU_APD200F3.step",
+    "name": "esc_LU_APD200F3",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "esc_LU_APD200F3"
+    ],
+    "color": [
+     26,
+     115,
+     38
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/avionics_tray_PA6CF.step",
+    "name": "avionics_tray_PA6CF",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "avionics_tray_PA6CF"
+    ],
+    "color": [
+     76,
+     76,
+     84
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/fc_H7.step",
+    "name": "fc_H7",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "fc_H7"
+    ],
+    "color": [
+     26,
+     76,
+     153
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/adr_board.step",
+    "name": "adr_board",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "adr_board"
+    ],
+    "color": [
+     26,
+     128,
+     64
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/o4pro_vtx.step",
+    "name": "o4pro_vtx",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "o4pro_vtx"
+    ],
+    "color": [
+     46,
+     46,
+     51
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/gnss_m10.step",
+    "name": "gnss_m10",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "gnss_m10"
+    ],
+    "color": [
+     51,
+     51,
+     153
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_node_7075.step",
+    "name": "pod_LU_node_7075",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_node_7075"
+    ],
+    "color": [
+     191,
+     191,
+     199
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.3,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_motor_V3120.step",
+    "name": "pod_LU_motor_V3120",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_motor_V3120"
+    ],
+    "color": [
+     140,
+     140,
+     153
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.9,
+     "roughness": 0.4,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_motorvis_bell.step",
+    "name": "pod_LU_motorvis_bell",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_motorvis_bell"
+    ],
+    "color": [
+     31,
+     31,
+     33
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_motorvis_stator.step",
+    "name": "pod_LU_motorvis_stator",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_motorvis_stator"
+    ],
+    "color": [
+     184,
+     107,
+     46
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_motorvis_base.step",
+    "name": "pod_LU_motorvis_base",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_motorvis_base"
+    ],
+    "color": [
+     140,
+     143,
+     153
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_motorvis_shaft.step",
+    "name": "pod_LU_motorvis_shaft",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_motorvis_shaft"
+    ],
+    "color": [
+     199,
+     199,
+     204
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_nacelle_front.step",
+    "name": "pod_LU_nacelle_front",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_nacelle_front"
+    ],
+    "color": [
+     41,
+     41,
+     46
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_nacelle_rear.step",
+    "name": "pod_LU_nacelle_rear",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_nacelle_rear"
+    ],
+    "color": [
+     41,
+     41,
+     46
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_spinner.step",
+    "name": "pod_LU_spinner",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_spinner"
+    ],
+    "color": [
+     191,
+     26,
+     26
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_prop.step",
+    "name": "pod_LU_prop",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_prop"
+    ],
+    "color": [
+     20,
+     20,
+     20
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_spar_CFRP.step",
+    "name": "pod_LU_spar_CFRP",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_spar_CFRP"
+    ],
+    "color": [
+     10,
+     10,
+     10
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.1,
+     "roughness": 0.35,
+     "dielectric_ior": 1.6
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LU_strut_fairing.step",
+    "name": "pod_LU_strut_fairing",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LU_strut_fairing"
+    ],
+    "color": [
+     61,
+     61,
+     69
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_node_7075.step",
+    "name": "pod_LD_node_7075",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_node_7075"
+    ],
+    "color": [
+     191,
+     191,
+     199
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.3,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_motor_V3120.step",
+    "name": "pod_LD_motor_V3120",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_motor_V3120"
+    ],
+    "color": [
+     140,
+     140,
+     153
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.9,
+     "roughness": 0.4,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_motorvis_bell.step",
+    "name": "pod_LD_motorvis_bell",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_motorvis_bell"
+    ],
+    "color": [
+     31,
+     31,
+     33
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_motorvis_stator.step",
+    "name": "pod_LD_motorvis_stator",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_motorvis_stator"
+    ],
+    "color": [
+     184,
+     107,
+     46
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_motorvis_base.step",
+    "name": "pod_LD_motorvis_base",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_motorvis_base"
+    ],
+    "color": [
+     140,
+     143,
+     153
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_motorvis_shaft.step",
+    "name": "pod_LD_motorvis_shaft",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_motorvis_shaft"
+    ],
+    "color": [
+     199,
+     199,
+     204
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_nacelle_front.step",
+    "name": "pod_LD_nacelle_front",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_nacelle_front"
+    ],
+    "color": [
+     41,
+     41,
+     46
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_nacelle_rear.step",
+    "name": "pod_LD_nacelle_rear",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_nacelle_rear"
+    ],
+    "color": [
+     41,
+     41,
+     46
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_spinner.step",
+    "name": "pod_LD_spinner",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_spinner"
+    ],
+    "color": [
+     191,
+     26,
+     26
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_prop.step",
+    "name": "pod_LD_prop",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_prop"
+    ],
+    "color": [
+     20,
+     20,
+     20
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_spar_CFRP.step",
+    "name": "pod_LD_spar_CFRP",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_spar_CFRP"
+    ],
+    "color": [
+     10,
+     10,
+     10
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.1,
+     "roughness": 0.35,
+     "dielectric_ior": 1.6
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_LD_strut_fairing.step",
+    "name": "pod_LD_strut_fairing",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_LD_strut_fairing"
+    ],
+    "color": [
+     61,
+     61,
+     69
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_node_7075.step",
+    "name": "pod_RU_node_7075",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_node_7075"
+    ],
+    "color": [
+     191,
+     191,
+     199
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.3,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_motor_V3120.step",
+    "name": "pod_RU_motor_V3120",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_motor_V3120"
+    ],
+    "color": [
+     140,
+     140,
+     153
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.9,
+     "roughness": 0.4,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_motorvis_bell.step",
+    "name": "pod_RU_motorvis_bell",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_motorvis_bell"
+    ],
+    "color": [
+     31,
+     31,
+     33
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_motorvis_stator.step",
+    "name": "pod_RU_motorvis_stator",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_motorvis_stator"
+    ],
+    "color": [
+     184,
+     107,
+     46
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_motorvis_base.step",
+    "name": "pod_RU_motorvis_base",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_motorvis_base"
+    ],
+    "color": [
+     140,
+     143,
+     153
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_motorvis_shaft.step",
+    "name": "pod_RU_motorvis_shaft",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_motorvis_shaft"
+    ],
+    "color": [
+     199,
+     199,
+     204
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_nacelle_front.step",
+    "name": "pod_RU_nacelle_front",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_nacelle_front"
+    ],
+    "color": [
+     41,
+     41,
+     46
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_nacelle_rear.step",
+    "name": "pod_RU_nacelle_rear",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_nacelle_rear"
+    ],
+    "color": [
+     41,
+     41,
+     46
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_spinner.step",
+    "name": "pod_RU_spinner",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_spinner"
+    ],
+    "color": [
+     191,
+     26,
+     26
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_prop.step",
+    "name": "pod_RU_prop",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_prop"
+    ],
+    "color": [
+     20,
+     20,
+     20
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_spar_CFRP.step",
+    "name": "pod_RU_spar_CFRP",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_spar_CFRP"
+    ],
+    "color": [
+     10,
+     10,
+     10
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.1,
+     "roughness": 0.35,
+     "dielectric_ior": 1.6
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RU_strut_fairing.step",
+    "name": "pod_RU_strut_fairing",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RU_strut_fairing"
+    ],
+    "color": [
+     61,
+     61,
+     69
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_node_7075.step",
+    "name": "pod_RD_node_7075",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_node_7075"
+    ],
+    "color": [
+     191,
+     191,
+     199
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 1.0,
+     "roughness": 0.3,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_motor_V3120.step",
+    "name": "pod_RD_motor_V3120",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_motor_V3120"
+    ],
+    "color": [
+     140,
+     140,
+     153
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.9,
+     "roughness": 0.4,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_motorvis_bell.step",
+    "name": "pod_RD_motorvis_bell",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_motorvis_bell"
+    ],
+    "color": [
+     31,
+     31,
+     33
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_motorvis_stator.step",
+    "name": "pod_RD_motorvis_stator",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_motorvis_stator"
+    ],
+    "color": [
+     184,
+     107,
+     46
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_motorvis_base.step",
+    "name": "pod_RD_motorvis_base",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_motorvis_base"
+    ],
+    "color": [
+     140,
+     143,
+     153
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_motorvis_shaft.step",
+    "name": "pod_RD_motorvis_shaft",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_motorvis_shaft"
+    ],
+    "color": [
+     199,
+     199,
+     204
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_nacelle_front.step",
+    "name": "pod_RD_nacelle_front",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_nacelle_front"
+    ],
+    "color": [
+     41,
+     41,
+     46
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_nacelle_rear.step",
+    "name": "pod_RD_nacelle_rear",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_nacelle_rear"
+    ],
+    "color": [
+     41,
+     41,
+     46
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_spinner.step",
+    "name": "pod_RD_spinner",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_spinner"
+    ],
+    "color": [
+     191,
+     26,
+     26
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_prop.step",
+    "name": "pod_RD_prop",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_prop"
+    ],
+    "color": [
+     20,
+     20,
+     20
+    ],
+    "opacity": 1.0
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_spar_CFRP.step",
+    "name": "pod_RD_spar_CFRP",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_spar_CFRP"
+    ],
+    "color": [
+     10,
+     10,
+     10
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.1,
+     "roughness": 0.35,
+     "dielectric_ior": 1.6
+    }
+   }
+  },
+  {
+   "command": "file.insert_step",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/speed-quad/cad/out/sq2/v3/pod_RD_strut_fairing.step",
+    "name": "pod_RD_strut_fairing",
+    "names": "solid"
+   }
+  },
+  {
+   "command": "appearance.assign",
+   "params": {
+    "components": [
+     "pod_RD_strut_fairing"
+    ],
+    "color": [
+     61,
+     61,
+     69
+    ],
+    "opacity": 1.0,
+    "pbr": {
+     "metallic": 0.0,
+     "roughness": 0.85,
+     "dielectric_ior": 1.5
+    }
+   }
+  }
+ ]
+}

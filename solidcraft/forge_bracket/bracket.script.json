@@ -1,0 +1,234 @@
+{
+ "commands": [
+  {
+   "command": "file.new",
+   "params": {
+    "name": "FORGE bracket"
+   }
+  },
+  {
+   "command": "sketch.create",
+   "params": {
+    "plane": "YZ",
+    "name": "plate"
+   }
+  },
+  {
+   "command": "sketch.rectangle.two_point",
+   "params": {
+    "sketch": "plate",
+    "p0": [
+     -15.0,
+     0
+    ],
+    "p1": [
+     15.0,
+     50.0
+    ]
+   }
+  },
+  {
+   "command": "solid.extrude",
+   "params": {
+    "sketch": "plate",
+    "distance": 4.0,
+    "operation": "new",
+    "body_name": "bracket"
+   }
+  },
+  {
+   "command": "sketch.create",
+   "params": {
+    "plane": "YZ",
+    "name": "arm"
+   }
+  },
+  {
+   "command": "sketch.rectangle.two_point",
+   "params": {
+    "sketch": "arm",
+    "p0": [
+     -15.0,
+     46.0
+    ],
+    "p1": [
+     15.0,
+     50.0
+    ]
+   }
+  },
+  {
+   "command": "solid.extrude",
+   "params": {
+    "sketch": "arm",
+    "distance": 90.0,
+    "operation": "join",
+    "targets": [
+     "bracket"
+    ]
+   }
+  },
+  {
+   "command": "sketch.create",
+   "params": {
+    "plane": "XZ",
+    "name": "gusset"
+   }
+  },
+  {
+   "command": "sketch.line",
+   "params": {
+    "sketch": "gusset",
+    "points": [
+     [
+      4.0,
+      46.0
+     ],
+     [
+      44.0,
+      46.0
+     ],
+     [
+      4.0,
+      16.0
+     ]
+    ],
+    "closed": true
+   }
+  },
+  {
+   "command": "solid.extrude",
+   "params": {
+    "sketch": "gusset",
+    "distance": 3.0,
+    "direction": "symmetric",
+    "operation": "join",
+    "targets": [
+     "bracket"
+    ]
+   }
+  },
+  {
+   "command": "sketch.create",
+   "params": {
+    "plane": "YZ",
+    "name": "bolts"
+   }
+  },
+  {
+   "command": "sketch.circle.center",
+   "params": {
+    "sketch": "bolts",
+    "center": [
+     -7.5,
+     13.799999999999999
+    ],
+    "radius": 2.75
+   }
+  },
+  {
+   "command": "sketch.circle.center",
+   "params": {
+    "sketch": "bolts",
+    "center": [
+     7.5,
+     13.799999999999999
+    ],
+    "radius": 2.75
+   }
+  },
+  {
+   "command": "sketch.circle.center",
+   "params": {
+    "sketch": "bolts",
+    "center": [
+     -7.5,
+     32.199999999999996
+    ],
+    "radius": 2.75
+   }
+  },
+  {
+   "command": "sketch.circle.center",
+   "params": {
+    "sketch": "bolts",
+    "center": [
+     7.5,
+     32.199999999999996
+    ],
+    "radius": 2.75
+   }
+  },
+  {
+   "command": "solid.extrude",
+   "params": {
+    "sketch": "bolts",
+    "through_all": true,
+    "direction": "symmetric",
+    "operation": "cut",
+    "targets": [
+     "bracket"
+    ]
+   }
+  },
+  {
+   "command": "sketch.create",
+   "params": {
+    "plane": "XY",
+    "name": "zholes"
+   }
+  },
+  {
+   "command": "sketch.circle.center",
+   "params": {
+    "sketch": "zholes",
+    "center": [
+     80.0,
+     0.0
+    ],
+    "radius": 3.25
+   }
+  },
+  {
+   "command": "sketch.circle.center",
+   "params": {
+    "sketch": "zholes",
+    "center": [
+     55.375,
+     0.0
+    ],
+    "radius": 5.0
+   }
+  },
+  {
+   "command": "sketch.circle.center",
+   "params": {
+    "sketch": "zholes",
+    "center": [
+     64.125,
+     0.0
+    ],
+    "radius": 5.0
+   }
+  },
+  {
+   "command": "solid.extrude",
+   "params": {
+    "sketch": "zholes",
+    "through_all": true,
+    "direction": "symmetric",
+    "operation": "cut",
+    "targets": [
+     "bracket"
+    ]
+   }
+  },
+  {
+   "command": "file.export",
+   "params": {
+    "path": "/Users/aayu/Workspace/developer/recursive-agents-hack/solidcraft/forge_bracket/bracket.step",
+    "format": "step"
+   }
+  }
+ ]
+}
