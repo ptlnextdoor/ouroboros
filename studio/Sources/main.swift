@@ -118,7 +118,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
     }
 
     func load() {
-        web.load(URLRequest(url: URL(string: BASE + "/")!))
+        let auto = ProcessInfo.processInfo.environment["FORGE_AUTO"] == "1" ? "?auto=1" : ""
+        web.load(URLRequest(url: URL(string: BASE + "/" + auto)!))
     }
 
     func webView(_ w: WKWebView, didFail nav: WKNavigation!, withError error: Error) { retry() }

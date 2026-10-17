@@ -38,6 +38,8 @@
     border-right:1px solid var(--hair);display:flex;flex-direction:column;
     padding:10px;padding-top:34px;-webkit-app-region:drag;
   }
+  /* docked beside Fusion: the chat gets the whole panel, team collapses to the top strip */
+  @media (max-width:760px){ .side{display:none} }
   .newbtn{
     -webkit-app-region:no-drag;appearance:none;width:100%;display:flex;align-items:center;gap:8px;
     background:var(--raise);border:1px solid var(--hair-2);border-radius:9px;color:var(--fg);
@@ -448,7 +450,13 @@ function replay(events){
     setTimeout(tick, stream[i-1]&&stream[i-1].event==='image'?260:90);
   })();
 }
-fetch(BASE+'/last').then(r=>r.json()).then(j=>{if(j.events&&j.events.length>3)replay(j.events);}).catch(()=>{});
+const AUTO = new URLSearchParams(location.search).get('auto');
+if (AUTO) {
+  // demo recording: skip the replay and send the first chip's mission as a live turn
+  setTimeout(()=>{input.value=document.querySelector('.chip').textContent;autoGrow();go();}, 1500);
+} else {
+  fetch(BASE+'/last').then(r=>r.json()).then(j=>{if(j.events&&j.events.length>3)replay(j.events);}).catch(()=>{});
+}
 </script>
 </body>
 </html>
