@@ -107,7 +107,7 @@ path because our bottleneck is physics, not FLOPs."
 
 1. Vision (15 s): "I'm a high-schooler at Boom Supersonic. A $200 AI subscription is what a
    $20M engineering team used to be — for software. FORGE brings that to hardware." Cut to the
-   SQ2 supersonic-quad dossier as the lived example.
+   SQ-2 record-speed quad dossier (590 km/h predicted) as the lived example.
 2. Comparison (30 s): GPT-Astra's drone = a cylinder labeled "drone," no materials, no
    manufacturability. FORGE's part = CNC-millable, material chosen, and **every claim checked by a
    solver it can't see inside, on loads it was never told about** (show a hidden-case FAIL).
