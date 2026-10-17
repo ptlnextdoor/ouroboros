@@ -66,6 +66,7 @@
   .tstat{font-size:11.5px;color:var(--dim);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
   .tmeta{font-size:11px;color:var(--faint);font-family:var(--mono);text-align:right;white-space:nowrap}
   .tmeta.run{color:var(--accent)}
+  .tmeta{color:var(--faint)}
   .cog{-webkit-app-region:no-drag;margin-top:auto;color:var(--faint);font-size:14px;padding:8px;cursor:default}
   /* ---------- main ---------- */
   .main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)}
@@ -238,14 +239,16 @@ const ROSTER = [
   {key:'CAD',     name:'CAD',     model:'Fusion 360', cls:'cad'},
   {key:'Referee', name:'Referee', model:'CalculiX / area-rule', cls:'referee'},
 ];
-let rosterActive={};
+let rosterActive={}, rosterDone=false;
 function renderTeam(){
   document.getElementById('team').innerHTML = ROSTER.map(a=>{
     const run=rosterActive[a.key];
+    const state = run ? (rosterDone?'done':'running') : 'idle';
+    const dotcls = run ? 'on' : '';
     return `<div class="trow">
-      <div class="tav ${a.cls}">${a.name[0]}<span class="sd ${run?'on':''}"></span></div>
+      <div class="tav ${a.cls}">${a.name[0]}<span class="sd ${dotcls}"></span></div>
       <div><div class="tname">${a.name}</div><div class="tstat">${a.model}</div></div>
-      <div class="tmeta ${run?'run':''}">${run?'running':'idle'}</div>
+      <div class="tmeta ${state==='running'?'run':''}">${state}</div>
     </div>`;}).join('');
   document.getElementById('teamcount').textContent=ROSTER.length;
 }
@@ -355,7 +358,7 @@ function go(){
   const msg=input.value.trim(); if(!msg||busy)return;
   busy=true;send.disabled=true;
   if(empty)empty.style.display='none';
-  rosterActive={};renderTeam();resetTurn();
+  rosterActive={};rosterDone=false;renderTeam();resetTurn();
   feed.appendChild(el(`<div class="goal">${esc(msg)}</div>`));
   input.value='';autoGrow();stick();
   fetch(BASE+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})})
@@ -370,7 +373,7 @@ function go(){
       return pump();
     }).catch(e=>{addStep({agent:'Gate',model:'FORGE',text:'stream error: '+e});finish();});
 }
-function finish(){busy=false;send.disabled=false;renderTeam();if(turnState.kind)renderDone();}
+function finish(){busy=false;send.disabled=false;rosterDone=true;renderTeam();if(turnState.kind)renderDone();}
 
 function renderDone(){
   const stuck=atBottom(); const s=turnState; let line='';
@@ -420,7 +423,7 @@ document.getElementById('layout').onclick=function(){
 };
 function clearFeed(){
   feed.querySelectorAll(':scope > *:not(#empty)').forEach(n=>n.remove());
-  resetTurn();lastCost=0;rosterActive={};renderTeam();if(empty)empty.style.display='flex';
+  resetTurn();lastCost=0;rosterActive={};rosterDone=false;renderTeam();if(empty)empty.style.display='flex';
 }
 document.getElementById('newdesign').onclick=clearFeed;
 
@@ -440,7 +443,7 @@ function replay(events){
   const stream=events.filter(e=>e.event!=='goal');let i=0;
   const tag=el(`<div class="replaying">replay of the last live run</div>`);feed.appendChild(tag);
   (function tick(){
-    if(i>=stream.length){tag.remove();if(turnState.kind)renderDone();return;}
+    if(i>=stream.length){tag.remove();rosterDone=true;renderTeam();if(turnState.kind)renderDone();return;}
     handle(stream[i]);i++;
     setTimeout(tick, stream[i-1]&&stream[i-1].event==='image'?260:90);
   })();
