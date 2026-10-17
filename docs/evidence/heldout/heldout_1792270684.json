@@ -1,0 +1,109 @@
+{
+  "ts": 1792271486.387726,
+  "kind": "heldout",
+  "a": {
+    "path": "playbook/v0.md",
+    "score": 330.79,
+    "solved": 5,
+    "n": 6,
+    "mean_iters": 3.0,
+    "mean_mass": 53.5,
+    "per": {
+      "br11": {
+        "solved": true,
+        "score": 80.42,
+        "iters": 2,
+        "stop": "solved",
+        "mass_g": 76.17
+      },
+      "br12": {
+        "solved": true,
+        "score": 51.16,
+        "iters": 4,
+        "stop": "solved",
+        "mass_g": 36.45
+      },
+      "br13": {
+        "solved": false,
+        "score": 0.0,
+        "iters": 1,
+        "stop": "no_improvement_3",
+        "mass_g": 25.8
+      },
+      "br14": {
+        "solved": true,
+        "score": 50.77,
+        "iters": 4,
+        "stop": "solved",
+        "mass_g": 44.72
+      },
+      "br15": {
+        "solved": true,
+        "score": 67.36,
+        "iters": 3,
+        "stop": "solved",
+        "mass_g": 15.09
+      },
+      "br16": {
+        "solved": true,
+        "score": 81.08,
+        "iters": 2,
+        "stop": "solved",
+        "mass_g": 94.88
+      }
+    }
+  },
+  "b": {
+    "path": "playbook/v2.md",
+    "score": 582.06,
+    "solved": 6,
+    "n": 6,
+    "mean_iters": 1.0,
+    "mean_mass": 44.3,
+    "per": {
+      "br11": {
+        "solved": true,
+        "score": 96.67,
+        "iters": 1,
+        "stop": "solved",
+        "mass_g": 55.37
+      },
+      "br12": {
+        "solved": true,
+        "score": 96.82,
+        "iters": 1,
+        "stop": "solved",
+        "mass_g": 30.1
+      },
+      "br13": {
+        "solved": true,
+        "score": 97.16,
+        "iters": 1,
+        "stop": "solved",
+        "mass_g": 57.74
+      },
+      "br14": {
+        "solved": true,
+        "score": 97.5,
+        "iters": 1,
+        "stop": "solved",
+        "mass_g": 26.44
+      },
+      "br15": {
+        "solved": true,
+        "score": 97.21,
+        "iters": 1,
+        "stop": "solved",
+        "mass_g": 15.95
+      },
+      "br16": {
+        "solved": true,
+        "score": 96.68,
+        "iters": 1,
+        "stop": "solved",
+        "mass_g": 80.23
+      }
+    }
+  },
+  "spent": 0.0597
+}

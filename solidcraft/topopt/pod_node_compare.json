@@ -1,0 +1,46 @@
+[
+ {
+  "command": "solid.box",
+  "params": {
+   "length": 36.0,
+   "width": 40.0,
+   "height": 40.0,
+   "center": [
+    18.0,
+    32.0,
+    0.0
+   ],
+   "name": "envelope_billet",
+   "body_name": "envelope_billet"
+  }
+ },
+ {
+  "command": "appearance.assign",
+  "params": {
+   "bodies": [
+    "envelope_billet"
+   ],
+   "color": "#7f8a99"
+  }
+ },
+ {
+  "command": "file.insert_mesh",
+  "params": {
+   "path": "/Users/aayu/Workspace/developer/recursive-agents-hack/ui/fixture/topopt/pod_node_final.stl",
+   "translate": [
+    0.0,
+    -32.0,
+    0.0
+   ]
+  }
+ },
+ {
+  "command": "appearance.assign",
+  "params": {
+   "components": [
+    "pod_node_final"
+   ],
+   "color": "#2ee6a6"
+  }
+ }
+]

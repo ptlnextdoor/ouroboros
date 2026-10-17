@@ -15,12 +15,12 @@ from urllib.parse import urlparse, parse_qs
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UI = os.path.join(ROOT, "ui")
-FIXTURE = "ui/fixture/demo"
+FIXTURE = "ui/fixture/br02"   # real br02 run (v2 playbook, 7 min, solved in 1 iter); ui/fixture/demo is the synthetic one
 FORCED_RUN = None
 
 
 def run_dirs():
-    paths = glob.glob(os.path.join(ROOT, "runs", "*", "events.jsonl"))
+    paths = glob.glob(os.path.join(ROOT, "runs", "**", "events.jsonl"), recursive=True)
     paths.sort(key=os.path.getmtime, reverse=True)
     return [os.path.relpath(os.path.dirname(p), ROOT) for p in paths]
 

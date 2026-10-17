@@ -1,3 +1,44 @@
+# STAGE CARD (read this, nothing else, when nervous)
+
+Rehearsed 2026-10-17 13:28 PT. `make demo TASK=br02 PLAYBOOK=playbook/v2.md` took **7 m 18 s** wall
+(solved in 1 iteration, best 26.5 g, $0.0012). Run dir: `runs/br02_1792268889`. Cached copy: `ui/fixture/br02`.
+
+## Live (two terminals, start the UI first)
+```
+# terminal 1  (UI, leave running)
+cd ~/Workspace/developer/recursive-agents-hack && make ui
+# terminal 2  (the run; UI auto-switches to it the moment it starts writing)
+cd ~/Workspace/developer/recursive-agents-hack && make demo TASK=br02 PLAYBOOK=playbook/v2.md
+```
+Browser: **http://localhost:8008/**
+
+## Replay (zero network, open in a second tab BEFORE you start)
+**http://localhost:8008/?replay=ui/fixture/br02&speed=8**   (real run; `&speed=1` = real pacing, `&speed=40` = instant)
+
+Fallback for the fallback: `python3 ui/serve.py` only needs stdlib; no conda, no FreeCAD, no key.
+
+## What you will see, and when (live, ~7 min)
+| t | event |
+|---|---|
+| 0:07 | spec: 5 done-means checklist chips |
+| 0:15 | designer-0 params + grey part; referee runs (30-90 s per design, CalculiX) |
+| 0:46 | verdict d0: FAIL (81.6 g, over mass) · red |
+| 2:22 | verdict d1: ccx **timed out at 90 s** (thin 1.5 mm plate meshes badly). Shows as FAIL with the timeout reason. Say: "the referee refuses to guess." |
+| 5:32 | verdict d2: **PASS · parity gap** (physics ok incl. 3 HIDDEN loads; agent claimed 88 MPa, FEA says 24, gap 270 %). Green. |
+| 7:14 | d3: timeout. Then SOLVED / DONE · 1 iters. UI focuses the winning part. |
+
+Referee panel: scroll shows `weight`, `g_load` (visible) then `side_knock`, `pull_off`, `overload_2x` (HIDDEN badge).
+Playbook panel: latest gate round from `playbook/history.jsonl` (v3 REJECTED, dev 385.9 -> 384.4) with the diff.
+
+## Flaky, with workaround
+- **ccx 90 s timeouts** on thin designs (2 of 4 here). Expected, not a bug; they count as FAIL. If all 4 time out the loop goes to iter 1 (adds ~7 min): switch to replay.
+- **Port 8008 in use** (`Address already in use`): `pkill -f ui/serve.py` then `make ui`, or `python3 ui/serve.py --port 8009`.
+- The UI tails the *newest* `runs/**/events.jsonl`. If another agent kicks off a gate/heldout run during the demo the live tab will switch to it. Pin with `http://localhost:8008/?run=runs/br02_<ts>` (ts printed by the run) or stop other runs.
+- Thumbnails/3D part need `ui/vendor/three` (vendored, no network). If the part is a PNG fallback, it is fine, keep going.
+- HELD-OUT bars say "appears after first gate" until a `kind:heldout` record lands in `playbook/history.jsonl` (`make heldout` writes it). Not needed for the demo beat; say the numbers from the slide.
+
+---
+
 # Demo script (3 min) + 1-min video storyboard
 
 ## Live demo, 3:00 (rehearse ×3 with a timer at 4:15)

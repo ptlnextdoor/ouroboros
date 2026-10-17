@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FORGE · a hardware company in a loop</title>
+<meta name="description" content="Agents that design real parts, prove them against physics they can't fool, and get better on parts they've never seen.">
+<style>
+:root{
+  --bg:#06080d;--panel:rgba(255,255,255,.035);--panel2:rgba(255,255,255,.06);--line:rgba(255,255,255,.09);
+  --txt:#e8eef5;--dim:#8a94a3;--mute:#5b6472;
+  --green:#2ee6a6;--blue:#4aa8ff;--red:#ff5f6d;--amber:#ffb547;--violet:#a78bfa;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Helvetica,Arial,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:
+   radial-gradient(900px 500px at 85% -5%,rgba(46,230,166,.13),transparent 60%),
+   radial-gradient(700px 500px at -10% 30%,rgba(74,168,255,.10),transparent 60%),
+   radial-gradient(800px 600px at 60% 110%,rgba(167,139,250,.08),transparent 60%),
+   linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px) 0 0/40px 40px,
+   linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px) 0 0/40px 40px}
+.wrap{max-width:1060px;margin:0 auto;padding:0 28px}
+section.wrap{padding-top:86px;padding-bottom:10px}
+.eyebrow{font:600 12px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:10px}
+.eyebrow:before{content:"";width:22px;height:1px;background:currentColor}
+h1{font-size:clamp(38px,6vw,72px);line-height:1.03;letter-spacing:-.035em;font-weight:800;margin:18px 0}
+h2{font-size:clamp(26px,3.4vw,38px);line-height:1.12;letter-spacing:-.025em;font-weight:780;margin:14px 0 10px}
+h3{font-size:17px;letter-spacing:-.01em;font-weight:700;margin-bottom:6px}
+p.lead{font-size:19px;color:#c3ccd8;max-width:740px}
+p{color:#b9c2cf}
+.grad{background:linear-gradient(92deg,#fff 0%,#bff5e2 45%,var(--green) 75%,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.dim{color:var(--dim)} .mono{font-family:var(--mono)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;backdrop-filter:blur(6px);position:relative;overflow:hidden}
+.card.glow:after{content:"";position:absolute;inset:-1px;border-radius:18px;padding:1px;pointer-events:none;
+  background:linear-gradient(135deg,rgba(46,230,166,.7),transparent 40%,transparent 60%,rgba(74,168,255,.6));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--mono);padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:#cfd7e2;margin:3px 4px 3px 0}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:860px){.g2,.g3{grid-template-columns:1fr}}
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(6,8,13,.7);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+nav a{color:var(--dim);text-decoration:none;font-size:13px;margin-left:18px} nav a:hover{color:var(--txt)}
+.logo{font:800 14px/1 var(--mono);letter-spacing:.1em;display:flex;gap:9px;align-items:center}
+.logo i{width:10px;height:10px;border-radius:3px;background:linear-gradient(135deg,var(--green),var(--blue));box-shadow:0 0 14px var(--green)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:34px}
+.stats div{background:rgba(8,11,17,.92);padding:20px}
+.stats b{display:block;font-size:34px;letter-spacing:-.03em;font-weight:800}
+.stats span{font:11.5px var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.07em}
+@media(max-width:860px){.stats{grid-template-columns:repeat(2,1fr)}}
+.flow{font:13.5px/1.9 var(--mono);color:#cfd7e2;background:rgba(8,11,17,.92);border:1px solid var(--line);border-radius:14px;padding:18px 22px;overflow-x:auto;white-space:pre}
+.flow b{color:var(--green)} .flow i{color:var(--blue);font-style:normal} .flow s{color:var(--red);text-decoration:none}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{font:600 11.5px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--dim);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:11px 12px;border-bottom:1px dashed rgba(255,255,255,.06);color:#c9d2de;vertical-align:top}
+td.k{font-family:var(--mono);font-size:13px;color:var(--green);white-space:nowrap}
+.ok{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}.warn{color:var(--amber);font-weight:700}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:860px){.vs{grid-template-columns:1fr}}
+.vs .card ul{margin:10px 0 0 18px}
+.vs .card li{margin:7px 0;color:#c3ccd8}
+blockquote{border-left:3px solid var(--green);padding:6px 0 6px 18px;margin:18px 0;font-size:18px;color:#d8e0ea;font-style:italic}
+.task{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed rgba(255,255,255,.06);align-items:baseline}
+.task .who{font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;min-width:64px;padding-top:2px}
+.task .who.k{color:var(--blue)} .task .who.a{color:var(--green)} .task .who.b{color:var(--violet)}
+footer{margin:90px 0 40px;text-align:center;color:var(--mute);font:12.5px var(--mono)}
+a{color:var(--blue)}
+.num{font:800 42px/1 var(--mono);color:rgba(255,255,255,.12);position:absolute;top:14px;right:18px}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <div class="logo"><i></i>FORGE</div>
+  <div>
+    <a href="#vision">vision</a><a href="#working">it works</a><a href="#memory">memory</a>
+    <a href="#compare">vs astra</a><a href="#plan">the plan</a><a href="#you">krish</a>
+  </div>
+</div></nav>
+
+<header class="wrap" style="padding-top:110px">
+  <div class="eyebrow">Recursive Agents Hackathon · Crusoe × Cerebral Valley · today</div>
+  <h1>A <span class="grad">hardware company</span><br>in a loop.</h1>
+  <p class="lead">FORGE is an agent team that turns one plain-English sentence into a real, manufacturable
+  part — then checks every claim against a physics solver it can't see inside, on loads it was never told
+  about. After each run it rewrites its own engineering playbook, and soon its own weights. It keeps a
+  lesson only if it does better on parts it has <b>never seen</b>.</p>
+  <div class="stats">
+    <div><b class="ok">0.18%</b><span>referee vs beam theory</span></div>
+    <div><b>$0.11</b><span>cost of a full 3-round self-improvement run</span></div>
+    <div><b>2 kept · 2 rejected</b><span>playbook edits, gated by score</span></div>
+    <div><b>16</b><span>bracket tasks · 6 held-out, never touched</span></div>
+  </div>
+</header>
+
+<section class="wrap" id="vision">
+  <div class="eyebrow">why this matters</div>
+  <h2>Software got its $200 founder. Hardware didn't.</h2>
+  <p class="lead">AI collapsed the cost of starting a software company: one person, one subscription,
+  a working product. Arlan built Nozomio after moving from Kazakhstan. Grok livestreamed a whole company
+  run by one human managing agents. That revolution skipped hardware — because in hardware,
+  a confident wrong answer doesn't throw an exception. It breaks.</p>
+  <blockquote>Last night our own design optimizer crowned a part with <b>negative drag</b> as its best
+  result. Nothing in the loop caught it. That's the problem FORGE exists to kill.</blockquote>
+  <p class="lead">The vision we're living: a high-schooler with a $200/mo AI subscription doing what used
+  to take $20M and a floor of engineers. Think Zipline, but at record speed: one node covering a continent
+  with organ and medication delivery. One of us already used this exact loop to produce SQ-2, a
+  590 km/h electric quadcopter aimed at the 657.6 km/h world record: CNC 7075 hub, carbon spars, printed
+  PA6-CF body, full-body CFD within 1.4 % of the design drag, 82 automated CAD checks, and independent audits
+  that caught its own mistakes. Not a cylinder labeled "drone." A part list you could order.</p>
+  <div class="grid g3" style="margin-top:22px">
+    <div class="card"><h3>Done Means Done</h3><p>The agent writes its own numeric definition of done.
+    The referee checks it — plus hidden loads the agent never saw. Drift gets caught, not reported.</p></div>
+    <div class="card glow"><h3>Version N+1</h3><p>Every run ends with a proposed lesson. A gate keeps it
+    only if the score on unseen parts goes up. Rejections stay in the log — that's the honesty move.</p></div>
+    <div class="card"><h3>Shared Brain</h3><p>The playbook is the team's memory. Its value isn't how smart
+    it reads — it's measured, on held-out parts, in pass rate and grams.</p></div>
+  </div>
+</section>
+
+<section class="wrap" id="working">
+  <div class="eyebrow">running since noon</div>
+  <h2>This isn't a slide. It runs.</h2>
+  <div class="flow">
+one-line goal: <i>"mount a 2 kg motor 80 mm off a wall in aluminium, 3 g rating"</i>
+      │
+      ▼
+<b>spec agent</b> (Nemotron-3-Super) ──▶ definition of done: 5 numeric checks
+      │
+      ▼
+<b>4 designers in parallel</b> (Nemotron-3.5-Lightning, ~1.8 s each)
+      │  choose parameters for a parametric part family · never raw CAD
+      ▼
+deterministic CAD build ──▶ part.step / part.stl
+      │
+      ▼
+<s>REFEREE — not an LLM.</s> gmsh + CalculiX FEA, 2nd-order tets
+      │  visible loads + <s>HIDDEN loads</s> (side knock · pull-off · 2× overload)
+      │  mass recomputed from geometry · symmetry + work sanity · STEP hash
+      ▼
+verdict ──▶ <b>critic</b> (DeepSeek-V4: different family, nobody grades their own work)
+      │                                   │
+      ▼                                   ▼
+next iteration                 <b>playbook editor</b> proposes ONE rule
+                                          │
+                                          ▼
+                              <s>GATE:</s> keep only if dev-set score improves
+                              v0 ──▶ v1 ──▶ v2   (+2 kept · 2 rejected, logged)</div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Receipts, not vibes</h3>
+      <p>Referee validated against cantilever beam theory at <b class="ok">0.18% error</b> (<span class="mono">make selftest</span>).
+      Isolation is enforced by the build (<span class="mono">make verify-isolation</span>) — agent code
+      that touches <span class="mono">referee/hidden/</span> fails CI, and only the referee call path may read it.
+      Every LLM call logged with dollar cost; hard budget cap per run.</p></div>
+    <div class="card"><h3>What the playbook actually learned</h3>
+      <p>v1: size arms for bending, gusset anything over ~50 mm, expect hidden overloads.
+      v2: mesh-friendly geometry, verify mass and stress claims before claiming.
+      Round 3's edit got <b class="bad">rejected</b> — dev score dropped. The gate caught it.
+      That rejection is in the demo on purpose.</p></div>
+  </div>
+</section>
+
+<section class="wrap" id="memory">
+  <div class="eyebrow">the architecture question</div>
+  <h2>How a hardware agent remembers</h2>
+  <p class="lead">Three tiers, like a real engineering team. One promotion rule for everything:
+  <b>memory is only memory if it transfers to parts you've never seen.</b></p>
+  <table style="margin-top:14px">
+    <tr><th>tier</th><th>what it is</th><th>lives in</th><th>gate</th></tr>
+    <tr><td class="k">1 · notebook</td><td>Episodic. Every attempt: params → verdict → critic hypothesis. Last 3 feed the next design.</td><td class="mono dim">trace.json</td><td class="dim">none — raw experience</td></tr>
+    <tr><td class="k">2 · playbook</td><td>Semantic. General rules in plain English, written by the team from its own failures. Legible — judges can read the diff.</td><td class="mono dim">playbook/vN.md</td><td>kept iff dev score ↑</td></tr>
+    <tr><td class="k">3 · weights</td><td>Procedural. Referee-verified (goal → params) pairs distilled into a LoRA on the designer itself, via Crusoe Serverless Fine-Tuning.</td><td class="mono dim">LoRA adapter</td><td>promoted iff held-out score ↑</td></tr>
+  </table>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card glow"><h3>The recursive sentence</h3>
+      <p>"The model that designs tomorrow is trained on what survived physics today. The playbook is the
+      team's notebook; the adapter is its trained hands. Neither gets promoted unless it wins on parts
+      it has never seen."</p></div>
+    <div class="card"><h3>Compute call: Crusoe, A100s parked</h3>
+      <p>Verified today: our key reaches Crusoe's fine-tuning API; Nemotron 3.5 Lightning 30B (the same model our designers run) trains at
+      <b>$0.40/1M tokens</b> — a Gen-1 LoRA job costs ~$2 of our $200. Krish's 8×A100s stay on standby
+      (the bottleneck is physics, not FLOPs — CalculiX is CPU-bound at ~6 s/verdict).</p></div>
+  </div>
+</section>
+
+<section class="wrap" id="compare">
+  <div class="eyebrow">the judge's ask: show the comparison</div>
+  <h2>Same prompt. Two different universes.</h2>
+  <div class="vs" style="margin-top:14px">
+    <div class="card"><h3 class="bad">GPT-6 Astra, raw</h3>
+      <ul>
+        <li>Made a cylinder, called it a drone.</li>
+        <li>No material decision — plastic? metal? unsaid.</li>
+        <li>No manufacturability. No part numbers. No checks.</li>
+        <li>Thermal management, loads, aero behavior at speed: unexamined.</li>
+        <li>Reports success because nothing in the loop can say no.</li>
+      </ul></div>
+    <div class="card glow"><h3 class="ok">FORGE's loop (SQ2 program)</h3>
+      <ul>
+        <li>CNC-milled frame — chosen because it's actually manufacturable.</li>
+        <li>Carbon tubes for structure, metal for props/internals, 3D-printed airfoil skin. Material per job.</li>
+        <li>Real COTS parts picked (motors, stack) — orderable today.</li>
+        <li>Stress margins on 21 load cases, full-body CFD (3.55 M cells, drag within 1.4 %), 590 km/h predicted, all in a dossier.</li>
+        <li>And in FORGE every claim meets a solver that can't be talked into anything.</li>
+      </ul></div>
+  </div>
+  <p style="margin-top:14px" class="dim">Demo line: "The difference isn't the model. It's that ours is
+  allowed to fail — in private, against physics — a hundred times before it tells you it's done."</p>
+</section>
+
+<section class="wrap" id="plan">
+  <div class="eyebrow">rest of today</div>
+  <h2>The 3-minute demo we're building toward</h2>
+  <table style="margin-top:10px">
+    <tr><th>t</th><th>beat</th></tr>
+    <tr><td class="k">0:00</td><td><b>Vision.</b> "I'm a high-schooler who works at Boom Supersonic. A $200 subscription is what a $20M team used to be — for software. FORGE brings it to hardware." Flash the SQ2 dossier.</td></tr>
+    <tr><td class="k">0:20</td><td><b>Live.</b> Type a one-line bracket goal. Checks appear. Four designers fan out. The part renders and spins.</td></tr>
+    <tr><td class="k">1:00</td><td><b>The villain.</b> Referee fails it on a HIDDEN side load, with a measured number. "It never saw this load. The build system proves it can't."</td></tr>
+    <tr><td class="k">1:30</td><td><b>Memory.</b> Playbook diff: two rules kept, one rejected by the gate. Then the Crusoe console: a LoRA fine-tune job on referee-verified designs, running live. "It's training its own successor right now."</td></tr>
+    <tr><td class="k">2:10</td><td><b>Receipt.</b> v0 vs vN on held-out parts: pass rate, iterations-to-pass, mass margin, $ per verified part. Point at a row where vN failed too.</td></tr>
+    <tr><td class="k">2:45</td><td><b>Close.</b> "Physics it can't fool. Lessons it has to earn. Run 100 beats run 1 — and we can prove it."</td></tr>
+  </table>
+</section>
+
+<section class="wrap" id="you">
+  <div class="eyebrow">division of labor · now → 4:00 freeze</div>
+  <h2>Who's on what</h2>
+  <div class="card" style="margin-top:10px">
+    <div class="task"><span class="who k">KRISH</span><div><b>forge/distill.py: DONE</b>, 24 referee-verified train designs, Crusoe LoRA job <span class="mono">ftjob-0330cd18758a46da997c2a530677360a</span> on Nemotron 3.5 Lightning is queued. Poll: <span class="mono">python -m forge.distill --status ftjob-0330cd18758a46da997c2a530677360a</span>. Your part now: the video.</div></div>
+    <div class="task"><span class="who k">KRISH</span><div><b>Gen-1 gate hook</b> — when the adapter lands, A/B base vs adapter on held-out via the existing <span class="mono">forge/gate.py --heldout</span> path. If the job doesn't finish by 3:30, the running console IS the demo artifact.</div></div>
+    <div class="task"><span class="who a">AAYU</span><div>Held-out v0 vs v2 run (in flight), results table into README, demo part selection + caching, vision video clip, rehearsal ×3 at 4:15.</div></div>
+    <div class="task"><span class="who b">BOTH</span><div>Feature freeze 4:00 · submit 4:45. Nothing new after freeze, only demo-path fixes.</div></div>
+  </div>
+  <p style="margin-top:16px">Repo: <a href="https://github.com/ptlnextdoor/ouroboros">github.com/ptlnextdoor/ouroboros</a> ·
+  deeper docs in <span class="mono">docs/BACKEND.md</span> (memory + compute decisions, with the measured numbers),
+  <span class="mono">docs/WIN_PLAYBOOK.md</span> (why this demo structure wins), <span class="mono">docs/DEMO.md</span> (script + Q&A).</p>
+</section>
+
+<footer>FORGE · Aayushya Patel &amp; Krish Garg · built today at SHACK15 · every number on this page has a replayable run behind it</footer>
+</body>
+</html>

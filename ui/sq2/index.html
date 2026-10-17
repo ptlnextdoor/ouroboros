@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SQ-2 · designed by agents</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{
+  --bg:#06080d; --bg2:#080b12; --panel:#0b0f17; --panel2:#0e141e; --line:#1a2432; --line2:#233146;
+  --fg:#e9eef6; --fg2:#c3cddd; --dim:#7d8da4; --faint:#55617a;
+  --acc:#2ee6a6; --red:#ff5f6d; --blue:#4aa8ff; --amber:#ffb454; --violet:#b58cff;
+  --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+  --sans:Inter,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);overflow:hidden;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{
+  display:grid;height:100vh;width:100vw;gap:12px;padding:12px;
+  grid-template-columns:316px 1fr 372px;
+  grid-template-rows:auto 1fr auto;
+  grid-template-areas:"top top top" "left center right" "bottom bottom bottom";
+}
+.card{background:linear-gradient(180deg,var(--panel) 0%,var(--bg2) 100%);border:1px solid var(--line);border-radius:14px}
+.lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);font-weight:600}
+
+/* ---------- TOP BAR ---------- */
+#top{grid-area:top;display:flex;align-items:center;gap:22px;padding:13px 20px}
+#brand{display:flex;flex-direction:column;gap:3px;min-width:0}
+#brand .t{font-size:21px;font-weight:700;letter-spacing:-.015em;line-height:1;white-space:nowrap}
+#brand .t b{color:var(--acc);font-weight:800}
+#brand .s{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.02em}
+#brand .s em{color:var(--fg2);font-style:normal}
+#topstats{display:flex;gap:26px;margin-left:auto;align-items:center}
+.tstat{display:flex;flex-direction:column;gap:2px;text-align:right}
+.tstat .v{font-family:var(--mono);font-size:16px;font-weight:600;letter-spacing:-.01em}
+.tstat .v.g{color:var(--acc)} .tstat .v.r{color:var(--red)} .tstat .v.b{color:var(--blue)}
+.tstat .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.tsep{width:1px;height:34px;background:var(--line)}
+
+/* ---------- CENTER HERO ---------- */
+#center{grid-area:center;position:relative;overflow:hidden;background:
+  radial-gradient(130% 100% at 50% 0%,#0b1119 0%,#06080d 62%,#05070b 100%)}
+#view{position:absolute;inset:0}
+#view canvas{display:block;width:100%!important;height:100%!important}
+#grid-overlay{position:absolute;inset:0;pointer-events:none;
+  background:
+   linear-gradient(90deg,rgba(74,168,255,.028) 1px,transparent 1px) 0 0/58px 58px,
+   linear-gradient(0deg,rgba(74,168,255,.028) 1px,transparent 1px) 0 0/58px 58px;
+  mask-image:radial-gradient(120% 90% at 50% 45%,#000 30%,transparent 80%);}
+#vignette{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 180px 40px rgba(0,0,0,.6);border-radius:14px}
+
+#hud-tl{position:absolute;left:18px;top:16px;pointer-events:none}
+#hud-tl .big{font-family:var(--mono);font-size:13px;color:var(--fg);letter-spacing:.02em}
+#hud-tl .big b{color:var(--acc);font-weight:600}
+#hud-tl .sub{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:3px;line-height:1.5}
+#hud-tr{position:absolute;right:18px;top:16px;text-align:right;pointer-events:none}
+#hud-tr .m{font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.6}
+#hud-tr .m em{color:var(--fg2);font-style:normal}
+
+/* state toggle */
+#modes{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:6px;
+  background:rgba(6,9,14,.72);border:1px solid var(--line2);border-radius:12px;padding:6px;backdrop-filter:blur(10px)}
+.mode{appearance:none;border:1px solid transparent;background:transparent;color:var(--dim);
+  font-family:var(--mono);font-size:12px;letter-spacing:.04em;padding:8px 18px;border-radius:8px;cursor:pointer;
+  transition:background .16s cubic-bezier(.23,1,.32,1),color .16s,border-color .16s,transform .1s ease-out;font-weight:600}
+.mode:hover{color:var(--fg2)}
+.mode:active{transform:scale(.97)}
+.mode.on{background:linear-gradient(180deg,rgba(46,230,166,.16),rgba(46,230,166,.06));color:var(--acc);border-color:rgba(46,230,166,.4)}
+
+#scalebar{position:absolute;right:18px;bottom:22px;display:flex;flex-direction:column;align-items:flex-end;gap:5px;pointer-events:none}
+#scalebar .bar{width:120px;height:0;border-top:2px solid var(--dim);position:relative}
+#scalebar .bar:before,#scalebar .bar:after{content:"";position:absolute;top:-5px;width:2px;height:10px;background:var(--dim)}
+#scalebar .bar:before{left:0}#scalebar .bar:after{right:0}
+#scalebar .t{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.08em}
+
+/* tooltip */
+#tip{position:absolute;pointer-events:none;z-index:9;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;
+  background:rgba(7,10,16,.94);border:1px solid var(--line2);border-radius:10px;padding:9px 12px;min-width:150px;
+  box-shadow:0 10px 36px rgba(0,0,0,.55)}
+#tip.on{opacity:1;transform:none}
+#tip .n{font-size:13.5px;font-weight:700;letter-spacing:-.01em;margin-bottom:5px}
+#tip .row{display:flex;justify-content:space-between;gap:16px;font-family:var(--mono);font-size:11px;line-height:1.7}
+#tip .row span{color:var(--faint)} #tip .row em{color:var(--fg2);font-style:normal}
+#tip .proc{color:var(--acc)!important}
+
+/* loader */
+#loader{position:absolute;inset:0;display:grid;place-items:center;background:var(--bg);z-index:20;transition:opacity .6s}
+#loader.done{opacity:0;pointer-events:none}
+#loader .box{width:360px;text-align:center}
+#loader .title{font-size:15px;font-weight:600;letter-spacing:-.01em;margin-bottom:5px}
+#loader .sub{font-family:var(--mono);font-size:11px;color:var(--dim);margin-bottom:18px}
+#loader .track{height:3px;background:var(--line);border-radius:3px;overflow:hidden}
+#loader .fill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--acc));transition:width .3s cubic-bezier(.23,1,.32,1);border-radius:3px}
+#loader .pct{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:9px;display:flex;justify-content:space-between}
+
+/* ---------- RAIL SHARED ---------- */
+#left,#right{display:flex;flex-direction:column;min-height:0}
+.railpad{padding:15px 16px;display:flex;flex-direction:column;gap:13px;min-height:0;height:100%}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.sechead .h{font-size:13px;font-weight:700;letter-spacing:.02em}
+.sechead .sub{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.06em}
+.divline{height:1px;background:var(--line);margin:1px 0}
+
+/* mass bars */
+#mass{display:flex;flex-direction:column;gap:7px}
+.mrow{display:grid;grid-template-columns:1fr auto;gap:3px 8px;align-items:center}
+.mrow .nm{font-size:11.5px;color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mrow .g{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.mrow .track{grid-column:1/3;height:5px;background:#0a0e15;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,.03)}
+.mrow .track i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--blue),#6fd0ff);transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.mrow.batt .track i{background:linear-gradient(90deg,#d8a800,#ffd24a)}
+.mrow.motor .track i{background:linear-gradient(90deg,#4aa8ff,#8ec9ff)}
+
+.totrow{display:flex;justify-content:space-between;align-items:baseline;padding:9px 11px;background:var(--panel2);border:1px solid var(--line);border-radius:10px}
+.totrow .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.totrow .v{font-family:var(--mono);font-size:19px;font-weight:600;letter-spacing:-.01em}
+.totrow .v small{font-size:11px;color:var(--dim);font-weight:400}
+
+/* process chips */
+#procwrap{display:flex;flex-wrap:wrap;gap:5px}
+.chip{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;color:var(--fg2);
+  background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:4px 8px}
+.chip b{color:var(--fg);font-weight:600}
+.chip .dot{width:8px;height:8px;border-radius:2px;flex:none}
+
+/* requirements table */
+#reqs{display:flex;flex-direction:column;gap:5px;overflow:auto;min-height:0}
+.req{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;padding:7px 11px;border-radius:9px;background:var(--panel2);border:1px solid var(--line)}
+.req.pass{border-color:rgba(46,230,166,.22)} .req.fail{border-color:rgba(255,95,109,.26)}
+.req .st{grid-row:1/3;align-self:center;width:9px;height:9px;border-radius:50%;margin-right:2px}
+.req.pass .st{background:var(--acc);box-shadow:0 0 8px rgba(46,230,166,.5)} .req.fail .st{background:var(--red);box-shadow:0 0 8px rgba(255,95,109,.5)}
+.req .nm{font-size:12px;font-weight:600;color:var(--fg)}
+.req .pf{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.1em;align-self:center;padding:2px 7px;border-radius:5px}
+.req.pass .pf{color:var(--acc);background:rgba(46,230,166,.1)} .req.fail .pf{color:var(--red);background:rgba(255,95,109,.1)}
+.req .ev{grid-column:2/4;font-family:var(--mono);font-size:10.5px;color:var(--dim);display:flex;gap:8px;flex-wrap:wrap}
+.req .ev em{color:var(--fg2);font-style:normal}
+.req .ev .tgt{color:var(--faint)}
+
+/* cfd card */
+#cfd{display:flex;gap:11px;align-items:center;padding:9px;background:var(--panel2);border:1px solid var(--line);border-radius:11px}
+#cfd img{width:116px;height:78px;object-fit:cover;border-radius:7px;border:1px solid var(--line2);flex:none;background:#000}
+#cfd .meta{min-width:0}
+#cfd .meta .h{font-size:11.5px;font-weight:700;margin-bottom:4px}
+#cfd .meta .l{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.65}
+#cfd .meta .l em{color:var(--acc);font-style:normal}
+
+/* ---------- BOTTOM STRIP ---------- */
+#bottom{grid-area:bottom;display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.cell{background:linear-gradient(180deg,var(--panel) 0%,var(--bg2) 100%);padding:13px 16px;display:flex;flex-direction:column;gap:5px;position:relative}
+.cell .k{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.cell .v{font-family:var(--mono);font-size:27px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.cell .v.g{color:var(--acc)} .cell .v.b{color:var(--blue)} .cell .v.a{color:var(--amber)} .cell .v.r{color:var(--red)}
+.cell .d{font-size:11px;color:var(--fg2);line-height:1.4}
+.cell .d em{color:var(--dim);font-style:normal}
+.cell .tag{position:absolute;right:13px;top:13px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;
+  padding:2px 7px;border-radius:5px;text-transform:uppercase;font-weight:700}
+.tag.ok{color:var(--acc);background:rgba(46,230,166,.1);border:1px solid rgba(46,230,166,.3)}
+.tag.caught{color:var(--amber);background:rgba(255,180,84,.1);border:1px solid rgba(255,180,84,.3)}
+
+::-webkit-scrollbar{width:7px;height:7px}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:4px}
+::-webkit-scrollbar-track{background:transparent}
+</style>
+</head>
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<header id="top" class="card">
+  <div id="brand">
+    <div class="t">SQ-2 <span style="color:var(--faint);font-weight:400">·</span> <b>designed by agents</b> in 48 hours</div>
+    <div class="s">high-speed electric quadcopter &nbsp;·&nbsp; one engineer + <em>Claude Opus</em> + the <em>jcode</em> agent stack &nbsp;·&nbsp; git span <em>Oct 14 20:08</em> → <em>Oct 16 15:49 PT</em></div>
+  </div>
+  <div id="topstats">
+    <div class="tstat"><div class="v b">590<span style="font-size:11px;color:var(--dim)"> km/h</span></div><div class="k">design speed · M0.48</div></div>
+    <div class="tstat"><div class="v r">657.6<span style="font-size:11px;color:var(--dim)"> km/h</span></div><div class="k">record · 10% short</div></div>
+    <div class="tsep"></div>
+    <div class="tstat"><div class="v g">78</div><div class="k">CAD parts</div></div>
+    <div class="tstat"><div class="v">2997<span style="font-size:11px;color:var(--dim)"> g</span></div><div class="k">mass (Fusion)</div></div>
+    <div class="tstat"><div class="v">~$3,100</div><div class="k">hardware</div></div>
+  </div>
+</header>
+
+<!-- ============ CENTER HERO ============ -->
+<section id="center" class="card">
+  <div id="view"></div>
+  <div id="grid-overlay"></div>
+  <div id="vignette"></div>
+
+  <div id="hud-tl">
+    <div class="big">SQ-2 <b>v3</b> master assembly</div>
+    <div class="sub">74 STEP parts · 130 optimizer parameters<br>parametric CadQuery + Autodesk Fusion</div>
+  </div>
+  <div id="hud-tr">
+    <div class="m"><em>real CAD geometry</em> · 78 STL<br>colored by material · live WebGL</div>
+  </div>
+
+  <div id="tip">
+    <div class="n">—</div>
+    <div class="row"><span>material</span><em class="mat">—</em></div>
+    <div class="row"><span>process</span><em class="proc">—</em></div>
+  </div>
+
+  <div id="scalebar"><div class="bar"></div><div class="t">body length 547 mm</div></div>
+
+  <div id="modes">
+    <button class="mode on" data-s="assembled">Assembled</button>
+    <button class="mode" data-s="exploded">Exploded</button>
+    <button class="mode" data-s="xray">X-ray</button>
+  </div>
+
+  <div id="loader">
+    <div class="box">
+      <div class="title">Loading SQ-2 assembly</div>
+      <div class="sub">streaming 78 real CAD parts · 17 MB</div>
+      <div class="track"><div class="fill" id="lfill"></div></div>
+      <div class="pct"><span id="lcount">0 / 78 parts</span><span id="lpct">0%</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEFT RAIL ============ -->
+<aside id="left" class="card">
+  <div class="railpad">
+    <div class="sechead"><div class="h">Bill of materials</div><div class="sub">by process · mass</div></div>
+    <div id="mass"></div>
+    <div class="totrow">
+      <div><div class="k">Take-off mass</div></div>
+      <div class="v">2997 g <small>Fusion · 3034 g model</small></div>
+    </div>
+    <div class="totrow">
+      <div><div class="k">Flight hardware</div></div>
+      <div class="v">~$3,100 <small>/ vehicle</small></div>
+    </div>
+    <div class="divline"></div>
+    <div class="sechead"><div class="h">Parts by process</div><div class="sub">78 total</div></div>
+    <div id="procwrap"></div>
+  </div>
+</aside>
+
+<!-- ============ RIGHT RAIL ============ -->
+<aside id="right" class="card">
+  <div class="railpad">
+    <div class="sechead"><div class="h">Requirements vs evidence</div><div class="sub">model · 15°C SL</div></div>
+    <div id="reqs"></div>
+    <div class="divline"></div>
+    <div class="sechead"><div class="h">CFD · OpenFOAM RANS</div><div class="sub">3.55M cells</div></div>
+    <div id="cfd">
+      <img src="img/cfd_cp_iso.png" alt="SQ-2 surface pressure coefficient, CFD">
+      <div class="meta">
+        <div class="h">Surface C<sub>p</sub> @ 590 km/h</div>
+        <div class="l">C<sub>d</sub>A <em>32.4 cm²</em> vs 31.9 design (<em>+1.4%</em>)<br>
+        method validated on 6:1 spheroid: <em>−2.8%</em><br>
+        2500 iters · α 1.8° · M 0.48</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ============ BOTTOM STRIP ============ -->
+<footer id="bottom">
+  <div class="cell"><span class="tag ok">pass</span><div class="k">Automated CAD checks</div><div class="v g">82</div><div class="d">all-pairs interference, clearances, cut volumes <em>· grew to 170 in v3.1</em></div></div>
+  <div class="cell"><span class="tag ok">pass</span><div class="k">Structural load cases</div><div class="v b">21</div><div class="d">min MS <em>+0.48</em> · spar root, 20 g pod-down <em>· incl. 2 the audit found missing</em></div></div>
+  <div class="cell"><span class="tag ok">pass</span><div class="k">CFD validated</div><div class="v g">−2.8%</div><div class="d">on 6:1 prolate spheroid vs analytic <em>· SQ-2 C<sub>d</sub>A +1.4% vs design</em></div></div>
+  <div class="cell"><span class="tag caught">caught</span><div class="k">Independent audit</div><div class="v a">5→0</div><div class="d">critical findings caught by the agent's own audit loop <em>· then worked, one commit each</em></div></div>
+  <div class="cell"><span class="tag caught">honest</span><div class="k">Buildable as drawn</div><div class="v r">~15%</div><div class="d">re-audit on STEP files <em>· ~75% after v3.2 fix pass, in progress</em></div></div>
+</footer>
+
+<script type="importmap">
+{"imports":{"three":"/vendor/three.module.js","three/addons/":"/vendor/addons/"}}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const params = new URLSearchParams(location.search);
+const INIT_STATE = params.get('state') || 'assembled';
+
+/* ---------- static data for rails ---------- */
+const MASS_GROUPS = {
+  "batteries":980.8,"motors":592.4,"body shell":358.0,"wiring + fasteners":290.0,
+  "nacelles + spinners":166.4,"ESCs":144.0,"hub + nodes":104.5,"avionics + camera":101.4,
+  "struts + spars":86.0,"finish + skin":86.7,"other structure":53.4,"props":34.0
+};
+const BATT='batt', MOTOR='motor';
+const massClass = {"batteries":BATT,"motors":MOTOR};
+(function massUI(){
+  const el=document.getElementById('mass');
+  const max=Math.max(...Object.values(MASS_GROUPS));
+  for(const [k,v] of Object.entries(MASS_GROUPS)){
+    const row=document.createElement('div'); row.className='mrow '+(massClass[k]||'');
+    row.innerHTML=`<div class="nm">${k}</div><div class="g">${v.toFixed(0)} g</div>
+      <div class="track"><i style="width:0"></i></div>`;
+    el.appendChild(row);
+    requestAnimationFrame(()=>{ row.querySelector('i').style.width=(100*v/max)+'%'; });
+  }
+})();
+
+const PROCESSES=[
+  {n:'Printed PA6-CF',c:21,col:'#4a5568'},
+  {n:'COTS motor rotor',c:16,col:'#8a6a3a'},
+  {n:'CNC 7075-T6',c:6,col:'#aeb6c2'},
+  {n:'Printed TPU',c:4,col:'#d8d6c4'},
+  {n:'APD 200F3 ESC',c:4,col:'#2f9e52'},
+  {n:'T-Motor V3120',c:4,col:'#7f8694'},
+  {n:'Carbon prop',c:4,col:'#1d1d22'},
+  {n:'Carbon tube',c:4,col:'#262626'},
+  {n:'Avionics PCB',c:3,col:'#2a6ad0'},
+  {n:'7S Li-ion pack',c:2,col:'#e6b800'},
+  {n:'DJI O4 Pro',c:2,col:'#2b4e82'},
+  {n:'CNC 6061-T6',c:1,col:'#9aa0ac'},
+  {n:'PC dome',c:1,col:'#bcd4e6'},
+];
+(function procUI(){
+  const el=document.getElementById('procwrap');
+  for(const p of PROCESSES){
+    const c=document.createElement('div'); c.className='chip';
+    c.innerHTML=`<span class="dot" style="background:${p.col}"></span>${p.n} <b>${p.c}</b>`;
+    el.appendChild(c);
+  }
+})();
+
+const REQS=[
+  {n:'Beat Guinness record',t:'> 657.6 km/h',c:'590 km/h',pass:false,ev:'gap 68 km/h (10%)'},
+  {n:'Two-way top speed',t:'> 670 km/h',c:'590 km/h',pass:false,ev:'610 km/h at k=0.20'},
+  {n:'Thrust / weight @ 8 m/s',t:'≥ 2.0',c:'4.23',pass:true,ev:'vertical TO + transition'},
+  {n:'Tip Mach',t:'≤ 0.95',c:'0.84',pass:true,ev:'helical, at V_max'},
+  {n:'Motor temp rise',t:'≤ 80 K',c:'80.0 K',pass:true,ev:'active constraint, 0 margin'},
+  {n:'ESC temp rise',t:'≤ 60 K',c:'55 K',pass:true,ev:''},
+  {n:'Energy per run',t:'≤ 80% pack',c:'73%',pass:true,ev:'99 Wh of 135 Wh'},
+  {n:'Pitch authority (5° gust)',t:'M_av > M_req',c:'2.2×',pass:true,ev:'1.61 vs 0.74 N·m'},
+  {n:'Structural margins (v3.1)',t:'MS ≥ 0',c:'+0.48',pass:true,ev:'spar root, 20 g pod-down'},
+  {n:'CFD drag validation',t:'< 15%',c:'−2.8%',pass:true,ev:'spheroid; C_dA +1.4% vs design'},
+  {n:'Buildable CAD',t:'no redesign',c:'~15%',pass:false,ev:'v3.2 fix pass under way'},
+];
+(function reqUI(){
+  const el=document.getElementById('reqs');
+  for(const r of REQS){
+    const d=document.createElement('div'); d.className='req '+(r.pass?'pass':'fail');
+    d.innerHTML=`<span class="st"></span><div class="nm">${r.n}</div><div class="pf">${r.pass?'PASS':'FAIL'}</div>
+      <div class="ev"><span class="tgt">${r.t}</span><em>→ ${r.c}</em>${r.ev?`<span>· ${r.ev}</span>`:''}</div>`;
+    el.appendChild(d);
+  }
+})();
+
+/* ========================================================================
+   THREE.JS HERO
+   ===================================================================== */
+const PROC_LABEL = {
+  PA6CF:'Printed PA6-CF', TPU:'Printed TPU', PC:'PC dome (cast)',
+  AL7075:'CNC 7075-T6', AL6061:'CNC 6061-T6', CFRP:'Carbon tube',
+  PROP:'Carbon prop', LIPO:'7S Li-ion pack', BRASS:'Brass bullet',
+  PCB:'Avionics PCB', SS:'Pitot, stainless', STEEL:'Steel fastener',
+  PUFOAM:'PU crash foam', MOTOR:'COTS: T-Motor V3120', ESC:'COTS: APD 200F3',
+  CAM:'COTS: DJI O4 Pro', VTX:'COTS: DJI O4 Pro VTX', VIS:'COTS: T-Motor V3120'
+};
+const MAT_LABEL = {
+  PA6CF:'PA6-CF', TPU:'TPU', PC:'Polycarbonate', AL7075:'7075-T6 Al', AL6061:'6061-T6 Al',
+  CFRP:'Carbon fiber', PROP:'Carbon fiber', LIPO:'Li-ion 7S', BRASS:'Brass', PCB:'FR-4 PCB',
+  SS:'Stainless', STEEL:'Steel', PUFOAM:'PU foam', MOTOR:'Brushless motor', ESC:'ESC',
+  CAM:'Camera module', VTX:'Video TX', VIS:'Motor rotor'
+};
+function prettyName(n){
+  return n.replace(/_PA6CF|_7075|_6061|_TPU|_PC|_CFRP|_SS|_M3|_7S|_APD200F3|_V3120/g,'')
+          .replace(/_/g,' ').replace(/\bLU\b/,'left-upper').replace(/\bLD\b/,'left-lower')
+          .replace(/\bRU\b/,'right-upper').replace(/\bRD\b/,'right-lower')
+          .replace(/o4pro/,'O4 Pro').replace(/fc h7/,'flight controller H7')
+          .replace(/adr board/,'air-data recorder').replace(/gnss/,'GNSS')
+          .replace(/vtx/,'video TX').replace(/esc/,'ESC').trim();
+}
+
+const view=document.getElementById('view');
+const tip=document.getElementById('tip');
+const loaderEl=document.getElementById('loader');
+
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.05;
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+view.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(32,1,1,20000);
+
+const pmrem=new THREE.PMREMGenerator(renderer);
+scene.environment=pmrem.fromScene(new RoomEnvironment(renderer),0.04).texture;
+
+/* studio lights */
+const key=new THREE.DirectionalLight(0xffffff,2.1); key.position.set(-1,2.4,1.6);
+key.castShadow=true; key.shadow.mapSize.set(2048,2048);
+key.shadow.bias=-0.0002; key.shadow.normalBias=0.8;
+scene.add(key);
+const fill=new THREE.DirectionalLight(0x9fc3ff,0.55); fill.position.set(2,0.6,-1.2); scene.add(fill);
+const rim=new THREE.DirectionalLight(0x2ee6a6,0.5); rim.position.set(0.5,-0.4,-2); scene.add(rim);
+scene.add(new THREE.AmbientLight(0x20304a,0.35));
+
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true; controls.dampingFactor=0.06;
+controls.autoRotate=true; controls.autoRotateSpeed=0.55;
+controls.enablePan=false; controls.minDistance=120; controls.maxDistance=4000;
+
+const root=new THREE.Group(); scene.add(root);          // holds re-centered, re-oriented model
+const spin=new THREE.Group(); root.add(spin);           // meshes added here
+
+/* material factory */
+function toColor(rgba){ return new THREE.Color().setRGB(rgba[0],rgba[1],rgba[2],THREE.SRGBColorSpace); }
+function makeMat(part){
+  const m=part.material, col=toColor(part.rgba);
+  if(['AL7075','AL6061'].includes(m))
+    return new THREE.MeshStandardMaterial({color:col,metalness:0.92,roughness:0.33,envMapIntensity:1.15});
+  if(m==='SS')
+    return new THREE.MeshStandardMaterial({color:col,metalness:0.95,roughness:0.18,envMapIntensity:1.2});
+  if(m==='STEEL')
+    return new THREE.MeshStandardMaterial({color:col,metalness:0.9,roughness:0.4,envMapIntensity:1.0});
+  if(m==='BRASS')
+    return new THREE.MeshStandardMaterial({color:col,metalness:0.9,roughness:0.34,envMapIntensity:1.1});
+  if(m==='MOTOR'||m==='VIS')
+    return new THREE.MeshStandardMaterial({color:col,metalness:0.85,roughness:0.36,envMapIntensity:1.05});
+  if(m==='CFRP'||m==='PROP')
+    return new THREE.MeshStandardMaterial({color:new THREE.Color(0.035,0.035,0.04),metalness:0.45,roughness:0.42,envMapIntensity:0.9});
+  if(m==='PC')
+    return new THREE.MeshPhysicalMaterial({color:col,metalness:0,roughness:0.06,transmission:0.92,transparent:true,
+      opacity:1,thickness:2.2,ior:1.52,envMapIntensity:1.3,clearcoat:1,clearcoatRoughness:0.08});
+  if(m==='PA6CF')
+    return new THREE.MeshStandardMaterial({color:col,metalness:0.04,roughness:0.74,envMapIntensity:0.55});
+  if(m==='TPU'||m==='PUFOAM')
+    return new THREE.MeshStandardMaterial({color:col,metalness:0,roughness:0.92,envMapIntensity:0.4});
+  if(m==='LIPO')
+    return new THREE.MeshStandardMaterial({color:col,metalness:0.35,roughness:0.5,envMapIntensity:0.7});
+  if(m==='CAM')
+    return new THREE.MeshStandardMaterial({color:col,metalness:0.5,roughness:0.3,envMapIntensity:0.9});
+  /* ESC, PCB, VTX */
+  return new THREE.MeshStandardMaterial({color:col,metalness:0.2,roughness:0.55,envMapIntensity:0.75});
+}
+
+/* which parts become see-through in X-ray */
+const SHELL_RE=/(_section_PA6CF|nacelle|strut_fairing|camera_dome|nose_tip|gnss_window|feet_TPU|pack_foam|pack_liners)/;
+
+const loader=new STLLoader();
+const meshes=[];
+let loaded=0;
+
+function setProgress(){
+  const pct=Math.round(100*loaded/78);
+  document.getElementById('lfill').style.width=pct+'%';
+  document.getElementById('lcount').textContent=`${loaded} / 78 parts`;
+  document.getElementById('lpct').textContent=pct+'%';
+}
+
+fetch('parts/manifest.json').then(r=>r.json()).then(manifest=>{
+  Promise.all(manifest.map(part=>loader.loadAsync('parts/'+part.stl.split('/').pop()).then(geo=>{
+    geo.computeVertexNormals();
+    geo.computeBoundingBox();
+    const c=new THREE.Vector3(); geo.boundingBox.getCenter(c);
+    const mat=makeMat(part);
+    const mesh=new THREE.Mesh(geo,mat);
+    mesh.castShadow=true; mesh.receiveShadow=true;
+    const isShell = SHELL_RE.test(part.name) || part.material==='PC';
+    mesh.userData={ part, partCenter:c, isShell,
+      baseOpacity: (part.material==='PC')?1:1,
+      transparentBase:(part.material==='PC') };
+    meshes.push(mesh); spin.add(mesh);
+    loaded++; setProgress();
+  }).catch(e=>{ console.warn('skip',part.name,e); loaded++; setProgress(); })))
+  .then(finish);
+});
+
+let modelRadius=300;
+function finish(){
+  /* center + orient: CAD +Z up -> three +Y up */
+  spin.rotation.x=-Math.PI/2;
+  spin.updateMatrixWorld(true);
+  const box=new THREE.Box3().setFromObject(spin);
+  const ctr=new THREE.Vector3(); box.getCenter(ctr);
+  const size=new THREE.Vector3(); box.getSize(size);
+  spin.position.sub(ctr);                         // recenter about origin
+  modelRadius=size.length()/2;
+
+  /* ground shadow catcher */
+  const ground=new THREE.Mesh(
+    new THREE.PlaneGeometry(modelRadius*14,modelRadius*14),
+    new THREE.ShadowMaterial({opacity:0.33}));
+  ground.rotation.x=-Math.PI/2;
+  ground.position.y=-size.y/2-2;
+  ground.receiveShadow=true;
+  root.add(ground);
+  key.shadow.camera.left=-modelRadius*1.5; key.shadow.camera.right=modelRadius*1.5;
+  key.shadow.camera.top=modelRadius*1.5; key.shadow.camera.bottom=-modelRadius*1.5;
+  key.shadow.camera.near=1; key.shadow.camera.far=modelRadius*10;
+  key.position.set(-modelRadius*2,modelRadius*3,modelRadius*2.2);
+  key.target.position.set(0,0,0); scene.add(key.target); key.shadow.camera.updateProjectionMatrix();
+
+  /* precompute explode targets (radial from centroid, in spin-local frame) */
+  for(const mesh of meshes){
+    const off=mesh.userData.partCenter.clone().sub(ctr);   // local offset
+    mesh.userData.explode=off.multiplyScalar(0.85);
+    mesh.position.set(0,0,0);
+  }
+
+  frameCamera();
+  resize();
+  setState(INIT_STATE,true);
+  loaderEl.classList.add('done');
+  setTimeout(()=>{ loaderEl.style.display='none'; }, 650);
+}
+
+function frameCamera(){
+  const d=modelRadius/Math.sin((camera.fov*Math.PI/180)/2)*1.05;
+  camera.near=d/100; camera.far=d*20; camera.updateProjectionMatrix();
+  camera.position.set(d*0.62,d*0.42,d*0.66);
+  controls.target.set(0,0,0);
+  controls.update();
+}
+
+/* ---------- state machine ---------- */
+let STATE='assembled';
+const modeBtns=[...document.querySelectorAll('.mode')];
+modeBtns.forEach(b=>b.onclick=()=>setState(b.dataset.s));
+function setState(s,instant){
+  STATE=s;
+  modeBtns.forEach(b=>b.classList.toggle('on',b.dataset.s===s));
+  const hist=history.replaceState?('?state='+s):null;
+  if(hist!==null) history.replaceState(null,'',hist);
+  for(const mesh of meshes){
+    const u=mesh.userData;
+    /* target position */
+    u.targetPos = (s==='exploded') ? u.explode : new THREE.Vector3(0,0,0);
+    /* target opacity */
+    let op=1;
+    if(s==='xray'){ op = u.isShell ? (u.part.material==='PC'?0.12:0.08) : 1; }
+    else if(u.part.material==='PC'){ op=1; }
+    u.targetOp=op;
+    if(instant){
+      mesh.position.copy(u.targetPos);
+      applyOpacity(mesh,op);
+    }
+  }
+}
+function applyOpacity(mesh,op){
+  const m=mesh.material;
+  if(op<0.999){ m.transparent=true; m.opacity=op; m.depthWrite=false; }
+  else { m.opacity=1; m.depthWrite=true; m.transparent=(mesh.userData.part.material==='PC'); }
+}
+
+/* ---------- hover ---------- */
+const ray=new THREE.Raycaster(); const ptr=new THREE.Vector2(); let hovered=null, lastEmissive=null;
+view.addEventListener('pointermove',e=>{
+  const r=view.getBoundingClientRect();
+  ptr.x=((e.clientX-r.left)/r.width)*2-1;
+  ptr.y=-((e.clientY-r.top)/r.height)*2+1;
+  ray.setFromCamera(ptr,camera);
+  const hits=ray.intersectObjects(meshes,false);
+  const hit=hits.find(h=>h.object.material.opacity>0.2)||hits[0];
+  if(hit){
+    const mesh=hit.object, u=mesh.userData;
+    if(hovered!==mesh){
+      clearHover(); hovered=mesh;
+      lastEmissive=mesh.material.emissive?mesh.material.emissive.clone():null;
+      if(mesh.material.emissive){ mesh.material.emissive.setRGB(0.08,0.5,0.36); }
+    }
+    tip.querySelector('.n').textContent=prettyName(u.part.name);
+    tip.querySelector('.mat').textContent=MAT_LABEL[u.part.material]||u.part.material;
+    tip.querySelector('.proc').textContent=PROC_LABEL[u.part.material]||u.part.material;
+    const tr=view.getBoundingClientRect();
+    let x=e.clientX-tr.left+16, y=e.clientY-tr.top+16;
+    if(x+180>tr.width) x=e.clientX-tr.left-180; if(y+90>tr.height) y=e.clientY-tr.top-90;
+    tip.style.left=x+'px'; tip.style.top=y+'px';
+    tip.classList.add('on');
+    controls.autoRotate=false;
+  } else { clearHover(); }
+});
+view.addEventListener('pointerleave',()=>{ clearHover(); controls.autoRotate=true; });
+function clearHover(){
+  if(hovered&&hovered.material.emissive&&lastEmissive) hovered.material.emissive.copy(lastEmissive);
+  hovered=null; tip.classList.remove('on');
+}
+
+/* ---------- loop ---------- */
+function resize(){
+  const r=view.getBoundingClientRect();
+  renderer.setSize(r.width,r.height,false);
+  camera.aspect=r.width/r.height; camera.updateProjectionMatrix();
+}
+addEventListener('resize',resize);
+function tick(){
+  requestAnimationFrame(tick);
+  for(const mesh of meshes){
+    const u=mesh.userData; if(!u.targetPos) continue;
+    mesh.position.lerp(u.targetPos,0.12);
+    if(u.targetOp!==undefined){
+      const m=mesh.material, cur=m.opacity, tgt=u.targetOp;
+      if(Math.abs(cur-tgt)>0.004){
+        m.transparent=true; m.depthWrite=false;
+        m.opacity=cur+(tgt-cur)*0.12;
+      } else if(tgt>0.999){ applyOpacity(mesh,1); }
+    }
+  }
+  controls.update();
+  renderer.render(scene,camera);
+}
+tick();
+</script>
+</body>
+</html>

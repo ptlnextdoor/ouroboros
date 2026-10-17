@@ -33,8 +33,17 @@ flowchart LR
 | problem statement | how FORGE answers it |
 |---|---|
 | **Done Means Done** | The spec agent turns one line into numeric checks (load × g-factor, factor of safety, mass, deflection). "Done" means the referee passed every check, including loads the agents never saw. A loop detector re-plans when designs repeat or stop improving. |
-| **Version N+1** | After each run a playbook editor proposes engineering rules from the failures. A rule is kept only if the dev-set score improves. v0 vs vN is reported on **held-out parts never used for editing**. Rejected edits stay in the log. |
+| **Version N+1** | After each run a playbook editor proposes engineering rules from the failures. A rule is kept only if the dev-set score improves. v0 vs vN is reported on **held-out parts never used for editing**. Rejected edits stay in the log. Then the designer's *weights* get the same treatment: referee-verified designs become a LoRA fine-tune on Crusoe. |
 | **Shared Brain** | The playbook is the team's shared memory. Every designer reads it before working, and its value is measured by held-out score, not by how it reads. |
+
+### Memory: three tiers, one promotion rule
+| tier | what | gate |
+|---|---|---|
+| notebook | every attempt: params → verdict → critic hypothesis (`trace.json`) | none, raw experience |
+| playbook | plain-English rules the team wrote from its own failures (`playbook/vN.md`) | kept only if dev score rises |
+| weights | referee-verified (goal → params) pairs distilled into a Nemotron LoRA via Crusoe Serverless Fine-Tuning (`forge/distill.py`) | promoted only if held-out score rises |
+
+Design rationale and the compute decision (Crusoe over our 8×A100s: the bottleneck is physics, not FLOPs) are in [`docs/BACKEND.md`](docs/BACKEND.md).
 
 ### Why the referee can't be fooled
 - **It isn't an LLM.** It's a 2nd-order tetrahedral FEA run (gmsh + CalculiX), checked against beam theory at **0.18 % error** (`make selftest`).
@@ -47,10 +56,16 @@ flowchart LR
 
 > Filled from `playbook/history.jsonl` and `runs/` on 2026-10-17. Every number has a replayable run.
 
-| | held-out pass rate | mean iterations to pass | mean mass margin | $ per verified part |
+| playbook | held-out solved | mean iterations to pass | mean mass of solved parts | held-out score (sum) |
 |---|---|---|---|---|
-| playbook v0 | _TBD_ | _TBD_ | _TBD_ | _TBD_ |
-| playbook vN | _TBD_ | _TBD_ | _TBD_ | _TBD_ |
+| v0 (naive) | 5 / 6 | 3.0 | 53.5 g | 330.8 |
+| v2 (2 gated edits) | **6 / 6** | **1.0** | **44.3 g** | **582.1** |
+
+Run `runs/heldout_1792270684/heldout.json`: same 6 held-out tasks (br11-br16, never used for editing or training), same budget, 4 designers, max 4 iterations. With v2, every held-out part passed every referee check, including the hidden loads, on the first try, and came out 17 % lighter on average. The whole A/B (12 task-solves, both playbooks) cost **$0.06** of Crusoe inference.
+
+Across every run today: **587** Crusoe calls, **$0.29** total, **58** referee-verified solves, about **$0.005 per verified part**.
+
+Honest limits: n = 6 held-out tasks from one part family (wall brackets), one seed per task, so treat the gap as evidence the mechanism works, not as a benchmark. The third playbook edit was **rejected** by the dev gate (score 385.9 → 384.4), and it stays in `playbook/v3_rejected.md`.
 
 ## Run it
 
@@ -60,6 +75,8 @@ make selftest                     # blocks + referee physics vs beam theory
 make verify-isolation             # proves agents can't see hidden load cases
 make demo TASK=motor_2kg_80mm     # one goal end-to-end
 make nplus1                       # playbook rounds: train → gate on dev → score held-out
+python -m forge.distill --dry-run # harvest referee-verified designs → gens/gen1/*.jsonl
+python -m forge.distill --launch  # Crusoe Serverless Fine-Tuning job on Nemotron (LoRA)
 python3 ui/serve.py               # live view; ?replay=runs/<run> replays a finished run
 ```
 

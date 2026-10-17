@@ -1,0 +1,1 @@
+{"commands": [{"command": "explode.create", "params": {"name": "blown", "scale": 1.4}}, {"command": "explode.show", "params": {"view": "blown"}}]}

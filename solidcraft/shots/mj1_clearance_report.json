@@ -1,0 +1,36 @@
+{
+ "check": "JetCat P550 turbine vs MJ-1 OML skin",
+ "method": "trimesh surface-sample proximity on world-placed meshes exported from SolidCraft 0.15 (exact B-rep inspect.clearance on the 50M-mm3 OML solid did not finish headless within 150s; mesh proximity is the fallback engineering check)",
+ "turbine_bbox_mm": [
+  [
+   1660.0,
+   -89.2,
+   -25.0
+  ],
+  [
+   2087.0,
+   89.2,
+   205.0
+  ]
+ ],
+ "skin_bbox_mm": [
+  [
+   -280.0,
+   -492.9,
+   -33.9
+  ],
+  [
+   2577.8,
+   492.5,
+   534.1
+  ]
+ ],
+ "min_gap_mm": 0.35,
+ "pct_turbine_surface_within_5mm_of_skin": 1.1,
+ "pct_turbine_surface_outside_skin": 2.8,
+ "protrusion_x_range_mm": [
+  1722.3,
+  2087.0
+ ],
+ "verdict": "TIGHT: turbine hood contacts the OML inner wall (min gap ~0 mm) and ~3% of the turbine surface lies outside the skin in x=1690-2087 (belly/intake region). Needs a local skin bulge or turbine shift for a clearance margin."
+}

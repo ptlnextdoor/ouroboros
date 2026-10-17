@@ -1,0 +1,23 @@
+{
+ "envelope_dims_mm": [
+  36.0,
+  40.0,
+  40.0
+ ],
+ "envelope_mm3": 57600.0,
+ "envelope_mass_g": 154.368,
+ "optimized_mass_g": 15.015539616503462,
+ "mass_reduction_pct": 90.27289359420122,
+ "rho_g_cc": 2.68,
+ "material": "AlSi10Mg LPBF",
+ "calculix_check": {
+  "nodes": 124950,
+  "tets": 74679,
+  "vm_max": 13.985286700904632,
+  "vm_p99": 4.033870326730606,
+  "vm_p999": 6.514669144272486,
+  "disp_max": 0.0018175712581599106
+ },
+ "design": "solidcraft/topopt/pod_node_compare.solidcraft",
+ "snapshot": "solidcraft/topopt/pod_node_compare_iso.png"
+}

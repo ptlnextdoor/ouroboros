@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FORGE · one-page brief for the video</title>
+<style>
+:root{--bg:#06080d;--line:rgba(255,255,255,.09);--txt:#e8eef5;--dim:#8a94a3;--green:#2ee6a6;--blue:#4aa8ff;--red:#ff5f6d;--amber:#ffb547;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:15px/1.55 -apple-system,BlinkMacSystemFont,Inter,Helvetica,Arial,sans-serif;padding:36px 20px 60px}
+.w{max-width:880px;margin:0 auto}
+h1{font-size:38px;letter-spacing:-.03em;line-height:1.05;margin:6px 0 10px}
+h2{font:700 12px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin:30px 0 10px}
+p{color:#c3ccd8;margin:6px 0}
+b{color:#fff}
+.k{color:var(--green)} .r{color:var(--red)} .bl{color:var(--blue)}
+.eb{font:600 12px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+table{width:100%;border-collapse:collapse;margin-top:6px;font-size:14px}
+th{font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--dim);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px dashed rgba(255,255,255,.07);vertical-align:top;color:#c9d2de}
+td.t{font-family:var(--mono);color:var(--green);white-space:nowrap}
+.box{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:rgba(255,255,255,.03);margin-top:8px}
+code{font:13px var(--mono);color:var(--blue)}
+ul{margin:6px 0 0 18px} li{margin:5px 0;color:#c3ccd8}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:4px}
+</style>
+</head>
+<body><div class="w">
+
+<div class="eb">FORGE · Recursive Agents Hackathon · for Krish + the animation agent</div>
+<h1>A hardware company in a loop.</h1>
+<p>One sentence in, a real manufacturable part out. Every claim is checked by a physics solver the agents can't see inside,
+on loads they were never told about. The team rewrites its own playbook after each run (and now its own weights), and keeps a lesson
+<b>only if it does better on parts it has never seen.</b></p>
+
+<h2>The video · 60 s total</h2>
+<table>
+<tr><th>t</th><th>segment</th><th>who makes it</th></tr>
+<tr><td class="t">0:00–0:05</td><td><b>Flashy title animation.</b> "FORGE" + one line: <i>hardware abundance, for humanity and innovation.</i></td><td>Krish's animation agent</td></tr>
+<tr><td class="t">0:05–0:12</td><td><b>Aayu intro (Tim Cook style, ~7 s).</b> "I'm a high-schooler at Boom Supersonic. A $200 AI subscription replaced a $20M engineering team, for software. FORGE brings that to hardware."</td><td>Aayu records on phone</td></tr>
+<tr><td class="t">0:12–0:52</td><td><b>Product demo, ~40 s</b> (breakdown below).</td><td>screen recording of our UI</td></tr>
+<tr><td class="t">0:52–1:00</td><td>End card: "Built today on Crusoe + NVIDIA Nemotron · github.com/ptlnextdoor/ouroboros"</td><td>animation agent</td></tr>
+</table>
+
+<h2>The 40 s demo inside it</h2>
+<table>
+<tr><th>t</th><th>on screen</th><th>voice line</th></tr>
+<tr><td class="t">+0</td><td>Type the goal: <code>mount a 2 kg motor 80 mm off a wall in aluminium, 3 g rating</code>. Checklist chips light up.</td><td>"One sentence. The agent writes its own definition of done."</td></tr>
+<tr><td class="t">+8</td><td>4 designer thumbnails fan out, the part renders and spins.</td><td>"Four Nemotron designers, in parallel, picking real engineering numbers."</td></tr>
+<tr><td class="t">+16</td><td>Referee panel. A <span class="r">HIDDEN</span> load row goes red with a number.</td><td>"The referee is real FEA, not an AI. It tests loads the agents never saw."</td></tr>
+<tr><td class="t">+26</td><td>Playbook diff: one rule <span class="k">KEPT</span>, one <span class="r">REJECTED</span>.</td><td>"After every run it rewrites its playbook, and only keeps what works on unseen parts."</td></tr>
+<tr><td class="t">+34</td><td>Crusoe console: the fine-tune job training its successor.</td><td>"Right now it's training its own successor."</td></tr>
+</table>
+
+<h2>The comparison (judge asked for it)</h2>
+<div class="box">
+<p><span class="r"><b>GPT-6 Astra, raw:</b></span> a cylinder labeled "drone". No material, no manufacturability, no checks. Says it's done because nothing can say no.</p>
+<p><span class="k"><b>FORGE's loop (our SQ-2 record-speed quad):</b></span> CNC 7075 hub, carbon spars, printed PA6-CF body, real orderable motors/ESCs/camera, 590 km/h predicted, full-body CFD within 1.4 % of design drag, 82 CAD checks, audits that caught its own mistakes.
+Full dossier: <code>handoff/SQ2_drone_package_for_krish.zip</code> on the repo.</p>
+</div>
+
+<h2>What actually runs (for the "show the codebase" beat)</h2>
+<div class="box"><p style="font:13px/1.9 var(--mono);color:#cfd7e2">
+goal → <span class="k">spec agent</span> (Nemotron-Super) → <span class="k">4 designers</span> (Nemotron-Lightning) → CAD build → <span class="r">referee</span> (gmsh + CalculiX FEA, hidden loads, no LLM)
+→ <span class="k">critic</span> (DeepSeek) → next try<br>
+after each run: <span class="k">playbook editor</span> → <span class="r">gate</span> (keep iff score ↑ on unseen parts) → playbook v0 → v1 → v2<br>
+verified designs → <span class="bl">forge/distill.py</span> → <span class="bl">Crusoe LoRA fine-tune</span> (job ftjob-0330cd18…, queued)
+</p>
+<p>Every arrow is a file on disk. Every LLM call is logged with its dollar cost.</p></div>
+
+<h2>Numbers we can say out loud</h2>
+<ul>
+<li>Referee matches beam theory to <b>0.18 %</b>.</li>
+<li>A full 3-round self-improvement run cost <b>$0.11</b>. One verified part: about <b>$0.001</b> of LLM calls.</li>
+<li>Playbook edits: <b>2 kept, 2 rejected</b> by the gate.</li>
+<li>Gen-1 fine-tune: <b>24</b> referee-verified designs, about <b>$0.01</b> to train.</li>
+<li>Credits: <b>$200</b> on Crusoe, about $0.20 spent so far.</li>
+</ul>
+
+<h2>Look and feel for the animation</h2>
+<p><span class="sw" style="background:#06080d;border:1px solid #333"></span>bg #06080d
+&nbsp;<span class="sw" style="background:#2ee6a6"></span>pass / brand #2ee6a6
+&nbsp;<span class="sw" style="background:#4aa8ff"></span>accent #4aa8ff
+&nbsp;<span class="sw" style="background:#ff5f6d"></span>fail / hidden #ff5f6d</p>
+<p>Dark, engineering-grid background, monospace labels, green = physics passed, red = the referee said no. Tone: calm, confident, real numbers, no hype words.</p>
+
+<h2>Links</h2>
+<p>Full site: <code>ptlnextdoor.github.io/ouroboros/vision/</code> · Repo: <code>github.com/ptlnextdoor/ouroboros</code> (branch <code>krish-live</code> stays synced) · Demo script + Q&amp;A: <code>docs/DEMO.md</code></p>
+
+</div></body></html>

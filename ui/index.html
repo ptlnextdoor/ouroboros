@@ -5,145 +5,334 @@
 <title>FORGE: live</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
+/* FORGE live loop. Register: product (the tool serves the task). Scene: a judge reading a
+   verdict off a projector in a dim room, an engineer leaning in for sigma vs allowable.
+   Feel: flight-test telemetry, instrumented and calm. Palette per AGENTS.md, neutrals
+   tinted toward the accent hue (no pure black or white). */
 :root{
-  --bg:#07090d;--panel:#0e131a;--panel2:#131a24;--line:#223044;
-  --fg:#e8eef7;--dim:#8da0b8;--acc:#5cc8ff;--ok:#2fe08a;--bad:#ff4d5e;--warn:#ffb347;--hid:#c084fc;
+  /* tinted neutrals (OKLCH, hue ~258 toward the blue accent) */
+  --bg:        oklch(0.145 0.016 258);
+  --surface:   oklch(0.185 0.017 258);
+  --surface-2: oklch(0.225 0.018 258);
+  --raise:     oklch(0.265 0.019 258);
+  --line:      oklch(0.315 0.020 258);
+  --line-soft: oklch(0.260 0.017 258);
+  --ink:       oklch(0.955 0.006 255);
+  --ink-dim:   oklch(0.730 0.020 256);
+  --ink-mute:  oklch(0.560 0.022 257);
+  /* semantic, from AGENTS.md */
+  --ok:#2ee6a6;        /* physics passed  */
+  --ok-weak:oklch(0.62 0.13 165 / .16);
+  --bad:#ff5f6d;       /* referee said no */
+  --bad-weak:oklch(0.66 0.19 18 / .16);
+  --acc:#4aa8ff;       /* accent          */
+  --acc-weak:oklch(0.70 0.14 250 / .16);
+  --hid:oklch(0.80 0.125 78);   /* HIDDEN load tag, warm so it never reads as pass/fail */
+  --hid-weak:oklch(0.80 0.125 78 / .15);
+  /* type */
   --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
-  --sans:Inter,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --sans:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --t-micro:11px; --t-tag:12px; --t-data:13px; --t-base:14px; --t-md:15px; --t-lg:18px;
+  --t-display:clamp(21px,1.1vw + 14px,32px);
+  --t-verdict:clamp(26px,1.2vw + 18px,40px);
+  /* space scale 4/8/10/12/16/20/28 */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:28px;
+  --r-sm:7px; --r-md:10px; --r-lg:13px;
+  --ease:cubic-bezier(0.16,1,0.3,1);        /* ease-out-expo */
+  --ease-soft:cubic-bezier(0.22,1,0.36,1);
 }
 *{box-sizing:border-box}
-html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);overflow:hidden}
-body{display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:1fr 380px;gap:10px;padding:10px;height:100vh}
-#top{grid-column:1/3;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
-#goal{font-size:28px;font-weight:700;letter-spacing:-.01em;line-height:1.15}
-#goal .lbl{font-size:13px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.12em;display:block;margin-bottom:4px}
-#dod{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;max-width:900px}
-.chk{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);font-size:16px;font-weight:600;color:var(--dim);transition:all .4s}
-.chk .box{width:20px;height:20px;border-radius:6px;border:2px solid var(--dim);display:grid;place-items:center;font-size:14px;transition:all .4s}
-.chk.ok{color:var(--ok);border-color:rgba(47,224,138,.5)}.chk.ok .box{background:var(--ok);border-color:var(--ok);color:#042}
-.chk.bad{color:var(--bad);border-color:rgba(255,77,94,.5)}.chk.bad .box{background:var(--bad);border-color:var(--bad);color:#fff}
-.chk.pend{color:var(--warn);border-color:rgba(255,179,71,.4)}.chk.pend .box{border-color:var(--warn)}
-#center{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;min-height:0}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:var(--t-base);overflow:hidden;
+  font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+h1,h2{margin:0;font-weight:600}
+
+body{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:var(--s3);
+  padding:var(--s3);height:100vh}
+
+/* ---------- panels ---------- */
+.col,.panel{background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--r-lg);min-height:0;min-width:0;display:flex;flex-direction:column}
+.colhead{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);
+  padding:var(--s3) var(--s4) var(--s2);flex:none}
+.colhead h2{font-size:var(--t-tag);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-dim);display:flex;align-items:baseline;gap:var(--s2)}
+.colhead .meta{font-family:var(--mono);font-size:var(--t-tag);letter-spacing:0;
+  text-transform:none;color:var(--ink-mute);font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+
+/* ---------- header / goal ---------- */
+#top{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:var(--s5);
+  align-items:center;padding:var(--s3) var(--s5)}
+.eyebrow{font-size:var(--t-tag);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-mute);font-weight:600;display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s2)}
+#goaltext{font-size:var(--t-display);font-weight:650;line-height:1.12;letter-spacing:-.012em;
+  color:var(--ink);text-wrap:balance;max-width:34ch}
+#taskstate{margin-top:var(--s2);font-family:var(--mono);font-size:var(--t-data);color:var(--ink-mute);min-height:1em}
+#taskstate b{font-weight:700}
+#status{display:inline-flex;gap:var(--s2);align-items:center;font-family:var(--mono);
+  font-size:var(--t-micro);letter-spacing:.04em;color:var(--ink-mute);text-transform:none;font-weight:500}
+#status .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-mute);transition:background .3s}
+#status .dot.live{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+#status .dot.replay{background:var(--acc);box-shadow:0 0 8px var(--acc)}
+
+/* done-means: compact requirement pills, full sentence on hover */
+#dod{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--s2);align-self:start}
+.chk{display:flex;align-items:center;gap:var(--s2);padding:var(--s2) var(--s3);
+  border-radius:var(--r-sm);border:1px solid var(--line-soft);background:var(--surface-2);
+  font-size:var(--t-data);font-weight:550;color:var(--ink-dim);transition:color .3s,border-color .3s}
+.chk .box{flex:none;width:16px;height:16px;border-radius:5px;border:1.5px solid var(--ink-mute);
+  display:grid;place-items:center;font-size:11px;font-weight:800;transition:all .3s}
+.chk .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chk.ok{color:var(--ok);border-color:oklch(0.62 0.13 165 / .4)}
+.chk.ok .box{background:var(--ok);border-color:var(--ok);color:oklch(0.2 0.05 165)}
+.chk.bad{color:var(--bad);border-color:oklch(0.66 0.19 18 / .4)}
+.chk.bad .box{background:var(--bad);border-color:var(--bad);color:oklch(0.98 0 0)}
+.chk.pend .box{border-style:dashed}
+
+/* ---------- main stage: designers | part | referee ---------- */
+#stage{display:grid;
+  grid-template-columns:minmax(212px,0.85fr) minmax(0,2.5fr) minmax(336px,1.15fr);
+  gap:var(--s3);min-height:0}
+
+/* designers rail */
+#thumbs{display:flex;flex-direction:column;gap:var(--s2);padding:0 var(--s3) var(--s3);
+  flex:1;min-height:0;overflow:auto}
+#thumbs .empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--ink-mute);
+  font-size:var(--t-data);padding:var(--s4);border:1px dashed var(--line);border-radius:var(--r-md)}
+.th{position:relative;flex:1;min-height:76px;background:var(--bg);
+  border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;cursor:pointer;
+  transition:border-color .3s,box-shadow .3s,transform .18s var(--ease)}
+.th:hover{transform:translateY(-1px)}
+.th.ok{border-color:oklch(0.62 0.13 165 / .55)}
+.th.bad{border-color:oklch(0.66 0.19 18 / .55)}
+.th.cur{box-shadow:0 0 0 1.5px var(--acc),0 0 16px oklch(0.70 0.14 250 / .35)}
+.th canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+.th .tag{position:absolute;left:var(--s2);top:var(--s1);font-family:var(--mono);
+  font-size:var(--t-micro);color:var(--ink-dim);letter-spacing:.02em}
+.th .res{position:absolute;right:var(--s2);top:var(--s1);font-family:var(--mono);
+  font-size:var(--t-micro);font-weight:800;letter-spacing:.08em}
+.th .m{position:absolute;left:var(--s2);bottom:var(--s1);font-family:var(--mono);
+  font-size:var(--t-micro);color:var(--ink);font-weight:600}
+.th .spin{position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-mute);font-size:var(--t-micro)}
+
+/* part viewer: the anchor */
+#part{position:relative;overflow:hidden}
 #view{position:absolute;inset:0}
 #view canvas{display:block;width:100%!important;height:100%!important}
-#fallback{position:absolute;inset:0;display:none;place-items:center;color:var(--dim);font-size:22px;text-align:center;padding:30px}
-#fallback img{max-width:90%;max-height:80%;border-radius:8px}
-#stamp{position:absolute;left:18px;top:14px;font-family:var(--mono);font-size:15px;color:var(--dim);line-height:1.5}
-#stamp b{color:var(--fg);font-size:17px}
-#verdictbig{position:absolute;right:18px;top:14px;font-size:44px;font-weight:900;letter-spacing:.04em;padding:6px 18px;border-radius:12px;background:rgba(0,0,0,.35);border:2px solid transparent;transition:all .4s;opacity:0;transform:translateY(-6px)}
-#verdictbig.show{opacity:1;transform:none}
-#verdictbig.ok{color:var(--ok);border-color:var(--ok)}#verdictbig.bad{color:var(--bad);border-color:var(--bad)}#verdictbig.wait{color:var(--warn);border-color:var(--warn)}
-#thumbs{position:absolute;left:14px;right:14px;bottom:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.th{height:138px;background:rgba(10,14,20,.85);border:2px solid var(--line);border-radius:10px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .4s,transform .3s}
-.th:hover{transform:translateY(-2px)}
-.th.ok{border-color:var(--ok)}.th.bad{border-color:var(--bad)}
-.th.cur{box-shadow:0 0 0 3px var(--acc)}
-.th canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
-.th .tag{position:absolute;left:8px;top:6px;font-family:var(--mono);font-size:13px;color:var(--dim)}
-.th .res{position:absolute;right:8px;top:6px;font-size:13px;font-weight:800;letter-spacing:.06em}
-.th .m{position:absolute;left:8px;bottom:6px;font-family:var(--mono);font-size:13px;color:var(--fg)}
-.th .spin{position:absolute;inset:0;display:grid;place-items:center;color:var(--dim);font-size:13px}
-#right{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-height:0;overflow:hidden}
-h2{margin:0;font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:.14em;font-weight:700;display:flex;justify-content:space-between;align-items:baseline}
-h2 span{font-family:var(--mono);text-transform:none;letter-spacing:0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
-#cases{display:flex;flex-direction:column;gap:9px}
-.case{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;animation:pop .4s ease}
-@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.case .nm{font-size:17px;font-weight:700;display:flex;gap:8px;align-items:center}
-.badge{font-size:11px;font-weight:800;letter-spacing:.1em;padding:2px 7px;border-radius:6px;background:var(--hid);color:#1a0a2e}
-.case .pf{font-size:18px;font-weight:900;letter-spacing:.06em}
-.case .pf.ok{color:var(--ok)}.case .pf.bad{color:var(--bad)}
-.case .bar{grid-column:1/3;height:14px;background:#0a0e14;border-radius:7px;position:relative;overflow:hidden;border:1px solid var(--line)}
-.case .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:var(--ok);transition:width .8s cubic-bezier(.2,.8,.2,1),background .4s}
+#fallback{position:absolute;inset:0;display:none;place-items:center;color:var(--ink-mute);
+  font-size:var(--t-md);text-align:center;padding:var(--s6)}
+#fallback img{max-width:88%;max-height:78%;border-radius:var(--r-md)}
+#partmeta{position:absolute;left:var(--s4);right:var(--s4);bottom:var(--s3);
+  display:flex;flex-direction:column;gap:2px;pointer-events:none}
+#stampname{font-family:var(--mono);font-size:var(--t-data);color:var(--ink);font-weight:600}
+#stampparams{font-family:var(--mono);font-size:var(--t-micro);color:var(--ink-mute);line-height:1.45;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#verdictpill{position:absolute;right:var(--s4);top:var(--s4);font-family:var(--mono);
+  font-size:var(--t-tag);font-weight:800;letter-spacing:.1em;padding:5px 11px;border-radius:999px;
+  border:1px solid var(--line);color:var(--ink-mute);background:oklch(0.145 0.016 258 / .7);
+  opacity:0;transition:opacity .3s,color .3s,border-color .3s;backdrop-filter:blur(6px)}
+#verdictpill.show{opacity:1}
+#verdictpill.ok{color:var(--ok);border-color:oklch(0.62 0.13 165 / .55)}
+#verdictpill.bad{color:var(--bad);border-color:oklch(0.66 0.19 18 / .55)}
+#verdictpill.wait{color:var(--acc);border-color:oklch(0.70 0.14 250 / .5)}
+
+/* ---------- referee ---------- */
+#referee{overflow:hidden}
+#refbody{display:flex;flex-direction:column;gap:var(--s3);padding:0 var(--s4) var(--s4);
+  flex:1;min-height:0;overflow:auto}
+#verdictline{border-radius:var(--r-md);padding:var(--s3) var(--s4);border:1px solid var(--line);
+  background:var(--surface-2);flex:none}
+#verdictline.ok{border-color:oklch(0.62 0.13 165 / .5);background:var(--ok-weak)}
+#verdictline.bad{border-color:oklch(0.66 0.19 18 / .5);background:var(--bad-weak)}
+#verdictline.wait{border-color:oklch(0.70 0.14 250 / .4);background:var(--acc-weak)}
+.vl-main{display:flex;align-items:baseline;gap:var(--s3)}
+#vl-label{font-size:var(--t-verdict);font-weight:750;letter-spacing:-.02em;line-height:1}
+#verdictline.ok #vl-label{color:var(--ok)}
+#verdictline.bad #vl-label{color:var(--bad)}
+#verdictline.wait #vl-label{color:var(--acc)}
+#vl-note{font-family:var(--mono);font-size:var(--t-tag);font-weight:700;letter-spacing:.06em;
+  color:var(--hid);text-transform:uppercase}
+#vl-sub{margin-top:var(--s2);font-size:var(--t-data);color:var(--ink-dim);line-height:1.4}
+.reveal{animation:reveal .42s var(--ease) both}
+@keyframes reveal{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+.sect-label{font-size:var(--t-micro);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-mute);font-weight:600;flex:none}
+#cases{display:flex;flex-direction:column;gap:var(--s2);flex:none}
+.case{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--r-sm);
+  padding:var(--s2) var(--s3);display:grid;grid-template-columns:1fr auto;gap:5px var(--s3);
+  align-items:center;animation:reveal .36s var(--ease) both}
+.case.fail{border-color:oklch(0.66 0.19 18 / .45);background:var(--bad-weak)}
+.case .nm{font-size:var(--t-data);font-weight:650;display:flex;gap:var(--s2);align-items:center;min-width:0}
+.case .nm .label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag-vis,.tag-hid{font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.1em;
+  padding:2px 6px;border-radius:4px;flex:none}
+.tag-vis{background:var(--raise);color:var(--ink-dim)}
+.tag-hid{background:var(--hid-weak);color:var(--hid);border:1px solid oklch(0.80 0.125 78 / .4)}
+.case .pf{font-family:var(--mono);font-size:var(--t-data);font-weight:800;letter-spacing:.06em}
+.case .pf.ok{color:var(--ok)} .case .pf.bad{color:var(--bad)}
+.case .bar{grid-column:1/3;height:7px;background:var(--bg);border-radius:4px;position:relative;
+  overflow:hidden;border:1px solid var(--line-soft)}
+.case .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--ok);
+  width:0;transition:width .85s var(--ease)}
 .case .bar i.bad{background:var(--bad)}
-.case .bar b{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--fg);opacity:.8}
-.case .nums{grid-column:1/3;font-family:var(--mono);font-size:13px;color:var(--dim);display:flex;justify-content:space-between;flex-wrap:wrap;gap:0 10px}
-.case .nums span{white-space:nowrap}
-.case .nums em{color:var(--fg);font-style:normal}
-#parity{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:center}
-#parity .big{font-size:64px;font-weight:900;letter-spacing:-.03em;line-height:1;font-family:var(--mono);transition:color .4s}
-#parity .big.ok{color:var(--ok)}#parity .big.bad{color:var(--bad)}
-#parity .sub{color:var(--dim);font-size:14px;margin-top:6px;font-family:var(--mono)}
-#parity .sub em{color:var(--fg);font-style:normal}
-#checks{font-family:var(--mono);font-size:13px;color:var(--dim);display:flex;flex-direction:column;gap:3px;overflow:auto;min-height:0}
-#checks div{display:flex;gap:8px}#checks .ok{color:var(--ok)}#checks .bad{color:var(--bad)}
-#bottom{grid-column:1/3;display:grid;grid-template-columns:1fr 1fr;gap:10px;height:270px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden}
-#critic{font-size:18px;line-height:1.4;overflow:auto;display:flex;flex-direction:column;gap:10px;min-height:0}
-.crit{padding:8px 12px;border-left:4px solid var(--warn);background:var(--panel2);border-radius:0 8px 8px 0;animation:pop .4s ease}
-.crit.ok{border-left-color:var(--ok)}
-.crit .who{font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:3px}
+.case .bar .allow{position:absolute;top:-1px;bottom:-1px;width:1.5px;background:var(--ink-dim);opacity:.85}
+.case .nums{grid-column:1/3;font-family:var(--mono);font-size:var(--t-micro);color:var(--ink-mute);
+  display:flex;justify-content:space-between;gap:var(--s3);flex-wrap:wrap}
+.case .nums em{color:var(--ink);font-style:normal;font-weight:600}
+
+#parity{border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:var(--s3);
+  background:var(--surface-2);flex:none}
+.parity-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3)}
+.parity-head .k{font-size:var(--t-micro);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute);font-weight:600}
+#paritynum{font-family:var(--mono);font-size:var(--t-lg);font-weight:750;letter-spacing:-.01em}
+#paritynum.ok{color:var(--ok)} #paritynum.bad{color:var(--hid)}
+#parityclaim{margin-top:5px;font-size:var(--t-data);color:var(--ink-dim);line-height:1.45}
+#parityclaim em{color:var(--ink);font-style:normal;font-weight:600;font-family:var(--mono)}
+
+#checks{display:flex;flex-direction:column;gap:3px;font-family:var(--mono);font-size:var(--t-micro);flex:none}
+#checks div{display:flex;gap:var(--s2);align-items:center;color:var(--ink-dim)}
+#checks .mark{flex:none;width:12px;text-align:center;font-weight:800}
+#checks .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#checks .val{margin-left:auto;color:var(--ink-mute);white-space:nowrap}
+#checks .ok .mark{color:var(--ok)} #checks .bad .mark{color:var(--bad)} #checks .warn{color:var(--hid)}
+
+/* ---------- bottom row: critic | playbook | economics ---------- */
+#bottom{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) minmax(252px,0.72fr);
+  gap:var(--s3);height:clamp(188px,25vh,248px)}
+.pbody{flex:1;min-height:0;overflow:auto;padding:0 var(--s4) var(--s4)}
+.empty-state{height:100%;display:grid;place-content:center;justify-items:start;gap:var(--s1);
+  color:var(--ink-mute);font-size:var(--t-data);padding:var(--s2) 0}
+.empty-state b{color:var(--ink-dim);font-weight:600}
+
+#critic{display:flex;flex-direction:column;gap:var(--s2)}
+.crit{padding:var(--s2) var(--s3);background:var(--surface-2);border:1px solid var(--line-soft);
+  border-radius:var(--r-sm);animation:reveal .36s var(--ease) both}
+.crit.ok{border-color:oklch(0.62 0.13 165 / .35)}
+.crit .who{font-family:var(--mono);font-size:var(--t-micro);color:var(--ink-mute);margin-bottom:3px}
+.crit .txt{font-size:var(--t-data);line-height:1.5;color:var(--ink-dim)}
 .crit .arrow{color:var(--acc);font-weight:700}
-.cursor{display:inline-block;width:9px;height:18px;background:var(--acc);vertical-align:-3px;animation:blink 1s steps(2) infinite}
+.cursor{display:inline-block;width:7px;height:14px;background:var(--acc);vertical-align:-2px;
+  animation:blink 1s steps(2) infinite}
 @keyframes blink{to{visibility:hidden}}
-#pbgrid{display:grid;grid-template-columns:1fr 230px;gap:12px;min-height:0;flex:1}
-#diff{font-family:var(--mono);font-size:14px;line-height:1.35;overflow:auto;background:#0a0e14;border:1px solid var(--line);border-radius:8px;padding:8px 10px;white-space:pre-wrap;min-height:0}
-#diff .add{color:var(--ok)}#diff .del{color:var(--bad)}#diff .hd{color:var(--dim)}
-#gatehd{display:flex;justify-content:space-between;align-items:center;gap:10px}
-#gatetag{font-size:18px;font-weight:900;letter-spacing:.08em;padding:3px 12px;border-radius:8px;border:2px solid var(--line);color:var(--dim);transition:all .4s}
-#gatetag.kept{color:var(--ok);border-color:var(--ok);background:rgba(47,224,138,.1)}
-#gatetag.rej{color:var(--bad);border-color:var(--bad);background:rgba(255,77,94,.1)}
-#delta{font-family:var(--mono);font-size:16px;color:var(--dim)}#delta em{font-style:normal;font-weight:800}
-#side{display:flex;flex-direction:column;gap:10px;min-height:0}
-#cost{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
-#cost .usd{font-family:var(--mono);font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1}
-#cost .usd small{display:block;font-size:12px;color:var(--dim);font-weight:600;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#cost .per{font-family:var(--mono);font-size:13px;color:var(--dim);margin-top:4px}#cost .per em{color:var(--fg);font-style:normal}
-#chart{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;display:flex;flex-direction:column;min-height:0}
-#chart .bars{flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center;padding:4px 0 0;min-height:0}
-.bar2{display:grid;grid-template-columns:34px 1fr 44px;align-items:center;gap:8px}
-.bar2 .trk{height:16px;background:#0a0e14;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.bar2 i{display:block;height:100%;border-radius:8px;background:var(--dim);transition:width 1s cubic-bezier(.2,.8,.2,1);width:0}
+
+#pbhead{display:flex;align-items:center;gap:var(--s3)}
+#gatetag{font-family:var(--mono);font-size:var(--t-micro);font-weight:800;letter-spacing:.1em;
+  padding:3px 9px;border-radius:5px;border:1px solid var(--line);color:var(--ink-mute)}
+#gatetag.kept{color:var(--ok);border-color:oklch(0.62 0.13 165 / .55);background:var(--ok-weak)}
+#gatetag.rej{color:var(--bad);border-color:oklch(0.66 0.19 18 / .55);background:var(--bad-weak)}
+#gatetag.gating{color:var(--acc);border-color:oklch(0.70 0.14 250 / .5)}
+.stamp-in{animation:stampIn .32s var(--ease) both}
+@keyframes stampIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:none}}
+#delta{font-family:var(--mono);font-size:var(--t-micro);color:var(--ink-mute);margin-left:auto}
+#delta em{font-style:normal;font-weight:800}
+#diff{font-family:var(--mono);font-size:var(--t-micro);line-height:1.5;white-space:pre-wrap;
+  background:var(--bg);border:1px solid var(--line-soft);border-radius:var(--r-sm);
+  padding:var(--s2) var(--s3);color:var(--ink-dim);word-break:break-word}
+#diff .add{color:var(--ok)} #diff .del{color:var(--bad)} #diff .hd{color:var(--ink-mute)}
+
+#cost{padding:0 var(--s4)}
+.usd{font-family:var(--mono);font-size:28px;font-weight:750;letter-spacing:-.02em;line-height:1;color:var(--ink)}
+.costmeta{font-family:var(--mono);font-size:var(--t-micro);color:var(--ink-mute);margin-top:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.costper{font-family:var(--mono);font-size:var(--t-micro);color:var(--ink-mute);margin-top:3px}
+.costper em{color:var(--ink);font-style:normal;font-weight:600}
+#chart{margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid var(--line-soft)}
+.chart-head{font-size:var(--t-micro);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute);
+  font-weight:600;display:flex;justify-content:space-between;gap:var(--s2)}
+.chart-head span{font-family:var(--mono);text-transform:none;letter-spacing:0}
+#bars{display:flex;flex-direction:column;gap:var(--s2);margin-top:var(--s2)}
+.bar2{display:grid;grid-template-columns:28px 1fr 46px;align-items:center;gap:var(--s2)}
+.bar2 .trk{height:10px;background:var(--bg);border:1px solid var(--line-soft);border-radius:5px;overflow:hidden}
+.bar2 i{display:block;height:100%;border-radius:5px;background:var(--ink-mute);width:0;transition:width .9s var(--ease)}
 .bar2.vn i{background:var(--ok)}
-.bar2 b{font-family:var(--mono);font-size:15px;text-align:right}.bar2 span{font-size:13px;color:var(--dim);font-family:var(--mono)}
-#chart .none{flex:1;display:grid;place-items:center;color:var(--dim);font-size:13px;text-align:center}
-#status{font-family:var(--mono);font-size:12px;color:var(--dim);display:inline-flex;gap:8px;align-items:center;margin-left:14px;text-transform:none;letter-spacing:0}
-#status .dot{width:9px;height:9px;border-radius:50%;background:var(--dim)}#status .dot.live{background:var(--ok);box-shadow:0 0 10px var(--ok)}#status .dot.replay{background:var(--acc)}
-.flash{animation:flash .6s ease}
-@keyframes flash{0%{box-shadow:0 0 0 0 rgba(92,200,255,.6)}100%{box-shadow:0 0 0 14px rgba(92,200,255,0)}}
+.bar2 span{font-family:var(--mono);font-size:var(--t-micro);color:var(--ink-mute)}
+.bar2 b{font-family:var(--mono);font-size:var(--t-tag);text-align:right;font-weight:600}
+#barsnone{color:var(--ink-mute);font-size:var(--t-micro);margin-top:var(--s2)}
+
+.flash{animation:flash .6s var(--ease)}
+@keyframes flash{0%{box-shadow:0 0 0 0 oklch(0.70 0.14 250 / .5)}100%{box-shadow:0 0 0 10px oklch(0.70 0.14 250 / 0)}}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body>
 
-<section id="top">
-  <div id="goal"><span class="lbl">Goal <span id="status"><span class="dot" id="dot"></span><span id="statustext">connecting…</span></span></span><span id="goaltext">waiting for spec…</span></div>
+<header id="top">
+  <div id="goalblock">
+    <div class="eyebrow">Goal <span id="status"><span class="dot" id="dot"></span><span id="statustext">connecting</span></span></div>
+    <h1 id="goaltext">waiting for spec</h1>
+    <div id="taskstate"></div>
+  </div>
   <div id="dod"></div>
-</section>
+</header>
 
-<section id="center">
-  <div id="view"></div>
-  <div id="fallback"><div><img id="fbimg" alt=""><div id="fbtext">3D viewer unavailable (offline). Showing last render.</div></div></div>
-  <div id="stamp"><b id="stampname">no candidate yet</b><br><span id="stampparams"></span></div>
-  <div id="verdictbig"></div>
-  <div id="thumbs"></div>
-</section>
+<main id="stage">
+  <section class="col" id="designers">
+    <div class="colhead"><h2>Designers</h2><span class="meta" id="desgenmeta"></span></div>
+    <div id="thumbs"><div class="empty">Four designers propose in parallel. Candidates appear here.</div></div>
+  </section>
 
-<aside id="right">
-  <h2>Referee: CalculiX <span id="refmeta"></span></h2>
-  <div id="cases"></div>
-  <div id="parity">
-    <div class="big" id="paritynum">—</div>
-    <div class="sub">parity gap · agent claim vs physics<br><span id="parityclaim"></span></div>
-  </div>
-  <div id="checks"></div>
-</aside>
+  <section class="col" id="part">
+    <div id="view"></div>
+    <div id="fallback"><div><img id="fbimg" alt="last rendered part"><div id="fbtext">3D viewer offline. Showing last render.</div></div></div>
+    <div id="verdictpill"></div>
+    <div id="partmeta">
+      <div id="stampname">no candidate yet</div>
+      <div id="stampparams"></div>
+    </div>
+  </section>
 
-<section id="bottom">
-  <div class="panel">
-    <h2>Critic <span>why it failed → what to change</span></h2>
-    <div id="critic"></div>
-  </div>
-  <div class="panel">
-    <div id="gatehd"><h2>Playbook <span id="pbver"></span></h2><div id="delta"></div><div id="gatetag">no gate yet</div></div>
-    <div id="pbgrid">
-      <div id="diff">waiting for playbook edit…</div>
-      <div id="side">
-        <div id="cost"><div class="usd">$<span id="usd">0.0000</span><small id="model"></small></div><div class="per">per verified part <em id="perpart">—</em> · <em id="nverified">0</em> verified</div></div>
-        <div id="chart"><h2>held-out <span></span></h2><div class="bars" id="bars"></div><div class="none" id="barsnone">appears after first gate</div></div>
+  <aside class="col" id="referee">
+    <div class="colhead"><h2>Referee</h2><span class="meta" id="refmeta">CalculiX FEA</span></div>
+    <div id="refbody">
+      <div id="verdictline" class="wait">
+        <div class="vl-main"><span id="vl-label">Referee idle</span><span id="vl-note"></span></div>
+        <div id="vl-sub">Awaiting a candidate to verify.</div>
+      </div>
+      <div class="sect-label">Load cases</div>
+      <div id="cases"><div class="empty-state">Visible and <b>hidden</b> loads appear once the referee runs.</div></div>
+      <div id="parity">
+        <div class="parity-head"><span class="k">Parity gap</span><span id="paritynum">—</span></div>
+        <div id="parityclaim">Agent's own stress estimate vs the referee. Never gates PASS.</div>
+      </div>
+      <div class="sect-label">Checks</div>
+      <div id="checks"></div>
+    </div>
+  </aside>
+</main>
+
+<footer id="bottom">
+  <section class="panel" id="criticpanel">
+    <div class="colhead"><h2>Critic <span class="meta">why it failed, what to change</span></h2></div>
+    <div class="pbody"><div id="critic"><div class="empty-state">No critique yet. <b>Appears when a design fails</b> and the critic proposes a fix.</div></div></div>
+  </section>
+
+  <section class="panel" id="playbookpanel">
+    <div class="colhead"><div id="pbhead"><h2>Playbook <span class="meta" id="pbver"></span></h2><div id="gatetag">no gate yet</div></div><div id="delta"></div></div>
+    <div class="pbody"><div id="diff"><div class="empty-state">No playbook edit yet. <b>The gate keeps a lesson only if it wins on dev.</b> Rejected edits stay visible.</div></div></div>
+  </section>
+
+  <section class="panel" id="costpanel">
+    <div class="colhead"><h2>Economics</h2></div>
+    <div class="pbody">
+      <div id="cost">
+        <div class="usd">$<span id="usd">0.0000</span></div>
+        <div class="costmeta" id="model"></div>
+        <div class="costper">per verified part <em id="perpart">—</em> · <em id="nverified">0</em> verified</div>
+        <div id="chart">
+          <div class="chart-head">Held-out A/B <span></span></div>
+          <div id="bars"></div>
+          <div id="barsnone">appears after the first gate</div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+</footer>
 
 
 <script type="importmap">
@@ -154,9 +343,14 @@ h2 span{font-family:var(--mono);text-transform:none;letter-spacing:0;font-size:1
 const Q = new URLSearchParams(location.search);
 const REPLAY = Q.get('replay');            // e.g. runs/<run> or ui/fixture/demo
 const SPEED = parseFloat(Q.get('speed') || '4');
-const S = { spec:null, cands:{}, cur:null, cost:null, nverified:0, gate:null };
+const S = { spec:null, cands:{}, cur:null, cost:null, nverified:0, gate:null, run:REPLAY||'', task:null };
+const stlUrl = rel => !rel ? null : (/^(runs|ui)\//.test(rel) ? rel : (S.run ? S.run+'/'+rel : rel));
 const $ = id => document.getElementById(id);
+// forge/loop.py physics_ok: parity never gates 'solved'. PASS = every non-parity check ok.
+const pok = v => !!v && (v.ok || ((v.checks||[]).length>0 && (v.checks||[]).every(c=>c.ok || c.name.startsWith('parity'))));
 const fmt = (x,d=1) => (x==null||isNaN(x)) ? '—' : Number(x).toFixed(d);
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const replayAnim = el => { el.classList.remove('reveal'); void el.offsetWidth; el.classList.add('reveal'); };
 
 // ---------- three.js (vendored in ui/vendor; falls back to CDN, then to a PNG) ----------
 let THREE=null, STLLoader=null, main=null;
@@ -181,11 +375,13 @@ function makeViewer(el, big){
   r.setPixelRatio(Math.min(devicePixelRatio,2));
   el.appendChild(r.domElement);
   const sc = new THREE.Scene();
-  const cam = new THREE.PerspectiveCamera(big?32:38, 1, 1, 5000);
-  sc.add(new THREE.HemisphereLight(0xffffff, 0x223044, big?1.1:1.3));
-  const d = new THREE.DirectionalLight(0xffffff, big?1.4:1.2); d.position.set(1,1.5,1); sc.add(d);
-  const d2 = new THREE.DirectionalLight(0x5cc8ff, .5); d2.position.set(-1,-.5,-1); sc.add(d2);
-  if (big){ const g = new THREE.GridHelper(400, 20, 0x223044, 0x172030); g.position.y=-60; sc.add(g); }
+  const cam = new THREE.PerspectiveCamera(big?32:40, 1, 1, 5000);
+  // studio key/fill/rim so the part reads as a machined object, not a flat silhouette
+  sc.add(new THREE.HemisphereLight(0xdfe9f7, 0x1a2330, big?1.0:1.25));
+  const key = new THREE.DirectionalLight(0xffffff, big?1.5:1.25); key.position.set(1.1,1.7,1.0); sc.add(key);
+  const fill = new THREE.DirectionalLight(0x4aa8ff, .45); fill.position.set(-1.2,-.3,-.8); sc.add(fill);
+  const rim = new THREE.DirectionalLight(0xffffff, big?.6:.3); rim.position.set(-.4,.8,-1.4); sc.add(rim);
+  if (big){ const g = new THREE.GridHelper(400, 20, 0x2a3a52, 0x1a2638); g.position.y=-60; sc.add(g); }
   const pivot = new THREE.Group(); sc.add(pivot);
   const v = {r, sc, cam, pivot, mesh:null, el, big, t:0};
   const resize = () => { const w=el.clientWidth||300, h=el.clientHeight||200; r.setSize(w,h,false); cam.aspect=w/h; cam.updateProjectionMatrix(); };
@@ -204,38 +400,47 @@ async function loadGeo(url){
 function setMesh(v, geo, color){
   if (!v) return;
   if (v.mesh){ v.pivot.remove(v.mesh); }
-  const mat = new THREE.MeshStandardMaterial({color, metalness:.35, roughness:.45, flatShading:false});
+  const mat = new THREE.MeshStandardMaterial({color, metalness:.4, roughness:.42, flatShading:false});
   const m = new THREE.Mesh(geo, mat);
   m.rotation.x = -Math.PI/2;           // part +z up -> three +y up
   v.pivot.add(m); v.mesh = m;
   geo.computeBoundingSphere();
   const R = geo.boundingSphere.radius;
-  const dist = R/Math.sin(v.cam.fov*Math.PI/360)*(v.big?1.3:0.95);
-  v.cam.position.set(dist*0.75, dist*(v.big?0.3:0.35), dist*0.7); v.cam.lookAt(0,0,0);
+  const dist = R/Math.sin(v.cam.fov*Math.PI/360)*(v.big?1.35:1.0);
+  v.cam.position.set(dist*0.75, dist*(v.big?0.32:0.35), dist*0.7); v.cam.lookAt(0,0,0);
   if (v.big){ v.sc.children.forEach(c=>{ if(c.isGridHelper) c.position.y=-R*1.05; }); }
-  // fade-in
   mat.transparent=true; mat.opacity=0; const t0=performance.now();
   const f=()=>{ const k=Math.min(1,(performance.now()-t0)/500); mat.opacity=k; if(k<1) requestAnimationFrame(f); else mat.transparent=false; }; f();
 }
 function recolor(v, color){ if (v && v.mesh) v.mesh.material.color.set(color); }
-const COL = { wait:0x9fb3c8, ok:0x2fe08a, bad:0xff4d5e };
+const COL = { wait:0x9fb3c8, ok:0x2ee6a6, bad:0xff5f6d };
 
 // ---------- DOM pieces ----------
 function key(p){ return `${p.task}/${p.iter}_${p.k}`; }
 function cand(p){ const k=key(p); return S.cands[k] ||= {key:k, task:p.task, iter:p.iter, k:p.k, params:p.params, verdict:null, stl:null}; }
+
+// compact requirement tag from a long done-means sentence (full text kept as hover title)
+function shortReq(s){
+  const n=s.toLowerCase();
+  if (n.includes('without breaking')||n.includes('holds')||(n.includes('load')&&n.includes('safety factor'))) return 'holds the load';
+  if (n.includes('yield')||n.includes('peak stress')) return 'stress under yield';
+  if (n.includes('deflection')) return 'tip deflection';
+  if (n.includes('mass')) return 'mass budget';
+  if (n.includes('mesh')||n.includes('thick')||n.includes('concentration')) return 'meshable geometry';
+  return s.split(/\s+/).slice(0,3).join(' ');
+}
 function dod(){
   const el=$('dod'); el.innerHTML='';
-  const checks = S.spec?.checks || [];
+  const checks = (S.spec?.checks || []).slice(0,6);
+  if (!checks.length){ el.innerHTML='<div class="chk pend"><span class="box">·</span><span class="t">waiting for spec</span></div>'; return; }
   const v = S.cur?.verdict;
   checks.forEach((name,i)=>{
     const d=document.createElement('div'); d.className='chk';
     let st='pend', mark='·';
-    if (v){
-      const c = matchCheck(v, name, i);
-      if (c!=null){ st = c?'ok':'bad'; mark = c?'✓':'✕'; }
-    }
+    if (v){ const c = matchCheck(v, name, i); if (c!=null){ st = c?'ok':'bad'; mark = c?'✓':'✕'; } }
     d.classList.add(st);
-    d.innerHTML=`<span class="box">${mark}</span>${name}`; el.appendChild(d);
+    d.innerHTML=`<span class="box">${mark}</span><span class="t" title="${esc(name)}">${esc(shortReq(name))}</span>`;
+    el.appendChild(d);
   });
 }
 function matchCheck(v, name, i){
@@ -245,7 +450,8 @@ function matchCheck(v, name, i){
   if (n.includes('mass')) return by('mass')?.ok ?? null;
   if (n.includes('hidden')) return by('hidden')?.ok ?? null;
   if (n.includes('parity')) return by('parity')?.ok ?? null;
-  if (n.includes('stress')||n.includes('visible')) return by('visible')?.ok ?? null;
+  if (n.includes('defl')) { const cs=(v.cases||[]).filter(c=>'defl_ok' in c); return cs.length ? cs.every(c=>c.defl_ok) : null; }
+  if (n.includes('stress')||n.includes('visible')||n.includes('yield')) return by('visible')?.ok ?? null;
   return (v.checks||[])[i]?.ok ?? null;
 }
 
@@ -255,116 +461,173 @@ function showCurrent(c){
   const v=c.verdict;
   $('stampname').textContent = `${c.task} · iter ${c.iter} · designer-${c.k}`;
   $('stampparams').textContent = c.params ? Object.entries(c.params).filter(([k,x])=>x).map(([k,x])=>`${k}=${x}`).join('  ') : '';
-  const vb=$('verdictbig'); vb.className='show '+(v? (v.ok?'ok':'bad') : 'wait');
-  vb.textContent = v ? (v.ok?'PASS':'FAIL') : 'REFEREE…';
-  if (c.stl && main){ loadGeo(c.stl).then(g=>{ if(S.cur===c) setMesh(main, g, v?(v.ok?COL.ok:COL.bad):COL.wait); }).catch(()=>{}); }
+  const pill=$('verdictpill'); pill.className='show '+(v? (pok(v)?'ok':'bad') : 'wait');
+  pill.textContent = v ? (v.ok?'PASS': pok(v)?'PASS*':'FAIL') : 'VERIFYING';
+  if (c.stl && main){ loadGeo(c.stl).then(g=>{ if(S.cur===c) setMesh(main, g, v?(pok(v)?COL.ok:COL.bad):COL.wait); }).catch(()=>{}); }
   else if (c.stl && !main){ $('fbimg').src='/'+c.stl.replace(/\.stl$/,'.png'); }
   referee(v); dod();
 }
 
+function verdictState(v){
+  if (!v) return {cls:'wait', label:'Verifying', note:'', sub:'CalculiX is solving the load cases.'};
+  if (v.ok) return {cls:'ok', label:'PASS', note:'', sub:'Every safety check satisfied on visible and hidden loads.'};
+  if (pok(v)) return {cls:'ok', label:'PASS', note:'parity gap',
+      sub:'All safety checks pass. The agent mis-estimated its own stress; physics is the source of truth, so this never blocks PASS.'};
+  return {cls:'bad', label:'FAIL', note:'', sub:esc(v.reason||'A safety check failed.')};
+}
+
 function referee(v){
+  const refmeta = v ? [v.material, v.fos?`FoS ${v.fos}`:null, v.mesh?`${v.mesh.tets} tets`:null,
+      v.seconds?`${v.seconds} s`:null, `${(v.cases||[]).filter(c=>c.hidden).length} hidden`].filter(Boolean).join(' · ')
+    : 'CalculiX FEA';
+  $('refmeta').textContent = refmeta;
+
+  const vs = verdictState(v), vl=$('verdictline');
+  vl.className = vs.cls;
+  $('vl-label').textContent = vs.label;
+  $('vl-note').textContent = vs.note;
+  $('vl-sub').innerHTML = vs.sub;
+  replayAnim(vl);
+
   const cs=$('cases'); cs.innerHTML='';
-  $('refmeta').textContent = v ? `${v.material||''} · FoS ${v.fos||''} · ${v.mesh?v.mesh.tets+' tets':''} · ${v.seconds||'?'} s` : '';
-  if (!v){ $('paritynum').textContent='—'; $('paritynum').className='big'; $('parityclaim').textContent=''; $('checks').innerHTML=''; return; }
-  if (!v.cases?.length){
-    const d=document.createElement('div'); d.className='case'; d.innerHTML=`<div class="nm" style="color:var(--bad)">${esc(v.reason||'no cases')}</div>`; cs.appendChild(d);
+  if (!v){ cs.innerHTML='<div class="empty-state">Visible and <b>hidden</b> loads appear once the referee runs.</div>'; }
+  else if (!v.cases?.length){
+    cs.innerHTML=`<div class="empty-state"><b>No load cases solved.</b> ${esc(v.reason||'meshing or solver error')}</div>`;
+  } else {
+    (v.cases||[]).forEach(c=>{
+      const frac = Math.min(1.6, c.sigma_MPa/(c.allow_MPa||1));
+      const d=document.createElement('div'); d.className='case'+(c.ok?'':' fail');
+      d.innerHTML=`<div class="nm"><span class="label">${esc(c.name)}</span>${c.hidden?'<span class="tag-hid">HIDDEN</span>':'<span class="tag-vis">VISIBLE</span>'}</div>
+        <div class="pf ${c.ok?'ok':'bad'}">${c.ok?'PASS':'FAIL'}</div>
+        <div class="bar"><i class="${c.ok?'':'bad'}" style="width:0"></i><span class="allow" style="left:${100/1.6}%"></span></div>
+        <div class="nums"><span>F = [${c.F.map(x=>Math.round(x)).join(', ')}] N</span><span>σ <em>${fmt(c.sigma_MPa,0)}</em> / ${fmt(c.allow_MPa,0)} MPa · δ ${fmt(c.defl_mm,2)} mm</span></div>`;
+      cs.appendChild(d);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{ d.querySelector('.bar i').style.width = (frac/1.6*100)+'%'; }));
+    });
   }
-  (v.cases||[]).forEach(c=>{
-    const frac = Math.min(1.6, c.sigma_MPa/(c.allow_MPa||1));
-    const d=document.createElement('div'); d.className='case';
-    d.innerHTML=`<div class="nm">${esc(c.name)} ${c.hidden?'<span class="badge">HIDDEN</span>':''}</div>
-      <div class="pf ${c.ok?'ok':'bad'}">${c.ok?'PASS':'FAIL'}</div>
-      <div class="bar"><i class="${c.ok?'':'bad'}" style="width:0"></i><b style="left:${100/1.6}%"></b></div>
-      <div class="nums"><span>F = [${c.F.map(x=>Math.round(x)).join(', ')}] N</span><span>σ <em>${fmt(c.sigma_MPa,0)}</em> / ${fmt(c.allow_MPa,0)} MPa · δ ${fmt(c.defl_mm,2)} mm</span></div>`;
-    cs.appendChild(d);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{ d.querySelector('.bar i').style.width = (frac/1.6*100)+'%'; }));
-  });
+
   const pn=$('paritynum');
-  if (v.parity_gap!=null){ const g=v.parity_gap*100; pn.textContent=fmt(g,0)+'%'; pn.className='big '+(v.parity_gap<=0.25?'ok':'bad');
-    $('parityclaim').innerHTML = `claim <em>${fmt(v.claim?.sigma_MPa,0)}</em> MPa · referee <em>${fmt(v.cases?.find(c=>!c.hidden)?.sigma_MPa,0)}</em> MPa`;
-  } else { pn.textContent='—'; pn.className='big'; $('parityclaim').textContent=''; }
-  $('checks').innerHTML = (v.checks||[]).map(c=>`<div class="${c.ok?'ok':'bad'}"><span>${c.ok?'✓':'✕'}</span><span>${esc(c.name)}</span><span style="margin-left:auto">${esc(String(c.measured))} ${esc(c.limit||'')}</span></div>`).join('')
-    + (v.ok ? '' : `<div class="bad"><span>→</span><span>${esc(v.reason||'')}</span></div>`);
+  if (v && v.parity_gap!=null){
+    const g=v.parity_gap*100, within=v.parity_gap<=0.25;
+    pn.textContent=(g>999?'>999':fmt(g,0))+'%'; pn.className=within?'ok':'bad';
+    const claim=fmt(v.claim?.sigma_MPa,0), ref=fmt(v.cases?.find(c=>!c.hidden)?.sigma_MPa,0);
+    $('parityclaim').innerHTML = within
+      ? `Agent claimed <em>${claim}</em> MPa, physics measured <em>${ref}</em> MPa. Within tolerance.`
+      : `Agent claimed <em>${claim}</em> MPa, physics measured <em>${ref}</em> MPa. The estimate is off, but the part is safe, so PASS stands.`;
+  } else {
+    pn.textContent='—'; pn.className='';
+    $('parityclaim').textContent = v ? 'Not evaluated for this candidate.' : "Agent's own stress estimate vs the referee. Never gates PASS.";
+  }
+
+  $('checks').innerHTML = v ? ((v.checks||[]).map(c=>
+      `<div class="${c.ok?'ok':'bad'}"><span class="mark">${c.ok?'✓':'✕'}</span><span class="nm">${esc(c.name)}</span><span class="val">${esc(String(c.measured))} ${esc(c.limit||'')}</span></div>`
+    ).join('') + (v.ok ? '' : `<div class="${pok(v)?'warn':'bad'}"><span class="mark">→</span><span class="nm">${esc(v.reason||'')}</span></div>`))
+    : '';
 }
 
 function thumb(c){
   let t = thumbsR[c.key];
   if (!t){
+    const box=$('thumbs'); const hint=box.querySelector('.empty'); if (hint) hint.remove();
+    // keep only candidates from the current iteration
+    for (const k of Object.keys(thumbsR)){ if (thumbsR[k].task !== c.task || thumbsR[k].iter < c.iter){ thumbsR[k].el.remove(); delete thumbsR[k]; } }
     const el=document.createElement('div'); el.className='th'; el.onclick=()=>showCurrent(c);
-    el.innerHTML=`<div class="spin">designing…</div><span class="tag">d${c.k} · it${c.iter}</span><span class="res"></span><span class="m"></span>`;
-    // keep only the 4 latest (same iteration preferred): remove thumbs from older iterations when a new iteration starts
-    const box=$('thumbs');
-    for (const k of Object.keys(thumbsR)){ if (thumbsR[k].iter < c.iter){ thumbsR[k].el.remove(); delete thumbsR[k]; } }
+    el.innerHTML=`<div class="spin">designing</div><span class="tag">d${c.k} · it${c.iter}</span><span class="res"></span><span class="m"></span>`;
     box.appendChild(el);
-    t = thumbsR[c.key] = {key:c.key, iter:c.iter, el, v: main?makeViewer(el,false):null};
+    t = thumbsR[c.key] = {key:c.key, iter:c.iter, task:c.task, el, v: main?makeViewer(el,false):null};
   }
   const v=c.verdict;
-  t.el.classList.toggle('ok', !!(v&&v.ok)); t.el.classList.toggle('bad', !!(v&&!v.ok));
-  t.el.querySelector('.res').textContent = v ? (v.ok?'PASS':'FAIL') : '';
-  t.el.querySelector('.res').style.color = v ? (v.ok?'var(--ok)':'var(--bad)') : '';
+  t.el.classList.toggle('ok', pok(v)); t.el.classList.toggle('bad', !!(v&&!pok(v)));
+  const res=t.el.querySelector('.res');
+  res.textContent = v ? (v.ok?'PASS': pok(v)?'PASS*':'FAIL') : '';
+  res.style.color = v ? (pok(v)?'var(--ok)':'var(--bad)') : '';
   t.el.querySelector('.m').textContent = v ? `${fmt(v.mass_g,1)} g` : '';
-  if (c.stl && t.v){ t.el.querySelector('.spin').remove(); loadGeo(c.stl).then(g=>setMesh(t.v, g, v?(v.ok?COL.ok:COL.bad):COL.wait)).catch(()=>{}); }
+  if (c.stl && t.v){ const s=t.el.querySelector('.spin'); if(s) s.remove(); loadGeo(c.stl).then(g=>setMesh(t.v, g, v?(pok(v)?COL.ok:COL.bad):COL.wait)).catch(()=>{}); }
   else if (v && !c.stl){ const s=t.el.querySelector('.spin'); if(s) s.textContent='no geometry'; }
 }
 
 function critic(p){
-  const box=$('critic');
+  const box=$('critic'); const hint=box.querySelector('.empty-state'); if (hint) hint.remove();
   const d=document.createElement('div'); d.className='crit'+(p.ok?' ok':'');
-  d.innerHTML=`<div class="who">${esc(p.task||'')} · iter ${p.iter} · designer-${p.k} · ${p.ok?'passed':'failed'}</div><div class="txt"></div>`;
+  d.innerHTML=`<div class="who">${esc(p.task||'')} · iter ${p.iter}${p.k!=null?' · designer-'+p.k:''}${p.ok!=null?(p.ok?' · passed':' · failed'):''}</div><div class="txt"></div>`;
   box.prepend(d); while (box.children.length>3) box.lastChild.remove();
-  const txt=d.querySelector('.txt'); const full=String(p.text||'');
-  // "why -> what" highlighting: bold the sentence that starts with Change:
+  const txt=d.querySelector('.txt'); const full=String(p.text||p.hypothesis||'');
+  const render = s => esc(s).replace(/(Change:|What to change:|Fix:)/gi,'<span class="arrow">→ $1</span>').replace(/(Hypothesis:|Why:|Why it failed:)/gi,'<span class="arrow">$1</span>');
   let i=0; const cur=document.createElement('span'); cur.className='cursor';
   const step=()=>{ i=Math.min(full.length, i+3); txt.innerHTML=render(full.slice(0,i)); if(i<full.length){ txt.appendChild(cur); setTimeout(step, 12);} };
-  const render = s => esc(s).replace(/(Change:)/g,'<span class="arrow">→ $1</span>').replace(/(Hypothesis:)/g,'<span class="arrow">$1</span>');
   step();
 }
 
 function playbookDiff(p){
   $('pbver').textContent = p.version!=null ? `v${p.version}` : '';
   const text = p.diff || p.text || '';
-  $('diff').innerHTML = text.split('\n').map(l=>{
-    const c = l.startsWith('+')?'add': l.startsWith('-')?'del': (l.startsWith('@@')||l.startsWith('---')||l.startsWith('+++'))?'hd':'';
+  const diff=$('diff');
+  if (!text){ diff.innerHTML='<div class="empty-state"><b>Gating in progress.</b> Comparing the candidate playbook against dev.</div>'; return; }
+  diff.innerHTML = text.split('\n').map(l=>{
+    const c = l.startsWith('+')?'add': l.startsWith('-')?'del': (l.startsWith('@@')||l.startsWith('---')||l.startsWith('+++')||l.startsWith('#'))?'hd':'';
     return `<span class="${c}">${esc(l)}</span>`;
   }).join('\n');
-  $('diff').classList.remove('flash'); void $('diff').offsetWidth; $('diff').classList.add('flash');
+  diff.classList.remove('flash'); void diff.offsetWidth; diff.classList.add('flash');
 }
 function gate(p){
   S.gate=p; playbookDiff(p);
   const tg=$('gatetag'); tg.className = p.kept?'kept':'rej'; tg.textContent = p.kept?'KEPT':'REJECTED';
+  tg.classList.remove('stamp-in'); void tg.offsetWidth; tg.classList.add('stamp-in');
   const dlt=(p.dev_score_new-p.dev_score_old);
-  $('delta').innerHTML = `dev ${fmt(p.dev_score_old,2)} → ${fmt(p.dev_score_new,2)} <em style="color:${dlt>=0?'var(--ok)':'var(--bad)'}">${dlt>=0?'+':''}${fmt(dlt,2)}</em>`;
+  const big = Math.abs(p.dev_score_old)>5 || Math.abs(p.dev_score_new)>5;   // forge/gate.py scores are sums (~100/task)
+  const d = big?1:2;
+  const solved = p.solved_old!=null ? ` · solved ${p.solved_old}→${p.solved_new}/${p.n}` : '';
+  $('delta').innerHTML = `dev ${fmt(p.dev_score_old,d)} → ${fmt(p.dev_score_new,d)} <em style="color:${dlt>=0?'var(--ok)':'var(--bad)'}">${dlt>=0?'+':''}${fmt(dlt,d)}</em>${solved}`;
   const h = p.heldout || (p.heldout_v0!=null ? {v0:p.heldout_v0, vN:p.heldout_vN, n:p.heldout_n} : null);
-  if (h){
-    $('barsnone').style.display='none'; const b=$('bars');
-    const vn = p.kept?p.version:(p.version-1);
-    b.innerHTML = `<div class="bar2 v0"><span>v0</span><div class="trk"><i></i></div><b>${fmt(h.v0*100,0)}%</b></div><div class="bar2 vn"><span>v${vn}</span><div class="trk"><i></i></div><b>${fmt(h.vN*100,0)}%</b></div>`;
-    $('chart').querySelector('h2 span').textContent = `v0 vs v${vn}` + (h.n ? ` · n=${h.n}` : '');
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.children[0].querySelector('i').style.width=(h.v0*100)+'%'; b.children[1].querySelector('i').style.width=(h.vN*100)+'%'; }));
-  }
+  if (h) heldoutBars({...h, name:'v'+(p.kept?p.version:(p.version-1))});
+}
+function heldoutBars(h){
+  $('barsnone').style.display='none'; const b=$('bars');
+  b.innerHTML = `<div class="bar2 v0"><span>v0</span><div class="trk"><i></i></div><b>${h.la||fmt(h.v0*100,0)+'%'}</b></div><div class="bar2 vn"><span>${esc(h.name||'vN')}</span><div class="trk"><i></i></div><b>${h.lb||fmt(h.vN*100,0)+'%'}</b></div>`;
+  $('chart').querySelector('.chart-head span').textContent = `v0 vs ${h.name||'vN'}` + (h.n ? ` · n=${h.n}` : '');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.children[0].querySelector('i').style.width=(Math.min(1,h.v0)*100)+'%'; b.children[1].querySelector('i').style.width=(Math.min(1,h.vN)*100)+'%'; }));
 }
 function cost(p){
-  S.cost=p; $('usd').textContent = Number(p.usd_total||0).toFixed(4);
-  $('model').textContent = (p.model||'').split('/').pop();
+  S.cost=p; const tot = p.usd_total ?? p.spent_usd ?? 0; p.usd_total = tot;
+  $('usd').textContent = Number(tot).toFixed(4);
+  $('model').textContent = p.model ? p.model.split('/').pop() : (p.calls!=null ? p.calls+' LLM calls' : '');
   $('nverified').textContent = S.nverified;
   $('perpart').textContent = S.nverified ? '$'+(p.usd_total/S.nverified).toFixed(4) : '—';
 }
-function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 // ---------- event handling ----------
 function handle(e){
   const p=e.payload||{};
   switch(e.kind){
-    case 'spec':
-      S.spec=p; $('goaltext').textContent = p.goal || p.prompt || p.task || '';
-      if (!p.checks && p.checks_json) p.checks = p.checks_json.map(c=>c.name);
-      dod(); break;
-    case 'design': { const c=cand(p); c.params=p.params||c.params; c.stl=p.stl||c.stl; thumb(c); if(!S.cur) showCurrent(c); break; }  // keep last verdict on screen until the new one lands
-    case 'verdict': { const c=cand(p); c.verdict=p; c.params=p.params||c.params; c.stl=p.stl||c.stl; S.nverified++; thumb(c); showCurrent(c);
-      recolor(main, p.ok?COL.ok:COL.bad); if (S.cost) cost(S.cost); break; }
+    case 'spec': {
+      // producer emits two spec rows per task: {prompt,status:start} then {done_means,mass_limit_g}
+      if (S.task !== p.task){ S.task=p.task; S.spec={task:p.task}; $('taskstate').textContent=''; }
+      Object.assign(S.spec, p);
+      if (p.goal || p.prompt) $('goaltext').textContent = p.goal || p.prompt;
+      if (p.done_means) S.spec.checks = p.done_means;
+      else if (!S.spec.checks && p.checks_json) S.spec.checks = p.checks_json.map(c=>c.name);
+      dod(); break; }
+    case 'design': {
+      if (p.k==null){ $('desgenmeta').textContent = `iter ${p.iter}`; $('taskstate').innerHTML = `iter ${p.iter}: ${p.n||4} designers working`; break; }   // {status:start,n}
+      const c=cand(p); c.params=p.params||c.params; c.claim=p.claim||c.claim; c.stl=stlUrl(p.stl)||c.stl; thumb(c);
+      if(!S.cur || S.cur.task!==c.task) showCurrent(c); break; }  // keep last verdict on screen until the new one lands
+    case 'verdict': {
+      const c=cand(p); c.verdict=p; c.params=p.params||c.params; c.stl=stlUrl(p.stl)||c.stl;
+      if (!p.claim && c.claim) p.claim=c.claim;
+      S.nverified++; thumb(c); showCurrent(c);
+      recolor(main, pok(p)?COL.ok:COL.bad); if (S.cost) cost(S.cost); break; }
     case 'critic': critic(p); break;
-    case 'playbook': $('gatetag').className=''; $('gatetag').textContent='GATING…'; $('delta').textContent=''; playbookDiff(p); break;
-    case 'gate': gate(p); break;
+    case 'playbook': { const tg=$('gatetag'); tg.className='gating'; tg.textContent='GATING'; $('delta').textContent=''; playbookDiff(p); break; }
+    case 'gate':
+      if ('kept' in p) gate(p);                                   // playbook gate (fixture / future producer)
+      else {                                                      // per-task loop status from forge/loop.py
+        const ts=$('taskstate');
+        if (p.status==='solved'){ ts.innerHTML = `<b style="color:var(--ok)">SOLVED</b> · iter ${p.iter} · ${fmt(p.mass_g,1)} g · score ${fmt(p.score,1)}`;
+          const win = Object.values(S.cands).find(c=>c.task===p.task && pok(c.verdict) && Math.abs((c.verdict.mass_g||0)-p.mass_g)<0.05); if (win) showCurrent(win); }
+        else if (p.status==='stuck') ts.innerHTML = `<b style="color:var(--bad)">STUCK</b> · ${esc(p.reason||'')}`;
+        else if (p.status==='done') ts.innerHTML = `${p.solved?'<b style="color:var(--ok)">DONE</b>':'<b style="color:var(--bad)">GAVE UP</b>'} · ${p.iters} iters · ${esc(p.stop_reason||'')}`;
+      }
+      break;
     case 'cost': cost(p); break;
   }
 }
@@ -372,14 +635,15 @@ function handle(e){
 // ---------- transport ----------
 const dot=$('dot'), st=$('statustext');
 function connectLive(run){
-  const es = new EventSource('/events'+(run?`?run=${encodeURIComponent(run)}`:''));
-  es.addEventListener('meta', e=>{ const m=JSON.parse(e.data); dot.className='dot live'; st.textContent='LIVE · '+m.run; });
+  const es = new EventSource('/events?'+(run?`run=${encodeURIComponent(run)}&`:'')+(Q.has('once')?'replay=1':''));
+  es.addEventListener('meta', e=>{ const m=JSON.parse(e.data); S.run=m.run; dot.className='dot live'; st.textContent='LIVE · '+m.run; });
   es.addEventListener('ev', e=>{ try{ handle(JSON.parse(e.data)); }catch(err){ console.warn(err); } });
   es.addEventListener('switch', e=>{ es.close(); setTimeout(()=>connectLive(null), 300); });
-  es.onerror = ()=>{ dot.className='dot'; st.textContent='reconnecting…'; };
+  es.addEventListener('done', e=>{ es.close(); st.textContent='SNAPSHOT · '+(run||''); });
+  es.onerror = ()=>{ dot.className='dot'; st.textContent='reconnecting'; };
 }
 async function replay(run){
-  dot.className='dot replay'; st.textContent=`REPLAY ${SPEED}x · ${run}`;
+  S.run=run; dot.className='dot replay'; st.textContent=`REPLAY ${SPEED}x · ${run}`;
   const txt = await (await fetch('/'+run+'/events.jsonl',{cache:'no-store'})).text();
   const evs = txt.split('\n').filter(Boolean).map(l=>{ try{return JSON.parse(l);}catch{return null;} }).filter(Boolean);
   const LIMIT = parseInt(Q.get('n')||'0');   // ?n=12 stops after 12 events (screenshots)
@@ -391,7 +655,47 @@ async function replay(run){
   }
   st.textContent=`REPLAY done · ${run}`;
 }
+// ---------- playbook gate from playbook/history.jsonl (forge/gate.py writes it; no event in events.jsonl) ----------
+const HIST = (REPLAY && REPLAY.startsWith('ui/fixture')) ? REPLAY+'/playbook/history.jsonl' : 'playbook/history.jsonl';
+let histSeen = 0;
+async function pollHistory(){
+  try {
+    const r = await fetch('/'+HIST, {cache:'no-store'});
+    if (!r.ok) return;
+    const recs = (await r.text()).split('\n').filter(Boolean).map(l=>{ try{return JSON.parse(l);}catch{return null;} }).filter(Boolean);
+    if (recs.length === histSeen) return;
+    histSeen = recs.length;
+    const gates = recs.filter(x=>'kept' in x && x.dev_current), held = recs.filter(x=>x.kind==='heldout').pop();
+    const g = gates[gates.length-1];
+    if (g){
+      const dc=g.dev_current||{}, dn=g.dev_candidate||{};
+      const ev = { version:g.round, kept:g.kept, dev_score_old:dc.score, dev_score_new:dn.score, summary:g.summary,
+                   solved_old:dc.solved, solved_new:dn.solved, n:dc.n, base:g.base, path:g.kept_path||g.rejected_path };
+      ev.diff = await mdDiff(ev.base, ev.path, ev.summary);
+      gate(ev);
+    }
+    if (held){
+      const a=held.a||{}, b=held.b||{}; const n=a.n||1;
+      heldoutBars({v0:(a.score||0)/(n*100), vN:(b.score||0)/(n*100), n, la:`${a.solved}/${n}`, lb:`${b.solved}/${n}`, name:(b.path||'vN').replace(/^playbook\//,'').replace(/\.md$/,'')});
+    }
+  } catch(e){ console.warn('history', e); }
+}
+async function mdDiff(a, b, summary){
+  const get = async p => { if(!p) return ''; try{ const r=await fetch('/'+p,{cache:'no-store'}); return r.ok? await r.text() : ''; }catch{ return ''; } };
+  const A=(await get(a)).split('\n'), B=(await get(b)).split('\n');
+  if (!B.length || (B.length===1 && !B[0])) return (summary? '# '+summary+'\n' : '') + '(playbook file not readable)';
+  const n=A.length, m=B.length, L=Array.from({length:n+1},()=>new Uint16Array(m+1));
+  for(let i=n-1;i>=0;i--) for(let j=m-1;j>=0;j--) L[i][j] = A[i]===B[j] ? L[i+1][j+1]+1 : Math.max(L[i+1][j], L[i][j+1]);
+  const out=[]; let i=0,j=0;
+  while(i<n && j<m){ if(A[i]===B[j]){ out.push(' '+A[i]); i++; j++; } else if(L[i+1][j]>=L[i][j+1]){ out.push('-'+A[i]); i++; } else { out.push('+'+B[j]); j++; } }
+  while(i<n) out.push('-'+A[i++]); while(j<m) out.push('+'+B[j++]);
+  const keep = out.map((l,k)=> l[0]!==' ' || (out[k-1]&&out[k-1][0]!==' ') || (out[k+1]&&out[k+1][0]!==' '));
+  const trimmed=[]; let gap=false;
+  out.forEach((l,k)=>{ if(keep[k]){ trimmed.push(l); gap=false; } else if(!gap){ trimmed.push('@@'); gap=true; } });
+  return `--- ${a||'?'}\n+++ ${b||'?'}\n` + (summary? '# '+summary+'\n' : '') + trimmed.join('\n');
+}
 if (REPLAY) replay(REPLAY); else connectLive(Q.get('run'));
+pollHistory(); setInterval(pollHistory, 3000);
 </script>
 </body>
 </html>

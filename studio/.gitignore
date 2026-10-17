@@ -1,0 +1,5 @@
+shots/*.png
+shots/*.txt
+__pycache__/
+FORGE Studio.app/
+*.app/

@@ -1,0 +1,75 @@
+{
+ "grid": [
+  24,
+  27,
+  27
+ ],
+ "h_mm": 1.5,
+ "vf": 0.12,
+ "iters_run": 18,
+ "envelope_mm3": 57600.0,
+ "envelope_mass_g": 154.368,
+ "optimized_mass_g": 15.015539616503462,
+ "mass_reduction_pct": 90.27289359420122,
+ "compliance_first": 18.035364467641976,
+ "compliance_final": 0.3637844066330585,
+ "vm_max_body_mpa": 2.4582866083956962,
+ "vm_max_all_mpa": 3.4401268279835424,
+ "min_MS_body": 53.23831902999629,
+ "rho_g_cc": 2.68,
+ "material": "AlSi10Mg LPBF",
+ "calculix_check": {
+  "nodes": 124950,
+  "tets": 74679,
+  "vm_max": 13.985286700904632,
+  "vm_p99": 4.033870326730606,
+  "vm_p999": 6.514669144272486,
+  "disp_max": 0.0018175712581599106
+ },
+ "report": {
+  "mass_g": 17.05829625,
+  "volume_mm3": 6388.875,
+  "cases": {
+   "thrust + torque": {
+    "vm_max_all": 3.4401268279835424,
+    "vm_p99_body": 1.9196750121708837,
+    "vm_max_body": 2.4485364838657344,
+    "defl_max_mm": 0.001923006145606571,
+    "MS_body": 53.454297173807056
+   },
+   "gyro 8 rad/s pitch": {
+    "vm_max_all": 2.072549898617838,
+    "vm_p99_body": 1.3459315327757748,
+    "vm_max_body": 1.7038926791607167,
+    "defl_max_mm": 0.0008131783121499237,
+    "MS_body": 77.25218980282789
+   },
+   "20 g landing, transverse": {
+    "vm_max_all": 3.199249467852616,
+    "vm_p99_body": 1.5374527151554112,
+    "vm_max_body": 2.4582866083956962,
+    "defl_max_mm": 0.0013875386742675706,
+    "MS_body": 53.23831902999629
+   },
+   "20 g side": {
+    "vm_max_all": 1.9491097340543437,
+    "vm_p99_body": 1.1740138725226301,
+    "vm_max_body": 1.5923936972265809,
+    "defl_max_mm": 0.0005246167365947083,
+    "MS_body": 82.73138726029597
+   }
+  },
+  "bbox_mm": [
+   36.0,
+   40.0,
+   40.0
+  ],
+  "n_fixed_nodes": 300,
+  "stl": "../recursive-agents-hack/ui/fixture/topopt/pod_node_final.stl",
+  "faces": 5362,
+  "watertight": true,
+  "islands_dropped": 0,
+  "stl_volume_mm3": 5602.813289740097,
+  "stl_mass_g": 14.959511483606061
+ }
+}

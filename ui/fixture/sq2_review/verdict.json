@@ -1,0 +1,82 @@
+{
+  "part": "SQ-2 pod node (pod_LD, 7075-T6, machined)",
+  "step_sha": "70a237c19b04",
+  "material": "Al 7075-T6",
+  "fos": 1.5,
+  "ok": true,
+  "reason": "PASS",
+  "load_case": {
+    "name": "20 g POD-DOWN",
+    "F_N": [
+      0.0,
+      0.0,
+      -48.64
+    ],
+    "F_pod_down_N": 48.64,
+    "m_pod_kg": 0.248,
+    "src": "sq2_v3_margins.py:116-117",
+    "note": "full pod inertia at flange = conservative"
+  },
+  "bc": {
+    "fix": "spar-socket bore (R 3.02, 2733 nodes, all DOF)",
+    "load": "motor-mount flange (x=378.5, 1942 nodes)",
+    "fix_nodes": 2733,
+    "load_nodes": 1942
+  },
+  "mesh": {
+    "nodes": 48031,
+    "tets": 27442,
+    "clmax": 1.2,
+    "order": "C3D10 (2nd-order tet)"
+  },
+  "bbox": {
+    "x": [
+      378.5,
+      406.5
+    ],
+    "y": [
+      87.3,
+      127.4
+    ],
+    "z": [
+      -136.2,
+      -93.9
+    ]
+  },
+  "mass_g": 22.66,
+  "results": {
+    "sigma_FEA_MPa": 10.7,
+    "sigma_peak_MPa": 44.8,
+    "sigma_handcalc_MPa": 7.5,
+    "arm_mm": 25.0,
+    "allow_MPa": 335.3,
+    "defl_mm": 0.0128,
+    "MS_FEA": 30.26,
+    "MS_peak": 6.48,
+    "MS_handcalc": 43.56,
+    "Kt_peak_over_handcalc": 5.95,
+    "gap_FEA_vs_handcalc": 0.425
+  },
+  "handcalc_airframe_governing": {
+    "item": "spar root bending, 20 g POD-DOWN (pod inertia x arm)",
+    "member": "CFRP spar (6x4 pultruded)",
+    "MS": 0.48,
+    "sigma_MPa": null,
+    "src": "speed-quad/cad/out/sq2/v3/margins.json"
+  },
+  "checks": [
+    {
+      "name": "node von Mises (99.5 pct) vs 7075-T6 yield/FoS",
+      "limit": "<= 335 MPa",
+      "measured": 10.7,
+      "ok": true
+    },
+    {
+      "name": "node peak von Mises (concentration) vs yield/FoS",
+      "limit": "<= 335 MPa",
+      "measured": 44.8,
+      "ok": true
+    }
+  ],
+  "seconds": null
+}
