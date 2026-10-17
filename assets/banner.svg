@@ -1,75 +1,41 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 1280 400">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#05070d"/>
-      <stop offset="1" stop-color="#0d1424"/>
-    </linearGradient>
-    <linearGradient id="snake" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#76b900"/>
-      <stop offset="0.5" stop-color="#2ee6a6"/>
-      <stop offset="1" stop-color="#3aa0ff"/>
-    </linearGradient>
-    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#9fe8c9"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#2ee6a6" stop-opacity="0.35"/>
-      <stop offset="1" stop-color="#2ee6a6" stop-opacity="0"/>
-    </radialGradient>
-    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
-      <path d="M32 0H0V32" fill="none" stroke="#ffffff" stroke-opacity="0.04" stroke-width="1"/>
-    </pattern>
-    <marker id="head" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="26" markerHeight="26" markerUnits="userSpaceOnUse" orient="auto">
-      <path d="M0 0L10 5L0 10z" fill="#3aa0ff"/>
-    </marker>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#05070d"/><stop offset="1" stop-color="#0d1424"/></linearGradient>
+    <linearGradient id="stress" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2ee6a6"/><stop offset=".55" stop-color="#ffe066"/><stop offset="1" stop-color="#ff5f6d"/></linearGradient>
+    <linearGradient id="ok" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2ee6a6"/><stop offset="1" stop-color="#9be15d"/></linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#9fe8c9"/></linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#fff" stroke-opacity=".04"/></pattern>
+    <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#3a4250" stroke-width="3"/></pattern>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#2ee6a6" stop-opacity=".25"/><stop offset="1" stop-color="#2ee6a6" stop-opacity="0"/></radialGradient>
   </defs>
-
-  <rect width="1280" height="400" fill="url(#bg)"/>
-  <rect width="1280" height="400" fill="url(#grid)"/>
-
-  <!-- ouroboros ring -->
-  <g transform="translate(230 200)">
-    <circle r="150" fill="url(#glow)"/>
-    <circle r="118" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="22"/>
-    <path d="M 0 -118 A 118 118 0 1 1 -40 -111" fill="none" stroke="url(#snake)" stroke-width="14"
-          stroke-linecap="round" marker-end="url(#head)"/>
-    <!-- generation nodes -->
-    <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" font-weight="700" text-anchor="middle">
-      <circle cx="0" cy="-118" r="22" fill="#05070d" stroke="#76b900" stroke-width="3"/>
-      <text x="0" y="-113" fill="#76b900">G0</text>
-      <circle cx="102" cy="59" r="22" fill="#05070d" stroke="#2ee6a6" stroke-width="3"/>
-      <text x="102" y="64" fill="#2ee6a6">G1</text>
-      <circle cx="-102" cy="59" r="22" fill="#05070d" stroke="#3aa0ff" stroke-width="3"/>
-      <text x="-102" y="64" fill="#3aa0ff">G2</text>
-    </g>
-    <!-- gate in the middle -->
-    <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">
-      <rect x="-46" y="-26" width="92" height="52" rx="10" fill="#0d1424" stroke="#ffffff" stroke-opacity="0.25"/>
-      <text y="-4" font-size="12" fill="#9aa4b2">GATE</text>
-      <text y="15" font-size="14" font-weight="700" fill="#2ee6a6">CI &gt; 0 ✓</text>
-    </g>
+  <rect width="1280" height="400" fill="url(#bg)"/><rect width="1280" height="400" fill="url(#grid)"/>
+  <circle cx="220" cy="200" r="190" fill="url(#glow)"/>
+  <!-- wall -->
+  <rect x="60" y="60" width="34" height="280" fill="url(#hatch)"/><rect x="92" y="60" width="4" height="280" fill="#566070"/>
+  <!-- v1 ghost (failed) -->
+  <g opacity=".35"><path d="M96 120h14v130h-14z M110 120h230v14h-230z" fill="#ff5f6d"/></g>
+  <!-- v2 bracket -->
+  <path d="M96 110h20v170h-20z" fill="url(#ok)"/>
+  <path d="M116 110h250v20h-250z" fill="url(#stress)" opacity=".95"/>
+  <path d="M116 130 L250 130 L116 250 Z" fill="url(#ok)" opacity=".9"/>
+  <circle cx="106" cy="160" r="4" fill="#05070d"/><circle cx="106" cy="240" r="4" fill="#05070d"/>
+  <rect x="320" y="62" width="50" height="46" rx="6" fill="#1b2230" stroke="#4aa8ff" stroke-width="1.5"/>
+  <path d="M345 140v46" stroke="#ff5f6d" stroke-width="3"/><path d="M337 180l8 12 8-12z" fill="#ff5f6d"/>
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12">
+    <rect x="160" y="290" width="200" height="56" rx="8" fill="#0b0f17" stroke="#ffffff" stroke-opacity=".15"/>
+    <text x="172" y="310" fill="#8a94a3">referee · HIDDEN side load</text>
+    <text x="172" y="332" fill="#ff5f6d" font-weight="700">v1 ✗ 310 MPa</text><text x="268" y="332" fill="#2ee6a6" font-weight="700">v2 ✓ 61 MPa</text>
   </g>
-
-  <!-- text -->
-  <g font-family="-apple-system, 'Segoe UI', Inter, Helvetica, Arial, sans-serif">
-    <text x="440" y="168" font-size="84" font-weight="800" letter-spacing="6" fill="url(#title)">OUROBOROS</text>
-    <text x="444" y="218" font-size="28" fill="#c9d1d9">An agent team that trains its own next brain.</text>
-    <text x="444" y="256" font-size="20" fill="#8b949e">Rewrites its weights, not just its prompts. A jury it can't bribe decides what survives.</text>
+  <g font-family="-apple-system,'Segoe UI',Inter,Helvetica,Arial,sans-serif">
+    <text x="450" y="170" font-size="96" font-weight="800" letter-spacing="10" fill="url(#title)">FORGE</text>
+    <text x="456" y="218" font-size="27" fill="#c9d1d9">Agents that design real parts, and get better on parts they've never seen.</text>
+    <text x="456" y="254" font-size="19" fill="#8b949e">Every claim checked by physics they can't fool. Only lessons that survive held-out tests are kept.</text>
   </g>
-
-  <!-- chips -->
-  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15">
-    <rect x="444" y="292" width="168" height="34" rx="17" fill="#76b900" fill-opacity="0.12" stroke="#76b900" stroke-opacity="0.6"/>
-    <text x="528" y="314" text-anchor="middle" fill="#a6e05a">NVIDIA Nemotron</text>
-    <rect x="624" y="292" width="226" height="34" rx="17" fill="#3aa0ff" fill-opacity="0.12" stroke="#3aa0ff" stroke-opacity="0.6"/>
-    <text x="737" y="314" text-anchor="middle" fill="#8cc8ff">Crusoe Managed Inference</text>
-    <rect x="862" y="292" width="140" height="34" rx="17" fill="#2ee6a6" fill-opacity="0.12" stroke="#2ee6a6" stroke-opacity="0.6"/>
-    <text x="932" y="314" text-anchor="middle" fill="#8ff0cb">8× A100 80GB</text>
-    <rect x="1014" y="292" width="132" height="34" rx="17" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.3"/>
-    <text x="1080" y="314" text-anchor="middle" fill="#c9d1d9">Version N+1</text>
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="15">
+    <rect x="456" y="288" width="168" height="34" rx="17" fill="#76b900" fill-opacity=".12" stroke="#76b900" stroke-opacity=".6"/><text x="540" y="310" text-anchor="middle" fill="#a6e05a">NVIDIA Nemotron</text>
+    <rect x="636" y="288" width="226" height="34" rx="17" fill="#3aa0ff" fill-opacity=".12" stroke="#3aa0ff" stroke-opacity=".6"/><text x="749" y="310" text-anchor="middle" fill="#8cc8ff">Crusoe Managed Inference</text>
+    <rect x="874" y="288" width="172" height="34" rx="17" fill="#2ee6a6" fill-opacity=".12" stroke="#2ee6a6" stroke-opacity=".6"/><text x="960" y="310" text-anchor="middle" fill="#8ff0cb">CalculiX referee</text>
+    <rect x="1058" y="288" width="132" height="34" rx="17" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".3"/><text x="1124" y="310" text-anchor="middle" fill="#c9d1d9">Version N+1</text>
   </g>
-
-  <text x="1240" y="376" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace"
-        font-size="13" fill="#6e7681">Recursive Agents Hackathon · Crusoe × Cerebral Valley · SF · Oct 17 2026</text>
+  <text x="1240" y="376" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="13" fill="#6e7681">Recursive Agents Hackathon · Crusoe × Cerebral Valley · SF · Oct 17 2026</text>
 </svg>

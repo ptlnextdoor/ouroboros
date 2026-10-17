@@ -1,35 +1,27 @@
 # Provenance: what existed before the hackathon vs built during it
 
-The hackathon rules say: *"Your demo must only highlight the specific features, code, and functionality
-that your team built during the hackathon."* This file lists exactly what existed before
-**10:45 AM PT, 2026-10-17** and what we built after.
+Rule: *"Your demo must only highlight the specific features, code, and functionality that your team built during the hackathon."*
+Hacking started **10:45 AM PT, 2026-10-17**. `git log --since="2026-10-17 10:45"` lists everything built today.
 
-## Before hacking started (planning only, no code)
-
-Created the evening of 2026-10-16:
-
-| File | What it is |
+## Before 10:45 (planning only, no project code)
+| what | where |
 |---|---|
-| `README.md` | project description, target interface (no implementation) |
-| `assets/banner.svg` | header graphic |
-| `docs/PLAN.md` | design, budget, pre-mortem, demo script |
-| `docs/RESEARCH.md` | literature review generated with Consensus |
-| `docs/SETUP.md` | environment checklist (installing libraries, downloading weights) |
-| `docs/WORKFLOW.md` | how the team will work |
-| `docs/ALTERNATIVES.md` | rejected ideas |
-| `CLAUDE.md`, `.gitignore`, `.env.example`, `LICENSE` | repo scaffolding |
-
-Environment prep (not in the repo): installing vLLM/TRL/PEFT, downloading model weights and
-public datasets, checking cluster access. No project source code was written before 10:45.
-
-## Third-party components (not our work)
-
-- Model weights: NVIDIA Nemotron-3-Nano-30B-A3B, Qwen3-8B (fallback)
-- Hosted models via Crusoe Managed Inference
-- Libraries: vLLM, Hugging Face Transformers / TRL / PEFT, PyTorch
-- Datasets: TACO, APPS, LiveCodeBench, HumanEval+/MBPP+
+| Ideas, research, plans, winner audit, judge notes | `docs/PLAN.md`, `RESEARCH.md`, `WINNER_AUDIT.md`, `ALTERNATIVES.md`, `WORKFLOW.md`, `SPEC.md`, `JUDGES.md`, `WIN_PLAYBOOK.md`, `SIDE_PRIZES.md`, `HARVESTED_SKILLS.md`, `brief/` |
+| Toolchain smoke test (environment check, script not kept) | `docs/evidence/REFEREE_SMOKE_TEST.md` |
+| Repo scaffolding | `LICENSE`, `.gitignore`, `.env.example`, `CLAUDE.md` |
+| Krish's thermal proposal (alternative idea, not built) | branch `thermal-research-factory` |
 
 ## Built during the hackathon
+`forge/` (blocks, LLM client, agents, loop, gate), `referee/` (FEA referee, hidden cases), `tasks/`, `playbook/`,
+`ui/`, `Makefile`, `assets/banner.svg` (FORGE version), `README.md` (FORGE version), and all `runs/` artifacts.
 
-Everything under `src/` and every commit timestamped after 10:45 AM PT on 2026-10-17.
-`git log --since="2026-10-17 10:45" --stat` shows the full list.
+## Pre-existing third-party tools (not our work)
+- CadQuery 2.8 / OpenCascade (geometry), gmsh (meshing), CalculiX `ccx` (FEA solver). gmsh and ccx ship inside FreeCAD.app.
+- Models on Crusoe Managed Inference: NVIDIA Nemotron-3-Super, Nemotron-3.5-Lightning, DeepSeek-V4-Pro.
+- Python libraries: numpy, openai client.
+
+## Prior personal work used only as *method* (no code copied)
+Lessons from the team's earlier drone and jet projects (SQ-2, MJ-1) shaped the referee checks: validate the
+solver against beam theory, treat mesh failure as a FAIL, check symmetry, hash the solved geometry. The
+negative-drag result quoted in the pitch comes from that earlier project's optimizer log, dated 2026-10-16.
+Listed in `docs/HARVESTED_SKILLS.md`. None of that code is in this repo.

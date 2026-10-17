@@ -1,161 +1,90 @@
-<p align="center">
-  <img src="assets/banner.svg" alt="Ouroboros: an agent team that trains its own next brain" width="100%"/>
-</p>
+<p align="center"><img src="assets/banner.svg" alt="FORGE: agents that design real parts and get better on parts they've never seen" width="100%"/></p>
 
 <p align="center">
-  <a href="#how-it-works">How it works</a> ·
-  <a href="#results">Results</a> ·
-  <a href="#quickstart">Quickstart</a> ·
-  <a href="docs/PLAN.md">Plan</a> ·
-  <a href="docs/RESEARCH.md">Research</a> ·
-  <a href="docs/PROVENANCE.md">What we built today</a>
+  <img alt="track" src="https://img.shields.io/badge/track-Version%20N%2B1%20%C2%B7%20Done%20Means%20Done-2ee6a6?style=flat-square"/>
+  <img alt="nemotron" src="https://img.shields.io/badge/designer-NVIDIA%20Nemotron-76b900?style=flat-square"/>
+  <img alt="crusoe" src="https://img.shields.io/badge/inference-Crusoe%20Managed%20Inference-3aa0ff?style=flat-square"/>
+  <img alt="referee" src="https://img.shields.io/badge/referee-CalculiX%20FEA%20(no%20LLM)-555?style=flat-square"/>
 </p>
 
-<p align="center">
-  <img alt="track" src="https://img.shields.io/badge/track-Version%20N%2B1-2ee6a6?style=flat-square"/>
-  <img alt="nemotron" src="https://img.shields.io/badge/student-NVIDIA%20Nemotron-76b900?style=flat-square"/>
-  <img alt="crusoe" src="https://img.shields.io/badge/jury-Crusoe%20Managed%20Inference-3aa0ff?style=flat-square"/>
-  <img alt="gpus" src="https://img.shields.io/badge/compute-8%C3%97%20A100%2080GB-555?style=flat-square"/>
-  <img alt="license" src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square"/>
-</p>
-
----
-
-> **Most agent teams are exactly as good on run 100 as on run 1.** Teams that "self-improve"
-> usually rewrite a prompt and call it learning.
+> Last night our own design optimizer crowned a part with **negative drag** as its best result.
+> Nothing in the loop caught it. Agents fill vague goals with assumptions and then report success.
 >
-> **Ouroboros rewrites its own weights.** After every run, the team keeps only the work that
-> provably passed, fine-tunes its successor on it, and puts that successor through an exam it
-> has never seen. A jury of *other* models, which the student can't influence, decides whether
-> the new brain is promoted or rejected.
-
-## Why it's different
-
-| Typical self-improving agent | Ouroboros |
-|---|---|
-| Edits its own prompt | Edits its prompt **and trains new weights** (LoRA generations) |
-| Grades itself | **No model ever grades itself.** Solver, test-writer and auditor come from different model families |
-| "It seems better" | **Paired bootstrap confidence interval** on 300 held-out problems. Promotion only if the lower bound > 0 |
-| Keeps every change | A **promotion gate** rejects regressions and logs the reason |
-| One agent | A **population** of adapters served side by side with vLLM multi-LoRA |
+> **FORGE** is an agent team that turns a one-line engineering goal into a real, manufacturable part.
+> It checks every claim against a physics solver it can't see inside, on loads it was never told about.
+> After each run it rewrites its own engineering playbook, and it keeps a rule only if the team does
+> measurably better on parts it has never seen.
 
 ## How it works
 
 ```mermaid
-flowchart TB
-  subgraph Crusoe["☁️ Crusoe Managed Inference: the jury (never trained)"]
-    ARCH["Architect · GLM-5.3<br/>one-line goal → tasks + definition of done"]
-    ADV["Adversary · DeepSeek-V4-Pro<br/>writes tests designed to break solutions"]
-    AUD["Auditor · gpt-oss-120b / Nemotron-3-Super<br/>flags reward hacking"]
-  end
-  subgraph Cluster["🖥️ Our 8× A100: the student"]
-    VLLM["vLLM multi-LoRA<br/>Nemotron-3-Nano-30B-A3B<br/>Gen 0 · Gen 1 · Gen 2"]
-    SBX["Sandboxed executor<br/>no network, timeouts"]
-    TRAIN["LoRA trainer<br/>TRL SFT on 8 GPUs"]
-  end
-  POOL[("Task pool<br/>real tests + adversary tests")]
-  ARCH --> POOL
-  ADV --> POOL
-  POOL --> VLLM
-  VLLM -->|16 samples / problem| SBX
-  SBX -->|"keep 0 < pass-rate < 1<br/>dedupe · cap 4 / problem"| DATA[("Verified trajectories")]
-  AUD -.audits.-> DATA
-  DATA --> TRAIN --> CAND["Candidate Gen N+1"]
-  CAND --> GATE{"Held-out gate<br/>300 items × 4 samples<br/>paired bootstrap CI"}
-  GATE -->|"CI low > 0"| PROMOTE["✅ Promote + hot-swap"]
-  GATE -->|otherwise| REJECT["❌ Reject + log why"]
-  PROMOTE --> VLLM
+flowchart LR
+  G["one-line goal<br/>'hold a 2 kg motor 80 mm off a wall, under 40 g'"] --> S["Spec agent · Nemotron-3-Super<br/>→ definition of done (checks.json)"]
+  S --> D["4 designers in parallel · Nemotron-3.5-Lightning<br/>→ parameters for a CAD block + claimed stress/mass"]
+  D --> R{"Referee · gmsh + CalculiX<br/>visible + HIDDEN load cases<br/>no LLM"}
+  R -->|verdict + parity gap| C["Critic · DeepSeek-V4-Pro<br/>hypothesis: why it failed, what to change"]
+  C --> D
+  R --> P["Playbook editor<br/>proposes a rule"]
+  P --> GATE{"keep only if score on<br/>dev parts improves"}
+  GATE -->|kept / rejected, both logged| PB[("playbook vN<br/>shared brain")]
+  PB --> D
 ```
 
-### Two clocks
-| Loop | Period | What changes | Scored on |
-|---|---|---|---|
-| **Fast** | minutes | system prompts / playbooks | dev split |
-| **Slow** | ~1 hour | model weights (LoRA generation) | locked held-out split |
+| problem statement | how FORGE answers it |
+|---|---|
+| **Done Means Done** | The spec agent turns one line into numeric checks (load × g-factor, factor of safety, mass, deflection). "Done" means the referee passed every check, including loads the agents never saw. A loop detector re-plans when designs repeat or stop improving. |
+| **Version N+1** | After each run a playbook editor proposes engineering rules from the failures. A rule is kept only if the dev-set score improves. v0 vs vN is reported on **held-out parts never used for editing**. Rejected edits stay in the log. |
+| **Shared Brain** | The playbook is the team's shared memory. Every designer reads it before working, and its value is measured by held-out score, not by how it reads. |
 
-The held-out split is never used for training or for prompt search.
-
-### Design decisions, and the research behind each
-Full cited report: [`docs/RESEARCH.md`](docs/RESEARCH.md) (17 papers, built with Consensus).
-
-- **Expert iteration with difficulty filtering, not GRPO.** Expert iteration matches or beats PPO in most setups, and GRPO's advantage comes mainly from discarding prompts where every sample failed. We keep only problems with pass rate strictly between 0 and 1, which gets most of GRPO's benefit with plain SFT plumbing. ([1.1], [6.2])
-- **Two generations, not ten.** Self-training gains usually plateau after about 2 iterations. A rejected Gen 3 is still a useful result: it shows the gate working. ([2.1], [5.2])
-- **Anti-collusion by construction.** When one model writes both code and tests, it learns to write easy tests. The test writer and the student are different model families, and tests are validated by cross-execution agreement. ([8.1], [7.3])
-- **Statistics instead of vibes.** Expected gains are +3 to +7 pass@1 points. A gain that size is invisible on 50 items, so we use 300 items, 4 samples each, and paired per-item comparison. ([10.2], [15.2])
-
-### Done Means Done
-The Architect turns a one-line goal into a **task spec + executable test suite**: a definition of
-done the system checks without a human. A loop detector stops and re-plans when a solver
-repeats the same failing output 3 times or makes no progress across turns. The Auditor
-flags solutions that special-case the tests.
+### Why the referee can't be fooled
+- **It isn't an LLM.** It's a 2nd-order tetrahedral FEA run (gmsh + CalculiX), checked against beam theory at **0.18 % error** (`make selftest`).
+- **Hidden load cases** live in `referee/hidden/`, which agent code never imports (`make verify-isolation`).
+- **Failures we've actually hit become explicit FAILs:** meshes that fail, invalid geometry, asymmetric response to a symmetric load, a solution that does negative work, and mass recomputed from the STEP rather than taken from the agent.
+- **Parity gap:** the agent's claimed stress vs the solver's. This is our simulation-vs-reality metric.
+- Every verdict records the hash of the exact STEP file it solved.
 
 ## Results
 
-> Filled in live on 2026-10-17. Every number below comes from `gens/*/gate.json`.
+> Filled from `playbook/history.jsonl` and `runs/` on 2026-10-17. Every number has a replayable run.
 
-| Generation | Held-out pass@1 | Δ vs parent | 95% CI | Gate |
+| | held-out pass rate | mean iterations to pass | mean mass margin | $ per verified part |
 |---|---|---|---|---|
-| Gen 0 (base) | _TBD_ | n/a | n/a | baseline |
-| Gen 1 | _TBD_ | _TBD_ | _TBD_ | _TBD_ |
-| Gen 2 | _TBD_ | _TBD_ | _TBD_ | _TBD_ |
+| playbook v0 | _TBD_ | _TBD_ | _TBD_ | _TBD_ |
+| playbook vN | _TBD_ | _TBD_ | _TBD_ | _TBD_ |
 
-## Quickstart
-
-> The code is written during the hackathon (10:45 AM to 5:00 PM PT, 2026-10-17).
-> These commands describe the target interface. See [`docs/SETUP.md`](docs/SETUP.md) for environment prep.
+## Run it
 
 ```bash
-git clone https://github.com/ptlnextdoor/ouroboros && cd ouroboros
-cp .env.example .env            # CRUSOE_API_KEY=...
-uv sync
-
-# 1. serve the student with hot-swappable LoRA adapters
-ouroboros serve --model nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B --gpus 0-7
-
-# 2. baseline on the locked held-out set
-ouroboros eval --gen 0
-
-# 3. run the loop: sample → filter → train → gate → promote
-ouroboros evolve --generations 2
-
-# 4. demo UI (lineage tree, gate chart, live hot-swap)
-ouroboros ui
+cp .env.example .env              # CRUSOE_API_KEY='...'
+make selftest                     # blocks + referee physics vs beam theory
+make verify-isolation             # proves agents can't see hidden load cases
+make demo TASK=motor_2kg_80mm     # one goal end-to-end
+make nplus1                       # playbook rounds: train → gate on dev → score held-out
+python3 ui/serve.py               # live view; ?replay=runs/<run> replays a finished run
 ```
 
-## Repo layout
+Requires Python 3.11+, CadQuery 2.8, and gmsh + CalculiX (both bundled with FreeCAD.app on macOS; set `FREECAD_BIN` elsewhere).
 
-```
-ouroboros/
-├── assets/            banner + demo media
-├── docs/
-│   ├── PLAN.md        full plan: architecture, budget, pre-mortem, demo script
-│   ├── RESEARCH.md    cited literature review (Consensus)
-│   ├── SETUP.md       pre-event environment checklist + smoke tests
-│   ├── WORKFLOW.md    how we build: spec-first swarm, techniques from past winners
-│   ├── ALTERNATIVES.md ideas we considered and why we passed
-│   └── PROVENANCE.md  exactly what existed before 10:45 vs built today
-├── CLAUDE.md          context file for coding agents
-└── (src/ written on the day)
-```
-
-## Stack
-
-| Layer | Tool | Built today? |
+## Models (all on Crusoe Managed Inference)
+| role | model | why |
 |---|---|---|
-| Student model | NVIDIA Nemotron-3-Nano-30B-A3B (fallback: Qwen3-8B) | ❌ pre-existing weights |
-| Jury | Crusoe Managed Inference (GLM-5.3, DeepSeek-V4-Pro, gpt-oss-120b, Nemotron-3-Super) | ❌ hosted API |
-| Serving | vLLM (multi-LoRA) | ❌ library |
-| Training | Hugging Face TRL + PEFT | ❌ library |
-| Data | TACO / APPS train, LiveCodeBench (held-out) | ❌ public datasets |
-| **Generation loop, filters, sandbox, gate, jury orchestration, prompt evolution, UI** | ours | ✅ **yes** |
+| spec agent | `nvidia/NVIDIA-Nemotron-3-Super-120B-A12B` | structured checks from plain English |
+| designers ×4 | `nvidia/Nemotron-3.5-Lightning-30B-A3B` | cheap parallel sub-agents, 1.3 s per design |
+| critic + playbook editor | `deepseek-ai/DeepSeek-V4-Pro` | different model family, so no model grades its own work |
+| referee | **none** (CalculiX) | physics, not opinion |
 
-See [`docs/PROVENANCE.md`](docs/PROVENANCE.md).
+Every call is logged with its cost to `runs/<run>/calls.jsonl`. A hard per-run budget cap stops the loop.
+
+## What we learned building it
+- **LLMs can't write raw CAD yet.** Nemotron-3-Super, Lightning, DeepSeek-V4-Pro and GLM-5.3 failed 6 of 6 times on raw CadQuery code. Choosing parameters for a CAD block succeeded 6 of 6 times in about 1.5 s. Agents decide the engineering, and code builds the geometry.
+- **Agents drift from the spec without saying so.** Asked for 80 mm of reach, a designer returned 100 mm and 150 mm. That's why the definition of done is written as checks the referee runs, not as instructions in the prompt.
+- **Thinking mode was 30× slower and returned empty content** for our parameter task, so designers run with thinking off.
+
+## Built today vs pre-existing
+See [`docs/PROVENANCE.md`](docs/PROVENANCE.md). In short: CadQuery, gmsh, CalculiX and the models are tools. All code in `forge/`, `referee/`, `ui/`, `tasks/` and `playbook/` was written during the event. The planning docs in `docs/` were written the night before.
 
 ## Team
-- Aayushya Patel ([@ptlnextdoor](https://github.com/ptlnextdoor))
-- Krish Garg ([@krishhgg](https://github.com/krishhgg))
+- Aayushya Patel ([@ptlnextdoor](https://github.com/ptlnextdoor)): mechanical and aero engineering
+- Krish Garg ([@krishhgg](https://github.com/krishhgg)): agents and systems
 
-Built at the **Recursive Agents Hackathon** (Crusoe × Cerebral Valley), Shack15, San Francisco.
-
-## License
-[MIT](LICENSE)
+Built at the **Recursive Agents Hackathon** (Crusoe × Cerebral Valley), SHACK15, San Francisco · [MIT](LICENSE)
