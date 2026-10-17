@@ -370,16 +370,20 @@ function go(){
         buf+=dec.decode(value,{stream:true});let idx;
         while((idx=buf.indexOf('\n\n'))>=0){const chunk=buf.slice(0,idx);buf=buf.slice(idx+2);
           const line=chunk.split('\n').find(l=>l.startsWith('data: '));
-          if(line){try{handle(JSON.parse(line.slice(6)));}catch(e){}}}
+          if(line){try{const ev=JSON.parse(line.slice(6));
+            if(ev.event==='end'){reader.cancel();finish();return;}
+            handle(ev);}catch(e){}}}
         return pump();});}
       return pump();
     }).catch(e=>{addStep({agent:'Gate',model:'FORGE',text:'stream error: '+e});finish();});
 }
-function finish(){busy=false;send.disabled=false;rosterDone=true;renderTeam();if(turnState.kind)renderDone();}
+function finish(){if(!busy)return;busy=false;send.disabled=false;rosterDone=true;renderTeam();if(turnState.kind)renderDone();}
 
 function renderDone(){
   const stuck=atBottom(); const s=turnState; let line='';
-  if(s.kind==='mj1'){
+  if(s.done){
+    line=esc(s.done);
+  } else if(s.kind==='mj1'){
     line=`Done. Sourced <b>${s.parts||23} parts</b> from datasheets, sized <b>${s.archN||8} architectures</b>, `+
       `${s.bestArch?`${esc(s.bestArch)} closes at M1.05`:'twin P400 closes at M1.05'}; `+
       `best area-ruled layout <b>E_WD ${s.e_wd??'3.06'}</b>, ~10% short of thrust for M1.05.`;
@@ -390,7 +394,19 @@ function renderDone(){
   feed.appendChild(el(`<div class="done"><div class="dicon">✓</div><div class="dtext">${line}</div></div>`));
   const acts=el(`<div class="actions"><button class="act primary" id="approveBtn">Approve</button><button class="act" id="reviseBtn">Revise</button></div>`);
   feed.appendChild(acts);
-  acts.querySelector('#approveBtn').onclick=e=>{e.target.textContent='Approved ✓';e.target.disabled=true;};
+  acts.querySelector('#approveBtn').onclick=e=>{
+    const b=e.target;b.disabled=true;b.textContent='Exporting STEP from Fusion…';
+    fetch(BASE+'/approve',{method:'POST'}).then(r=>r.json()).then(j=>{
+      if(j.ok){
+        b.textContent='Released ✓';
+        feed.appendChild(el(`<div class="done"><div>Released <b>${esc(j.design||'design')}</b> · ${j.solids} solid(s), ${j.kb} KB STEP<br><span class="meta">${esc(j.step)}</span></div></div>`));
+      }else{
+        b.textContent='Export failed';b.disabled=false;
+        feed.appendChild(el(`<div class="done"><div>STEP export failed: ${esc(j.error||'no file written')}</div></div>`));
+      }
+      stick();
+    }).catch(err=>{b.textContent='Export failed';b.disabled=false;});
+  };
   acts.querySelector('#reviseBtn').onclick=()=>input.focus();
   if(stuck)stick();
 }
@@ -412,7 +428,7 @@ function handle(ev){
       break;
     case 'cost': if(ev.spent_usd!=null){lastCost=ev.spent_usd;} break;
     case 'summary': turnState.solved=ev.solved;turnState.iters=ev.iters;turnState.mass_g=ev.mass_g;addSummary(ev);break;
-    case 'summary_mj1': turnState.e_wd=ev.e_wd;turnState.bestArch=ev.best_arch||turnState.bestArch;break;
+    case 'summary_mj1': turnState.e_wd=ev.e_wd;turnState.bestArch=ev.best_arch||turnState.bestArch;if(ev.done)turnState.done=ev.done;break;
     case 'fusion': addFusionNote(ev);break;
     case 'image': addImage(ev);break;
     case 'error': addStep({agent:'Gate',model:'FORGE',text:'error: '+ev.message});break;

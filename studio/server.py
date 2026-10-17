@@ -33,6 +33,7 @@ from forge import loop as forge_loop               # noqa: E402
 from studio import fusion                          # noqa: E402
 from studio import mj1bridge                        # noqa: E402
 from studio import mj1flow                          # noqa: E402
+from studio import router, cadtools                  # noqa: E402
 
 # words that route a goal to the MJ-1 supersonic-jet pipeline instead of brackets
 JET_WORDS = ("supersonic", "mach", "jet", "drone", "aircraft", "plane", "boom",
@@ -100,11 +101,33 @@ def run_turn(goal, q, playbook_rel="playbook/v2.md"):
     def send(ev, **data):
         q.put(dict(event=ev, **data))
 
-    # route: a supersonic-jet goal runs the MJ-1 pipeline; anything else is a bracket
-    gl = goal.lower()
-    if any(w in gl for w in JET_WORDS):
+    # route: one Nemotron-Super call decides new_jet / new_bracket / edit / question
+    t0 = time.time()
+    try:
+        mj1bridge._activate("MJ1")
+        names = cadtools.list_occurrences().get("names", [])
+    except Exception:
+        names = []
+    decision = router.route(goal, names)
+    intent = decision["intent"]
+    ed = decision.get("edit") or {}
+    rtxt = f"intent: {intent}"
+    if intent == "edit":
+        rtxt += f" · target: {ed.get('target')} · {ed.get('value')}"
+    send("step", agent="Router", model="Nemotron-3-Super", kind="result",
+         ms=int(1000 * (time.time() - t0)), text=rtxt, decision=decision)
+
+    if intent == "new_jet":
         try:
             mj1flow.run_mj1_turn(goal, send, mj1bridge)
+        except Exception as e:
+            send("error", message=f"{type(e).__name__}: {e}")
+        finally:
+            q.put(None)
+        return
+    if intent in ("edit", "question"):
+        try:
+            _edit_turn(goal, decision, send)
         except Exception as e:
             send("error", message=f"{type(e).__name__}: {e}")
         finally:
@@ -199,6 +222,41 @@ def run_turn(goal, q, playbook_rel="playbook/v2.md"):
         q.put(None)  # sentinel: stream complete
 
 
+def _edit_turn(goal, decision, send):
+    """edit -> apply in Fusion, stream image + Done; question -> one Spec step."""
+    send("turn_mj1", goal=goal, subject="MJ-1", rules=mj1flow.BOOM_RULES)
+    if decision["intent"] == "question":
+        send("step", agent="Spec", model=MODELS["spec"], kind="result",
+             text=decision.get("reply") or "(no reply)")
+        send("summary_mj1", done=decision.get("reply") or "Done.")
+        return
+    ed = decision["edit"]
+    t0 = time.time()
+    if ed["action"] == "revert":
+        send("step", agent="CAD", model="Fusion 360", kind="tool",
+             text="restoring the original appearances saved before our edits, removing FORGE colours")
+        r = cadtools.revert_appearance(ed.get("target") or ".*")
+        what = (f"Restored the original appearance on {r.get('count', 0)} bodies and removed "
+                f"{len(r.get('removed', []))} added colour(s)")
+    elif ed["action"] == "visibility":
+        show = str(ed.get("value", "hide")).lower().startswith("show")
+        send("step", agent="CAD", model="Fusion 360", kind="tool",
+             text=f"{'showing' if show else 'hiding'} occurrences matching /{ed['target']}/")
+        r = cadtools.set_visibility(ed["target"], show)
+        what = f"{'Showed' if show else 'Hid'} {r['count']} part(s) ({', '.join(r['targets'][:6])})"
+    else:
+        send("step", agent="CAD", model="Fusion 360", kind="tool",
+             text=f"searching appearance libraries for '{ed['value']}' · applying to /{ed['target']}/")
+        r = cadtools.set_appearance(ed["target"], ed["value"])
+        what = (f"Applied {r['appearance']} to {r['count']} parts "
+                f"({', '.join(r['targets'][:6])})")
+    ms = int(1000 * (time.time() - t0))
+    send("step", agent="CAD", model="Fusion 360", kind="result", ms=ms, text=what, **r)
+    png = cadtools.capture("iso")
+    send("image", source="fusion", caption=f"MJ-1 in Fusion 360 · {what}", image_base64=png)
+    send("summary_mj1", done=f"Done. {what}.")
+
+
 def _forward(rec, send, step_t0):
     """Translate a forge.loop event record into a Studio SSE event."""
     kind = rec.get("kind")
@@ -248,6 +306,148 @@ def _forward(rec, send, step_t0):
 # ---------------------------------------------------------------------------
 # HTTP
 # ---------------------------------------------------------------------------
+SQ2_SYSTEM = (
+    "You are FORGE's CAD agent editing SQ-2, a 590 km/h electric quadcopter, written in OpenSCAD. "
+    "You get the CURRENT full source and one request. Change the model the way an aero/mechanical "
+    "engineer would. Reply with STRICT JSON only:\n"
+    '{"set": {"<param>": <number>, ...}, "replace": [{"old": "<exact unique substring>", "new": "<text>"}], '
+    '"say": "<one short sentence: what changed and the engineering effect>"}\n'
+    "Prefer \"set\" for anything a top-of-file parameter covers (values must respect the [min:max] "
+    "comments). Use \"replace\" only for topology the parameters cannot express (new module, "
+    "different section shape, extra part); old must be copied exactly from the source. Keep the "
+    "model a valid closed solid. Never remove the stage logic. Either key may be empty. "
+    "The say sentence must be physically correct: SQ-2 flies at Mach 0.48, so there is no wave "
+    "drag; a blunter or shorter nose ADDS pressure drag, a longer finer nose cuts it; thinner, "
+    "more swept fins cut drag but lose some yaw authority. If a request costs performance, say so."
+)
+_SQ2_LLM = None
+
+
+def sq2_edit(message, code, error=None):
+    """-> {set, replace, say, ms, model}. One Crusoe call, Lightning first (about 1 s)."""
+    global _SQ2_LLM
+    from forge.llm import LLM, parse_json
+    if _SQ2_LLM is None:
+        _SQ2_LLM = LLM(run_dir="runs/_sq2edit", budget_usd=3.0)
+    user = f"CURRENT SOURCE:\n```openscad\n{code}\n```\n\nREQUEST: {message}"
+    if error:
+        user += f"\n\nYour previous edit failed to compile:\n{error[:1500]}\nFix it."
+    t0 = time.time()
+    out = {"set": {}, "replace": [], "say": ""}
+    for role in ("designer", "spec"):
+        try:
+            txt = _SQ2_LLM.chat(role, [{"role": "system", "content": SQ2_SYSTEM},
+                                       {"role": "user", "content": user}],
+                                temperature=0, max_tokens=1500, meta=dict(agent="sq2_edit"))
+            got = parse_json(txt)
+            if isinstance(got, dict) and (got.get("set") or got.get("replace")):
+                out.update({k: got[k] for k in ("set", "replace", "say") if k in got})
+                out["model"] = MODELS[role]
+                break
+        except Exception as e:
+            out["say"] = f"model error: {e}"[:200]
+    out["ms"] = int((time.time() - t0) * 1000)
+    return out
+
+
+SQ2_FUSION_DOC = "SQ2 FORGE live"
+_SQ2_FIT = [False]
+
+
+def sq2_to_fusion(groups, snap=False):
+    """groups: [{rgb:[r,g,b] 0-1, tris: base64 float32 xyz*9 per tri}] -> Fusion.
+
+    One STL per colour group, imported as mesh bodies into the 'SQ2 FORGE live' document.
+    The previous version's bodies are deleted first, so Fusion always shows exactly the
+    current geometry (no stacked copies)."""
+    import base64, struct
+    t0 = time.time()
+    d = os.path.join(HERE, "runs", "sq2_fusion")
+    os.makedirs(d, exist_ok=True)
+    files = []
+    for i, g in enumerate(groups):
+        raw = base64.b64decode(g["tris"])
+        n = len(raw) // 36
+        p = os.path.join(d, f"g{i}.stl")
+        with open(p, "wb") as f:
+            f.write(b"\0" * 80 + struct.pack("<I", n))
+            for k in range(n):
+                f.write(b"\0" * 12 + raw[36 * k:36 * k + 36] + b"\0\0")
+        files.append([p, [int(255 * c) for c in g["rgb"]]])
+    if snap:
+        sd = os.path.join(d, "snaps")
+        os.makedirs(sd, exist_ok=True)
+        snap = os.path.join(sd, "pending.png")
+    code = f'''
+import adsk.core, adsk.fusion, json
+app = adsk.core.Application.get()
+DOC = {SQ2_FUSION_DOC!r}
+doc = None
+for i in range(app.documents.count):
+    if app.documents.item(i).name.startswith(DOC):
+        doc = app.documents.item(i)
+if doc is None:
+    doc = app.documents.add(adsk.core.DocumentTypes.FusionDesignDocumentType)
+    doc.name = DOC
+doc.activate()
+des = adsk.fusion.Design.cast(app.activeProduct)
+if des.designType != adsk.fusion.DesignTypes.DirectDesignType:
+    des.designType = adsk.fusion.DesignTypes.DirectDesignType
+root = des.rootComponent
+for i in range(root.meshBodies.count - 1, -1, -1):
+    root.meshBodies.item(i).deleteMe()
+lib = app.materialLibraries.itemByName("Fusion Appearance Library")
+base = None
+for i in range(lib.appearances.count):
+    a = lib.appearances.item(i)
+    if "Paint - Enamel Glossy" in a.name:
+        base = a; break
+n = 0
+for path, rgb in {files!r}:
+    mb = root.meshBodies.add(path, adsk.fusion.MeshUnits.MillimeterMeshUnit)
+    nm = "SQ2_%d_%d_%d" % tuple(rgb)
+    ap = des.appearances.itemByName(nm)
+    if ap is None and base is not None:
+        ap = des.appearances.addByCopy(base, nm)
+        for k in range(ap.appearanceProperties.count):
+            pr = ap.appearanceProperties.item(k)
+            if isinstance(pr, adsk.core.ColorProperty):
+                pr.value = adsk.core.Color.create(rgb[0], rgb[1], rgb[2], 255); break
+    for k in range(mb.count):
+        b = mb.item(k)
+        if ap is not None: b.appearance = ap
+        n += 1
+vp = app.activeViewport
+vp.visualStyle = adsk.core.VisualStyles.ShadedVisualStyle
+cam = vp.camera
+cam.isSmoothTransition = False
+cam.cameraType = adsk.core.CameraTypes.PerspectiveCameraType
+tgt = adsk.core.Point3D.create(28.0, 0, 0)
+cam.target = tgt
+# same view direction as the FORGE three.js camera (1.15, -1.35, 0.75 in SCAD axes)
+cam.eye = adsk.core.Point3D.create(28.0 + 1.15 * 70, -1.35 * 70, 0.75 * 70)
+cam.upVector = adsk.core.Vector3D.create(0, 0, 1)
+cam.viewExtents = 265.0
+vp.camera = cam
+vp.refresh()
+snap = {snap!r}
+if snap:
+    vp.saveAsImageFile(snap, 1280, 1440)
+json.dumps({{"bodies": n, "doc": doc.name}})
+'''
+    r = fusion._exec(code, 60.0)
+    out = json.loads(r) if isinstance(r, str) else (r or {})
+    if isinstance(out, dict) and isinstance(out.get("result"), str):
+        try:
+            out = json.loads(out["result"])
+        except Exception:
+            pass
+    out["ms"] = int((time.time() - t0) * 1000)
+    if snap and os.path.exists(snap):
+        os.rename(snap, os.path.join(os.path.dirname(snap), f"{time.time():.3f}.png"))
+    return out
+
+
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, *a):
         pass
@@ -275,6 +475,13 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
+        elif path == "/sq2":
+            self._send_file("sq2.html", "text/html; charset=utf-8")
+        elif path == "/sq2.scad":
+            self._send_file("sq2.scad", "text/plain; charset=utf-8")
+        elif path.startswith("/vendor/") and ".." not in path:
+            ext = path.rsplit(".", 1)[-1]
+            self._send_file(path[1:], {"js": "text/javascript", "wasm": "application/wasm"}.get(ext, "application/octet-stream"))
         elif path == "/last":
             body = json.dumps(self._last_turn()).encode()
             self.send_response(200)
@@ -319,7 +526,91 @@ class Handler(BaseHTTPRequestHandler):
                 pass
         return {"events": []}
 
+    def _approve(self):
+        """Release the design that is open in Fusion: export the whole design to STEP via the
+        Fusion API and write a release record next to it. Returns {ok, step, record, kb}."""
+        rel_dir = os.path.join(os.path.dirname(TRANSCRIPTS), "releases")
+        os.makedirs(rel_dir, exist_ok=True)
+        stamp = time.strftime("%Y%m%d_%H%M%S")
+        code = f'''
+import adsk.core, adsk.fusion, json, os
+app = adsk.core.Application.get()
+des = adsk.fusion.Design.cast(app.activeProduct)
+name = app.activeDocument.name.split(" ")[0].rstrip("*")
+path = os.path.join({rel_dir!r}, name + "_" + {stamp!r} + ".step")
+em = des.exportManager
+em.execute(em.createSTEPExportOptions(path, des.rootComponent))
+json.dumps({{"design": name, "step": path, "bytes": os.path.getsize(path) if os.path.exists(path) else 0}})
+'''
+        try:
+            res = fusion._exec("import json\n" + code, 120.0)
+            info = json.loads(res) if isinstance(res, str) else res
+        except Exception as e:
+            return {"ok": False, "error": str(e)[:300]}
+        # Fusion finishes writing STEP after execute() returns; wait for real B-rep entities.
+        step = info.get("step")
+        solids = 0
+        for _ in range(60):
+            if step and os.path.exists(step):
+                with open(step, errors="ignore") as f:
+                    txt = f.read()
+                solids = txt.count("MANIFOLD_SOLID_BREP")
+                if solids and txt.rstrip().endswith("END-ISO-10303-21;"):
+                    break
+            time.sleep(0.5)
+        info["bytes"] = os.path.getsize(step) if step and os.path.exists(step) else 0
+        info["solids"] = solids
+        if not solids:
+            # Fusion wrote an empty STEP (the open MJ1 doc is an assembly of imported references).
+            # Release the build's own STEP outputs instead, and say so.
+            src = "/Users/aayu/Workspace/developer/mj1/cad/out/kc/OML_master.step"
+            if os.path.exists(src):
+                import shutil
+                dst = os.path.join(rel_dir, f"MJ1_OML_{stamp}.step")
+                shutil.copyfile(src, dst)
+                with open(dst, errors="ignore") as f:
+                    info["solids"] = f.read().count("MANIFOLD_SOLID_BREP")
+                info.update(step=dst, bytes=os.path.getsize(dst), source_step=src)
+        record = dict(info, approved_at=time.strftime("%Y-%m-%d %H:%M:%S"), source="FORGE Studio")
+        rec_path = os.path.join(rel_dir, f"{info.get('design', 'design')}_{stamp}.json")
+        with open(rec_path, "w") as f:
+            json.dump(record, f, indent=2)
+        return {"ok": bool(info.get("solids")), "design": info.get("design"), "step": info.get("step"),
+                "record": rec_path, "kb": round((info.get("bytes") or 0) / 1024), "solids": info.get("solids")}
+
     def do_POST(self):
+        if self.path.split("?")[0] == "/approve":
+            body = json.dumps(self._approve()).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if self.path.split("?")[0] == "/sq2/fusion":
+            n = int(self.headers.get("Content-Length", 0))
+            req = json.loads(self.rfile.read(n) or b"{}")
+            try:
+                res = sq2_to_fusion(req.get("groups", []), bool(req.get("snap")))
+            except Exception as e:
+                res = {"error": str(e)[:300]}
+            body = json.dumps(res).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if self.path.split("?")[0] == "/sq2/edit":
+            n = int(self.headers.get("Content-Length", 0))
+            req = json.loads(self.rfile.read(n) or b"{}")
+            body = json.dumps(sq2_edit(req.get("message", ""), req.get("code", ""), req.get("error"))).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
         if self.path.split("?")[0] == "/layout":
             self._tile_windows()
             return
@@ -337,8 +628,9 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", "text/event-stream")
         self.send_header("Cache-Control", "no-cache")
-        self.send_header("Connection", "keep-alive")
+        self.send_header("Connection", "close")
         self.end_headers()
+        self.close_connection = True
 
         q = queue.Queue()
         th = threading.Thread(target=run_turn, args=(goal, q), daemon=True)
@@ -362,6 +654,11 @@ class Handler(BaseHTTPRequestHandler):
                 break
         try:
             tf.close()
+        except Exception:
+            pass
+        try:
+            self.wfile.write(b'data: {"event": "end"}\n\n')
+            self.wfile.flush()
         except Exception:
             pass
     def _tile_windows(self):

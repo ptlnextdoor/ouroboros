@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FORGE · SQ-2</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  /* monocode tokens (same as studio/index.html) */
+  :root{
+    --bg:hsl(240 0% 9%); --sidebar:hsl(240 0% 7%); --raise:hsl(240 0% 12%); --raise-hi:hsl(240 0% 15%);
+    --fg:hsl(240 0% 92%); --dim:hsla(0,0%,100%,.55); --faint:hsla(0,0%,100%,.38);
+    --hair:hsla(0,0%,100%,.07); --hair-2:hsla(0,0%,100%,.1);
+    --accent:hsl(211 92% 62%); --pass:hsl(158 64% 42%); --fail:hsl(0 72% 60%); --amber:hsl(45 90% 62%);
+    --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+    --sans:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--fg);font:13px/1.45 var(--sans);-webkit-font-smoothing:antialiased;
+    display:grid;grid-template-columns:300px 1fr 270px;height:100vh;overflow:hidden}
+  @media (max-width:1400px){body{grid-template-columns:270px 1fr 240px}}
+  .rail{background:var(--sidebar);border-right:1px solid var(--hair);display:flex;flex-direction:column;min-height:0}
+  .right{background:var(--sidebar);border-left:1px solid var(--hair);display:flex;flex-direction:column;min-height:0}
+  .hd{padding:14px 16px 12px;border-bottom:1px solid var(--hair);display:flex;align-items:baseline;gap:8px}
+  .hd b{font-size:14px;font-weight:650;letter-spacing:-.01em}
+  .hd span{color:var(--faint);font-size:12px}
+  #log{flex:1;overflow:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+  .m{border-radius:10px;padding:9px 11px;background:var(--raise);border:1px solid var(--hair)}
+  .m.user{background:transparent;border-color:var(--hair-2);align-self:flex-end;max-width:90%}
+  .m .who{font-size:11px;color:var(--faint);margin-bottom:3px;display:flex;gap:6px}
+  .m .who .mdl{font-family:var(--mono)}
+  .m .t{color:var(--fg)}
+  .m .diff{margin-top:6px;font:11px/1.5 var(--mono);color:var(--dim)}
+  .m .diff i{font-style:normal;color:var(--accent)}
+  .m .ms{font:11px var(--mono);color:var(--faint);margin-top:4px}
+  .m.err .t{color:var(--fail)}
+  .composer{padding:12px;border-top:1px solid var(--hair)}
+  .box{background:var(--raise);border:1px solid var(--hair-2);border-radius:12px;padding:10px 12px}
+  textarea{width:100%;resize:none;background:transparent;border:0;outline:0;color:var(--fg);font:13px/1.45 var(--sans);height:44px}
+  .row{display:flex;gap:6px;align-items:center;margin-top:6px}
+  .chip{font-size:11.5px;color:var(--dim);border:1px solid var(--hair-2);border-radius:999px;padding:3px 9px;cursor:pointer;background:transparent}
+  .chip:hover{color:var(--fg);background:var(--raise-hi)}
+  .btn{margin-left:auto;background:var(--fg);color:var(--bg);border:0;border-radius:8px;padding:6px 12px;font:600 12px var(--sans);cursor:pointer}
+  .btn:disabled{opacity:.4;cursor:default}
+  .sugg{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+  #stage{position:relative;min-width:0}
+  #view{position:absolute;inset:0}
+  .ov{position:absolute;left:18px;top:14px;pointer-events:none}
+  .ov .ttl{font-size:15px;font-weight:650;letter-spacing:-.01em}
+  .ov .sub{color:var(--faint);font-size:12px;margin-top:2px}
+  #status{position:absolute;left:18px;bottom:14px;font:11.5px var(--mono);color:var(--faint)}
+  #status.busy{color:var(--accent)}
+  #fus{position:absolute;right:18px;bottom:14px;font:11.5px var(--mono);color:var(--faint)}
+  #status.bad{color:var(--fail)}
+  .tb{position:absolute;right:16px;top:14px;display:flex;gap:6px}
+  .tb button{font:12px var(--sans);color:var(--dim);background:var(--raise);border:1px solid var(--hair-2);border-radius:8px;padding:5px 10px;cursor:pointer}
+  .tb button:hover{color:var(--fg)}
+  .tb button.pri{color:var(--bg);background:var(--fg);border-color:var(--fg)}
+  #stages{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;display:flex;gap:4px}
+  #stages div{font:11px var(--sans);color:var(--faint);padding:4px 9px;border-radius:999px;border:1px solid var(--hair)}
+  #stages div.on{color:var(--fg);border-color:var(--hair-2);background:var(--raise)}
+  .sec{padding:10px 14px 4px;font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+  #checks{padding:0 14px 6px;display:flex;flex-direction:column;gap:4px}
+  .ck{display:flex;align-items:center;gap:8px;font-size:12px}
+  .ck .d{width:6px;height:6px;border-radius:50%;background:var(--pass);flex:none}
+  .ck.bad .d{background:var(--fail)}
+  .ck .v{margin-left:auto;font:11.5px var(--mono);color:var(--dim)}
+  #params{flex:1;overflow:auto;padding:0 14px 14px}
+  .grp{font-size:11px;color:var(--faint);margin:12px 0 4px}
+  .p{display:grid;grid-template-columns:1fr 58px;gap:2px 8px;align-items:center;padding:3px 0}
+  .p label{font-size:12px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .p .val{font:11.5px var(--mono);text-align:right;color:var(--fg)}
+  .p input[type=range]{grid-column:1/3;width:100%;accent-color:var(--accent);height:14px}
+  .p.flash .val{color:var(--accent)}
+  .p.flash label{color:var(--accent)}
+</style>
+<style>
+  /* half-screen (side by side with Fusion): chat + viewer only, checks float over the viewer */
+  @media (max-width:1000px){
+    body{grid-template-columns:250px 1fr}
+    .right{position:absolute;right:12px;bottom:34px;width:238px;background:hsla(240,0%,7%,.86);
+      border:1px solid var(--hair-2);border-radius:12px;backdrop-filter:blur(8px);z-index:5}
+    .right .hd{padding:9px 12px 7px}.right .ck{font-size:11px}.right #checks{padding-bottom:10px}
+    .right #params,.right #psec{display:none}
+    #status{display:none}#fus{left:262px;right:auto}
+    .sugg{display:none}
+  }
+</style>
+</head>
+<body>
+<aside class="rail">
+  <div class="hd"><b>FORGE</b><span>SQ-2 · agent CAD</span></div>
+  <div id="log"></div>
+  <div class="composer">
+    <div class="box">
+      <textarea id="msg" placeholder="Change anything: nose, airfoils, pods, arms, props, fins…"></textarea>
+      <div class="row">
+        <button class="chip" id="undo">Undo</button>
+        <button class="btn" id="send">Send</button>
+      </div>
+    </div>
+    <div class="sugg" id="sugg"></div>
+  </div>
+</aside>
+<main id="stage">
+  <div id="view"></div>
+  <div class="ov"><div class="ttl">SQ-2</div><div class="sub">590 km/h electric quad · parametric OML · OpenSCAD in-browser</div></div>
+  <div class="tb">
+    <button id="dev" class="pri">Replay build</button>
+    <button id="fit">Fit</button>
+    <button id="dl">STL</button>
+  </div>
+  <div id="stages"></div>
+  <div id="status">loading OpenSCAD…</div>
+  <div id="fus"></div>
+</main>
+<aside class="right">
+  <div class="hd"><b>Design</b><span id="mass"></span></div>
+  <div class="sec">Live checks</div>
+  <div id="checks"></div>
+  <div class="sec" id="psec">Parameters</div>
+  <div id="params"></div>
+</aside>
+
+<script type="importmap">{"imports":{"three":"/vendor/three.module.js","three/addons/":"/vendor/addons/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const $ = s => document.querySelector(s);
+let code = await (await fetch('/sq2.scad')).text();
+const history = [];
+
+// ---------- three ----------
+const view = $('#view');
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(devicePixelRatio);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+view.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x171717);
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+const cam = new THREE.PerspectiveCamera(30, 1, 1, 20000);
+const ctl = new OrbitControls(cam, renderer.domElement);
+ctl.enableDamping = true;
+const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(-600, 900, 700); scene.add(key);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x222226, 0.5));
+const grid = new THREE.GridHelper(2000, 40, 0x2a2a2e, 0x202024); scene.add(grid);
+const root = new THREE.Group(); root.rotation.x = -Math.PI / 2; scene.add(root);  // SCAD z-up -> three y-up
+let mesh = null, lastSTL = null, fitted = false;
+const mat = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.38, metalness: 0.15, clearcoat: 0.6, clearcoatRoughness: 0.25 });
+function resize() { const r = view.getBoundingClientRect(); renderer.setSize(r.width, r.height); cam.aspect = r.width / r.height; cam.updateProjectionMatrix(); }
+addEventListener('resize', resize); resize();
+let spin = !new URLSearchParams(location.search).has('auto'); ctl.addEventListener('start', () => spin = false);
+(function loop() { requestAnimationFrame(loop); if (spin) root.rotation.z += 0.0022; ctl.update(); renderer.render(scene, cam); })();
+
+function fit(m) {
+  const L = Math.max(m.hi[0] - m.lo[0], m.hi[1] - m.lo[1], m.hi[2] - m.lo[2]);
+  const cx = (m.lo[0] + m.hi[0]) / 2;
+  root.position.set(-cx, -m.lo[2] + 10, 0);
+  grid.position.y = 0;
+  ctl.target.set(0, (m.hi[2] - m.lo[2]) / 2 + 10, 0);
+  const k = Math.max(0.78, 1.0 / cam.aspect);   // narrow viewport: back the camera off just enough
+  cam.position.set(L * 1.15 * k, L * 0.75 * k, L * 1.35 * k);
+}
+$('#fit').onclick = () => { if (lastMesh) fit(lastMesh); };
+let lastMesh = null;
+
+// ---------- compile ----------
+const worker = new Worker('/vendor/scad-worker.js', { type: 'module' });
+let jid = 0, inflight = null, queued = null;
+const waiters = {};
+worker.onmessage = e => { const w = waiters[e.data.id]; delete waiters[e.data.id]; w && w(e.data); };
+function compileRaw(src) { const id = ++jid; worker.postMessage({ id, code: src }); return new Promise(r => waiters[id] = r); }
+async function compile(src = code) {
+  if (inflight) { queued = src; return inflight; }
+  status('compiling…', 'busy');
+  inflight = compileRaw(src).then(r => {
+    inflight = null;
+    if (r.ok) show(r); else status('compile error: ' + r.error.split('\n').pop(), 'bad');
+    if (queued) { const q = queued; queued = null; compile(q); }
+    return r;
+  });
+  return inflight;
+}
+function show(r) {
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(r.pos, 3));
+  g.setAttribute('normal', new THREE.BufferAttribute(r.nor, 3));
+  g.setAttribute('color', new THREE.BufferAttribute(r.col, 3));
+  if (mesh) { root.remove(mesh); mesh.geometry.dispose(); }   // old version gone; the model is replaced in place
+  mesh = new THREE.Mesh(g, mat); root.add(mesh);
+  lastSTL = r.pos; lastMesh = r;
+  if (!fitted) { fit(r); fitted = true; }
+  status(`${(r.ms / 1000).toFixed(2)} s · ${r.tris.toLocaleString()} tris · manifold`);
+  renderChecks(r);
+  toFusion(r);
+}
+function status(t, c = '') { const s = $('#status'); s.textContent = t; s.className = c; }
+
+// ---------- Fusion sync: same mesh, replaced in place in the "SQ2 FORGE live" doc ----------
+const FUSION = !new URLSearchParams(location.search).has('nofusion');
+let fusionBusy = false, fusionNext = null;
+function groupsOf(r) {
+  const by = new Map();
+  for (let f = 0; f < r.tris; f++) {
+    const k = [r.col[9 * f], r.col[9 * f + 1], r.col[9 * f + 2]].map(v => v.toFixed(3)).join(',');
+    if (!by.has(k)) by.set(k, []);
+    by.get(k).push(f);
+  }
+  return [...by].map(([k, fs]) => {
+    const a = new Float32Array(fs.length * 9);
+    fs.forEach((f, i) => a.set(r.pos.subarray(9 * f, 9 * f + 9), 9 * i));
+    let s = ''; const u = new Uint8Array(a.buffer);
+    for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000));
+    return { rgb: k.split(',').map(Number), tris: btoa(s) };
+  });
+}
+async function toFusion(r) {
+  if (!FUSION) return;
+  if (fusionBusy) { fusionNext = r; return; }
+  fusionBusy = true;
+  const t0 = performance.now();
+  try {
+    const res = await (await fetch('/sq2/fusion', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ groups: groupsOf(r), snap: new URLSearchParams(location.search).has('snap') }) })).json();
+    $('#fus').textContent = res.error ? 'Fusion: ' + res.error.slice(0, 60)
+      : `Fusion synced · ${res.bodies} bodies · ${((performance.now() - t0) / 1000).toFixed(1)} s`;
+  } catch (e) { $('#fus').textContent = 'Fusion offline'; }
+  fusionBusy = false;
+  if (fusionNext) { const n = fusionNext; fusionNext = null; toFusion(n); }
+}
+
+// ---------- params ----------
+const PRE = /^(\w+)\s*=\s*(-?[\d.]+)\s*;\s*\/\/\s*\[(-?[\d.]+):(-?[\d.]+)\]\s*(.*)$/;
+function params(src = code) {
+  const out = []; let grp = '';
+  for (const line of src.split('\n')) {
+    const g = line.match(/^\/\/\s*(\w[\w ()]*)$/); if (g && !line.includes('=')) grp = g[1];
+    const m = line.match(PRE);
+    if (m && m[1] !== 'stage') out.push({ name: m[1], v: +m[2], lo: +m[3], hi: +m[4], note: m[5], grp });
+  }
+  return out;
+}
+const P = () => Object.fromEntries(params().map(p => [p.name, p.v]));
+function setParam(src, name, v) {
+  return src.replace(new RegExp(`^(${name}\\s*=\\s*)(-?[\\d.]+)(\\s*;)`, 'm'), (_, a, __, c) => a + (+(+v).toFixed(4)) + c);
+}
+function renderParams(flash = []) {
+  const box = $('#params'); box.innerHTML = ''; let g = null;
+  for (const p of params()) {
+    if (p.grp !== g) { g = p.grp; const d = document.createElement('div'); d.className = 'grp'; d.textContent = g; box.appendChild(d); }
+    const el = document.createElement('div'); el.className = 'p' + (flash.includes(p.name) ? ' flash' : '');
+    const step = (p.hi - p.lo) <= 1.5 ? 0.005 : (p.hi - p.lo) <= 12 ? 1 : 0.5;
+    el.innerHTML = `<label title="${p.note}">${p.name.replace(/_/g, ' ')}</label><span class="val">${p.v}</span>
+      <input type="range" min="${p.lo}" max="${p.hi}" step="${step}" value="${p.v}">`;
+    const inp = el.querySelector('input'), val = el.querySelector('.val');
+    inp.oninput = () => { val.textContent = inp.value; code = setParam(code, p.name, inp.value); compile(); };
+    inp.onpointerdown = () => history.push(code);
+    box.appendChild(el);
+  }
+}
+
+// ---------- live engineering checks (analytic, from the parameters) ----------
+function renderChecks(r) {
+  const p = P();
+  const A_body = Math.PI * (p.body_diameter / 2) ** 2;
+  const A_pods = p.arm_count * Math.PI * (p.pod_diameter / 2) ** 2;
+  // struts present their thickness (t/c x chord) times span to the flow, not their chord
+  const A_strut = p.arm_count * (p.pod_radius - p.body_diameter / 2) * p.strut_chord * p.strut_tc * (1 + p.strut_taper) / 2;
+  const A_fin = p.fin_count * p.fin_span * p.fin_root * p.fin_tc * (1 + p.fin_taper) / 2;
+  const A = (A_body + A_pods + A_strut + A_fin) / 100;   // cm2, geometric frontal area
+  const gap = 2 * p.pod_radius * Math.sin(Math.PI / p.arm_count) - p.prop_diameter;  // adjacent prop discs
+  const hub = p.pod_radius - p.prop_diameter / 2 - p.body_diameter / 2;             // prop tip to body
+  const fin = p.fin_span > 0 && p.fin_count > 0;
+  const fineness = p.body_length / p.body_diameter;
+  const rows = [
+    ['Prop discs clear each other', gap >= 5, `${gap.toFixed(0)} mm`],
+    ['Prop tip clears fuselage', hub >= 5, `${hub.toFixed(0)} mm`],
+    ['Body fineness ≥ 4.5', fineness >= 4.5, fineness.toFixed(2)],
+    ['Strut t/c ≥ 0.10 (spar fits)', p.strut_tc >= 0.10, p.strut_tc.toFixed(3)],
+    ['Pod fits V3120 motor (≥ 38 mm)', p.pod_diameter >= 38, `${p.pod_diameter} mm`],
+    ['Fins present (yaw stability)', fin, fin ? `${p.fin_count} × ${p.fin_span} mm` : 'none'],
+    ['Frontal area', true, `${A.toFixed(1)} cm²`],
+    ['Solid volume', true, `${(r.vol_mm3 / 1e3).toFixed(0)} cm³`],
+  ];
+  $('#checks').innerHTML = rows.map(([n, ok, v]) => `<div class="ck ${ok ? '' : 'bad'}"><span class="d"></span>${n}<span class="v">${v}</span></div>`).join('');
+  $('#mass').textContent = `${(r.hi[0] - r.lo[0]).toFixed(0)} × ${(r.hi[1] - r.lo[1]).toFixed(0)} mm`;
+}
+
+// ---------- chat ----------
+const log = $('#log');
+function msg(cls, who, text, extra = '') {
+  const d = document.createElement('div'); d.className = 'm ' + cls;
+  d.innerHTML = (who ? `<div class="who">${who}</div>` : '') + `<div class="t"></div>` + extra;
+  d.querySelector('.t').textContent = text; log.appendChild(d); log.scrollTop = 1e9; return d;
+}
+function applyEdit(src, e) {
+  let s = src; const changed = []; const notes = [];
+  const R = Object.fromEntries(params(src).map(p => [p.name, p]));
+  for (let [k, v] of Object.entries(e.set || {})) {
+    if (R[k]) v = Math.min(R[k].hi, Math.max(R[k].lo, +v));
+    if (new RegExp(`^${k}\\s*=`, 'm').test(s)) { const before = P()[k]; s = setParam(s, k, v); changed.push(k); notes.push(`${k} <i>${before} → ${+(+v).toFixed(4)}</i>`); }
+  }
+  for (const r of e.replace || []) {
+    if (r.old && s.includes(r.old)) { s = s.replace(r.old, r.new); notes.push(`code: <i>${(r.new.split('\n')[0] || '').slice(0, 60).replace(/</g, '&lt;')}…</i>`); }
+  }
+  return { s, changed, notes };
+}
+let busy = false;
+async function send(text) {
+  text = (text || $('#msg').value).trim(); if (!text || busy) return;
+  busy = true; $('#send').disabled = true; $('#msg').value = '';
+  msg('user', '', text);
+  const t0 = performance.now();
+  const pend = msg('', 'CAD agent · <span class="mdl">Crusoe</span>', 'thinking…');
+  let err = null, ok = false;
+  for (let attempt = 0; attempt < 2 && !ok; attempt++) {
+    const e = await (await fetch('/sq2/edit', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, code, error: err }) })).json();
+    const { s, changed, notes } = applyEdit(code, e);
+    if (s === code) { pend.querySelector('.t').textContent = e.say || 'No change made.'; break; }
+    pend.querySelector('.who').innerHTML = `CAD agent · <span class="mdl">${(e.model || '').split('/').pop()}</span>`;
+    pend.querySelector('.t').textContent = e.say || 'Edited.';
+    const r = await compileRaw(s);
+    if (r.ok) {
+      history.push(code); code = s; show(r); renderParams(changed); ok = true;
+      pend.insertAdjacentHTML('beforeend', `<div class="diff">${notes.join('<br>')}</div>
+        <div class="ms">LLM ${(e.ms / 1000).toFixed(1)} s · compile ${(r.ms / 1000).toFixed(1)} s · total ${((performance.now() - t0) / 1000).toFixed(1)} s</div>`);
+    } else { err = r.error; pend.querySelector('.t').textContent = 'Compile failed, agent is fixing it…'; }
+  }
+  if (!ok && err) { pend.classList.add('err'); pend.querySelector('.t').textContent = 'Edit did not compile; model unchanged. ' + err.split('\n').pop(); }
+  busy = false; $('#send').disabled = false; $('#msg').focus();
+}
+$('#send').onclick = () => send();
+$('#msg').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } });
+$('#undo').onclick = async () => { if (!history.length) return; code = history.pop(); renderParams(); await compile(); msg('', 'FORGE', 'Reverted to the previous version.'); };
+const S = ['Make the nose blunter and shorter', 'Use a cambered NACA 4415 strut, sweep it back 20°', 'Make it a hexacopter', 'Fatter, shorter pods with a pointed nose', 'Three-blade props', 'Remove the fins'];
+$('#sugg').innerHTML = S.map(s => `<button class="chip">${s}</button>`).join('');
+$('#sugg').onclick = e => { if (e.target.classList.contains('chip')) send(e.target.textContent); };
+
+// ---------- replay: how the agents developed SQ-2 (real pipeline, real numbers) ----------
+const STAGES = [
+  [1, 'Fuselage', 'Spec agent', 'Requirement: beat 657.6 km/h. Sized a 547 mm, 100 mm-diameter body around two 7S packs. Fineness 5.45 from the drag model anchored to Blackbird and Peregreen.'],
+  [2, 'Struts', 'Designer', 'Four NACA 0015 struts at 45°, 57 mm chord, carrying the CFRP spar. t/c 0.155 leaves room for the harness conduit.'],
+  [3, 'Pods', 'Designer', 'Motor nacelles sized to the T-Motor V3120 the agent sourced: 41 mm diameter, 181 mm long, 160 mm off the axis.'],
+  [4, 'Props', 'Designer', '165 mm two-blade props. Tip Mach 0.84 at V_max, under the 0.95 limit.'],
+  [5, 'Fins', 'Critic', 'Added four 45°-clocked tail fins: pitch authority 2.2× the 5° gust requirement. CFD on the OML: C_dA 32.4 cm², +1.4 % vs design.'],
+];
+$('#stages').innerHTML = STAGES.map(s => `<div data-s="${s[0]}">${s[1]}</div>`).join('');
+async function replay(gap = 2200) {
+  $('#dev').disabled = true;
+  msg('', 'FORGE', 'Replaying how the agents built SQ-2, stage by stage.');
+  for (const [st, name, who, text] of STAGES) {
+    document.querySelectorAll('#stages div').forEach(d => d.classList.toggle('on', +d.dataset.s <= st));
+    const r = await compileRaw(setParam(code, 'stage', st)); if (r.ok) show(r);
+    msg('', `${who} · <span class="mdl">${name}</span>`, text);
+    await new Promise(z => setTimeout(z, gap));
+    while (fusionBusy) await new Promise(z => setTimeout(z, 80));
+  }
+  msg('', 'FORGE', 'Built. Type any change: the agent edits the CAD source and it recompiles in place.');
+  $('#dev').disabled = false;
+}
+$('#dev').onclick = () => replay();
+
+$('#dl').onclick = () => {
+  if (!lastSTL) return; const n = lastSTL.length / 9; const b = new DataView(new ArrayBuffer(84 + n * 50)); b.setUint32(80, n, true);
+  for (let i = 0; i < n; i++) for (let k = 0; k < 9; k++) b.setFloat32(84 + i * 50 + 12 + k * 4, lastSTL[i * 9 + k], true);
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([b])); a.download = 'SQ2.stl'; a.click();
+};
+
+renderParams();
+await compile();
+document.querySelectorAll('#stages div').forEach(d => d.classList.add('on'));
+if (new URLSearchParams(location.search).has('replay')) replay();
+else if (new URLSearchParams(location.search).has('auto')) autoDemo();
+else msg('', 'FORGE', 'SQ-2 is loaded from the optimiser output. Press Replay build to watch the agents develop it, or type a change.');
+
+// autonomous demo: type like a person, the agent reshapes the nose then the tail fins
+async function typeIn(text) {
+  const t = $('#msg'); t.value = ''; t.focus();
+  for (const ch of text) { t.value += ch; await new Promise(z => setTimeout(z, 28)); }
+  await new Promise(z => setTimeout(z, 250));
+}
+async function autoDemo() {
+  while (fusionBusy) await new Promise(z => setTimeout(z, 100));
+  window.__start = true;
+  if (new URLSearchParams(location.search).has('build')) { log.innerHTML = ''; await replay(700); }
+  await new Promise(z => setTimeout(z, 500));
+  for (const q of (new URLSearchParams(location.search).get('q') || 'Stretch the nose cone into a long, needle-sharp ogive|Swap the tail fins for a thinner, swept, more tapered airfoil').split('|')) {
+    while (fusionBusy) await new Promise(z => setTimeout(z, 100));
+    await typeIn(q); await send();
+    await new Promise(z => setTimeout(z, 600));
+    while (fusionBusy) await new Promise(z => setTimeout(z, 100));
+    await new Promise(z => setTimeout(z, 2000));
+  }
+  window.__done = true;
+}
+window.__forge = { send, P, get code() { return code; } };
+</script>
+</body>
+</html>

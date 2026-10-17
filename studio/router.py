@@ -16,12 +16,14 @@ SYSTEM = (
     "You are the intent router for a CAD studio. The open Fusion 360 design is MJ-1, a "
     "supersonic RC jet. Classify the user's one-line message. Reply with STRICT JSON only:\n"
     '{"intent": "new_jet"|"new_bracket"|"edit"|"question", '
-    '"edit": {"action": "appearance"|"visibility", "target": "<regex over the part names '
+    '"edit": {"action": "appearance"|"visibility"|"revert", "target": "<regex over the part names '
     'below>", "value": "<appearance words like black anodized, or show/hide>"}, '
     '"reply": "<one sentence, only for question>"}\n'
     "new_jet = design a new aircraft/jet/drone from scratch. new_bracket = design a new "
     "mounting bracket/part with loads. edit = change the existing design's look or "
-    "visibility. question = anything else. For edit, target MUST be a case-insensitive "
+    "visibility. Use action revert (target '.*' unless a part is named) when the user wants "
+    "to undo, revert, go back to the original colours, or remove the colours we added. "
+    "question = anything else. For edit, target MUST be a case-insensitive "
     "regex matching the real part names, e.g. the engine is 'ENGINE_|JetCat P550'; the skin "
     "is '^Skin'. Omit edit for non-edit intents."
 )
@@ -29,6 +31,8 @@ SYSTEM = (
 
 def _fallback(goal):
     g = goal.lower()
+    if any(w in g for w in ("revert", "undo", "original", "go back", "reset colo", "back to the")):
+        return {"intent": "edit", "edit": {"action": "revert", "target": ".*", "value": ""}, "reply": ""}
     if any(w in g for w in VIS_WORDS):
         show = ("show" in g or "unhide" in g) and "hide " not in g
         tgt = re.sub(r"\b(hide|show|the|unhide|please)\b", "", g).strip() or "skin"

@@ -108,18 +108,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
         // dock to the right third of the main screen
         if let screen = NSScreen.main {
             let vf = screen.visibleFrame
-            let w: CGFloat = max(440, min(520, vf.width * 0.30))
+            let w: CGFloat = vf.width * 0.5
             window.setFrame(NSRect(x: vf.maxX - w, y: vf.minY, width: w, height: vf.height), display: true)
         }
         window.makeKeyAndOrderFront(nil)
+        // side-by-side with Fusion: Fusion's window can't shrink below ~1200 pt and grabs focus on
+        // every sync, so keep FORGE above it (FORGE_FLOAT=0 to disable)
+        if ProcessInfo.processInfo.environment["FORGE_FLOAT"] != "0" { window.level = .floating }
         NSApp.activate(ignoringOtherApps: true)
 
         load()
     }
 
     func load() {
-        let auto = ProcessInfo.processInfo.environment["FORGE_AUTO"] == "1" ? "?auto=1" : ""
-        web.load(URLRequest(url: URL(string: BASE + "/" + auto)!))
+        let page = ProcessInfo.processInfo.environment["FORGE_PAGE"] ?? "sq2"
+        let auto = ProcessInfo.processInfo.environment["FORGE_QUERY"] ??
+            (ProcessInfo.processInfo.environment["FORGE_AUTO"] == "1" ? "?auto=1" : "")
+        web.load(URLRequest(url: URL(string: BASE + "/" + page + auto)!))
     }
 
     func webView(_ w: WKWebView, didFail nav: WKNavigation!, withError error: Error) { retry() }
